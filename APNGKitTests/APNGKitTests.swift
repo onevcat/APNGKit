@@ -24,6 +24,12 @@ class APNGKitTests: XCTestCase {
     func testExample() {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let s = NSInputStream(data: minialPNGData)
+        s.open()
+        var buffer = Array<UInt8>(count: 12, repeatedValue: 0)
+        s.read(&buffer, maxLength: 8)
+        print(buffer)
+        s.close()
     }
     
     func testPerformanceExample() {

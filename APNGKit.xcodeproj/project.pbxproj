@@ -35,6 +35,8 @@
 		4B6B690D1B8EB39E00C4868A /* libz.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B6B690C1B8EB39E00C4868A /* libz.1.dylib */; };
 		4B6B69101B8EB50B00C4868A /* PNGSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B690F1B8EB50B00C4868A /* PNGSource.swift */; settings = {ASSET_TAGS = (); }; };
 		4B6B69121B8EB65F00C4868A /* Fundamental Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69111B8EB65F00C4868A /* Fundamental Tests.swift */; settings = {ASSET_TAGS = (); }; };
+		4B6B69151B8EB98300C4868A /* Reader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69141B8EB98300C4868A /* Reader.swift */; settings = {ASSET_TAGS = (); }; };
+		4B6B69171B8EBFC700C4868A /* ReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69161B8EBFC700C4868A /* ReaderTests.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +81,8 @@
 		4B6B690C1B8EB39E00C4868A /* libz.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.dylib; path = /usr/lib/libz.1.dylib; sourceTree = "<absolute>"; };
 		4B6B690F1B8EB50B00C4868A /* PNGSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PNGSource.swift; sourceTree = "<group>"; };
 		4B6B69111B8EB65F00C4868A /* Fundamental Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Fundamental Tests.swift"; sourceTree = "<group>"; };
+		4B6B69141B8EB98300C4868A /* Reader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reader.swift; sourceTree = "<group>"; };
+		4B6B69161B8EBFC700C4868A /* ReaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +129,7 @@
 				4B6B68DF1B8EB33100C4868A /* libpng-apng */,
 				4B0D673C1B8E9DBF00876BDF /* APNGKit.h */,
 				4B0D673E1B8E9DBF00876BDF /* Info.plist */,
+				4B6B69141B8EB98300C4868A /* Reader.swift */,
 			);
 			path = APNGKit;
 			sourceTree = "<group>";
@@ -136,6 +141,7 @@
 				4B0D67481B8E9DC000876BDF /* APNGKitTests.swift */,
 				4B6B69111B8EB65F00C4868A /* Fundamental Tests.swift */,
 				4B0D674A1B8E9DC000876BDF /* Info.plist */,
+				4B6B69161B8EBFC700C4868A /* ReaderTests.swift */,
 			);
 			path = APNGKitTests;
 			sourceTree = "<group>";
@@ -250,6 +256,7 @@
 		4B0D67301B8E9DBF00876BDF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "OneV's Den";
 				TargetAttributes = {
@@ -328,6 +335,7 @@
 				4B6B69081B8EB33100C4868A /* pngwio.c in Sources */,
 				4B6B69051B8EB33100C4868A /* pngset.c in Sources */,
 				4B6B68FF1B8EB33100C4868A /* pngpread.c in Sources */,
+				4B6B69151B8EB98300C4868A /* Reader.swift in Sources */,
 				4B6B68FB1B8EB33100C4868A /* pngget.c in Sources */,
 				4B6B69011B8EB33100C4868A /* pngread.c in Sources */,
 				4B6B69041B8EB33100C4868A /* pngrutil.c in Sources */,
@@ -342,6 +350,7 @@
 			files = (
 				4B6B69121B8EB65F00C4868A /* Fundamental Tests.swift in Sources */,
 				4B6B69101B8EB50B00C4868A /* PNGSource.swift in Sources */,
+				4B6B69171B8EBFC700C4868A /* ReaderTests.swift in Sources */,
 				4B0D67491B8E9DC000876BDF /* APNGKitTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -449,6 +458,7 @@
 		4B0D674E1B8E9DC000876BDF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -459,12 +469,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		4B0D674F1B8E9DC000876BDF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
