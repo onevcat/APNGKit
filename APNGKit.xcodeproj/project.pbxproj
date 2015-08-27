@@ -33,6 +33,8 @@
 		4B6B690A1B8EB33100C4868A /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68F41B8EB33100C4868A /* pngwtran.c */; settings = {ASSET_TAGS = (); }; };
 		4B6B690B1B8EB33100C4868A /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68F51B8EB33100C4868A /* pngwutil.c */; settings = {ASSET_TAGS = (); }; };
 		4B6B690D1B8EB39E00C4868A /* libz.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B6B690C1B8EB39E00C4868A /* libz.1.dylib */; };
+		4B6B69101B8EB50B00C4868A /* PNGSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B690F1B8EB50B00C4868A /* PNGSource.swift */; settings = {ASSET_TAGS = (); }; };
+		4B6B69121B8EB65F00C4868A /* Fundamental Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69111B8EB65F00C4868A /* Fundamental Tests.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +77,8 @@
 		4B6B68F41B8EB33100C4868A /* pngwtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwtran.c; sourceTree = "<group>"; };
 		4B6B68F51B8EB33100C4868A /* pngwutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwutil.c; sourceTree = "<group>"; };
 		4B6B690C1B8EB39E00C4868A /* libz.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.dylib; path = /usr/lib/libz.1.dylib; sourceTree = "<absolute>"; };
+		4B6B690F1B8EB50B00C4868A /* PNGSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PNGSource.swift; sourceTree = "<group>"; };
+		4B6B69111B8EB65F00C4868A /* Fundamental Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Fundamental Tests.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,7 +132,9 @@
 		4B0D67471B8E9DC000876BDF /* APNGKitTests */ = {
 			isa = PBXGroup;
 			children = (
+				4B6B69131B8EB66400C4868A /* Helpers */,
 				4B0D67481B8E9DC000876BDF /* APNGKitTests.swift */,
+				4B6B69111B8EB65F00C4868A /* Fundamental Tests.swift */,
 				4B0D674A1B8E9DC000876BDF /* Info.plist */,
 			);
 			path = APNGKitTests;
@@ -170,6 +176,14 @@
 				4B6B690C1B8EB39E00C4868A /* libz.1.dylib */,
 			);
 			name = lib;
+			sourceTree = "<group>";
+		};
+		4B6B69131B8EB66400C4868A /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				4B6B690F1B8EB50B00C4868A /* PNGSource.swift */,
+			);
+			name = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -326,6 +340,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B6B69121B8EB65F00C4868A /* Fundamental Tests.swift in Sources */,
+				4B6B69101B8EB50B00C4868A /* PNGSource.swift in Sources */,
 				4B0D67491B8E9DC000876BDF /* APNGKitTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
