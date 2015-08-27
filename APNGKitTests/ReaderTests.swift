@@ -29,10 +29,25 @@ class ReaderTests: XCTestCase {
         XCTAssertEqual(result.data, signatureOfPNG)
         
         var count = result.bytesCount
-        while count != Reader.dataEnd {
-            let (data, c) = reader.read(4)
-            print(data)
+        while count != 0 {
+            let (_, c) = reader.read(4)
             count = c
         }
+        reader.endReading()
+    }
+    
+    func testReaderWithBuffer() {
+        var ptr = [UInt8](count: 8, repeatedValue: 0)
+        let reader = Reader(data: minialPNGData, maxBuffer: 0)
+        
+        var count = 0
+        
+        reader.beginReading()
+        
+        repeat {
+            count = reader.read(&ptr, bytesCount: 8)
+        } while count != 0
+        
+        reader.endReading()
     }
 }

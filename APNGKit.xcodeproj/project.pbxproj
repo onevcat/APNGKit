@@ -37,6 +37,7 @@
 		4B6B69121B8EB65F00C4868A /* Fundamental Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69111B8EB65F00C4868A /* Fundamental Tests.swift */; settings = {ASSET_TAGS = (); }; };
 		4B6B69151B8EB98300C4868A /* Reader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69141B8EB98300C4868A /* Reader.swift */; settings = {ASSET_TAGS = (); }; };
 		4B6B69171B8EBFC700C4868A /* ReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69161B8EBFC700C4868A /* ReaderTests.swift */; settings = {ASSET_TAGS = (); }; };
+		4B6B69191B8ED1C300C4868A /* LibPNGTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69181B8ED1C300C4868A /* LibPNGTests.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +84,7 @@
 		4B6B69111B8EB65F00C4868A /* Fundamental Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Fundamental Tests.swift"; sourceTree = "<group>"; };
 		4B6B69141B8EB98300C4868A /* Reader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reader.swift; sourceTree = "<group>"; };
 		4B6B69161B8EBFC700C4868A /* ReaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderTests.swift; sourceTree = "<group>"; };
+		4B6B69181B8ED1C300C4868A /* LibPNGTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibPNGTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +144,7 @@
 				4B6B69111B8EB65F00C4868A /* Fundamental Tests.swift */,
 				4B0D674A1B8E9DC000876BDF /* Info.plist */,
 				4B6B69161B8EBFC700C4868A /* ReaderTests.swift */,
+				4B6B69181B8ED1C300C4868A /* LibPNGTests.swift */,
 			);
 			path = APNGKitTests;
 			sourceTree = "<group>";
@@ -352,6 +355,7 @@
 				4B6B69101B8EB50B00C4868A /* PNGSource.swift in Sources */,
 				4B6B69171B8EBFC700C4868A /* ReaderTests.swift in Sources */,
 				4B0D67491B8E9DC000876BDF /* APNGKitTests.swift in Sources */,
+				4B6B69191B8ED1C300C4868A /* LibPNGTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

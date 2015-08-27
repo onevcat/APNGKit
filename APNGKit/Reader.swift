@@ -10,8 +10,6 @@ import Foundation
 
 class Reader {
     
-    static let dataEnd = -1
-    
     private let stream: NSInputStream
     private var totalBytesRead = 0
     private let dataLength: Int
@@ -25,7 +23,7 @@ class Reader {
         maxBufferCount = maxBuffer
         dataLength = data.length
         
-        for i in 1...maxBuffer {
+        for i in 0...maxBuffer {
             buffers[i] = Array<UInt8>(count: i, repeatedValue: 0)
         }
     }
@@ -38,10 +36,34 @@ class Reader {
         stream.close()
     }
     
+    func read(buffer: UnsafeMutablePointer<UInt8>, bytesCount: Int) -> Int {
+        if stream.streamStatus == NSStreamStatus.AtEnd {
+            return 0
+        }
+        
+        if stream.streamStatus != NSStreamStatus.Open {
+            fatalError("The stream is not in Open status. This may occur when you try to read before calling beginReading() or after endReading(). It could also be caused by you are trying to read from multiple threads. Reader is not support multithreads reading! Current status is: \(stream.streamStatus.rawValue)")
+        }
+        
+        if bytesCount == 0 {
+            print("Trying to read 0 byte.")
+            return 0
+        }
+        
+        if totalBytesRead < dataLength {
+            let dataRead = stream.read(buffer, maxLength: bytesCount)
+            totalBytesRead += dataRead
+            
+            return dataRead
+        } else {
+            return 0
+        }
+    }
+    
     func read(bytesCount: Int) -> (data: [UInt8], bytesCount: Int) {
         
         if stream.streamStatus == NSStreamStatus.AtEnd {
-            return ([], Reader.dataEnd)
+            return ([], 0)
         }
         
         if stream.streamStatus != NSStreamStatus.Open {
@@ -53,7 +75,7 @@ class Reader {
         }
         
         if bytesCount == 0 {
-            print("Trying to read ")
+            print("Trying to read 0 byte.")
             return ([], 0)
         }
         
@@ -64,7 +86,7 @@ class Reader {
             
             return (buffer, dataRead)
         } else {
-            return ([], Reader.dataEnd)
+            return ([], 0)
         }
     }
 }
