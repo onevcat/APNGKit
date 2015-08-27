@@ -12,3 +12,5 @@ var minimalPNG: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00,
 let minialPNGData = NSData(bytes: &minimalPNG, length: minimalPNG.count)
 
 let signatureOfPNG: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]
+
+let ballAPNGData = NSData(contentsOfFile: NSBundle(forClass: APNGKitTests.self).pathForResource("ball", ofType: "png")!)!

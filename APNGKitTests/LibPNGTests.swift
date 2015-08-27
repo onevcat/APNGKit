@@ -31,9 +31,10 @@ class LibPNGTests: XCTestCase {
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
         reader.endReading()
         reader = nil
+        
+        super.tearDown()
     }
     
     func testReadSignature() {
@@ -74,15 +75,5 @@ class LibPNGTests: XCTestCase {
         XCTAssertEqual(h, 1, "height should be 1 in IHDR")
         XCTAssertEqual(bitDepth, 8, "bitDepth should be 8")
         XCTAssertEqual(colorType, PNG_COLOR_TYPE_RGB, "colorType should be PNG_COLOR_TYPE_RGB")
-        
     }
-
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
-        }
-    }
-    
 }

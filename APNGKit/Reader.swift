@@ -18,7 +18,7 @@ class Reader {
     
     let maxBufferCount: Int
     
-    init(data: NSData, maxBuffer: Int) {
+    init(data: NSData, maxBuffer: Int = 0) {
         stream = NSInputStream(data: data)
         maxBufferCount = maxBuffer
         dataLength = data.length

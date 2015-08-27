@@ -10,6 +10,13 @@
 		4B0D673D1B8E9DBF00876BDF /* APNGKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B0D673C1B8E9DBF00876BDF /* APNGKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B0D67441B8E9DC000876BDF /* APNGKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B0D67391B8E9DBF00876BDF /* APNGKit.framework */; settings = {ASSET_TAGS = (); }; };
 		4B0D67491B8E9DC000876BDF /* APNGKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0D67481B8E9DC000876BDF /* APNGKitTests.swift */; };
+		4B2132061B8EF20500A39502 /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2132051B8EF20500A39502 /* Frame.swift */; settings = {ASSET_TAGS = (); }; };
+		4B2132081B8EF30600A39502 /* ball.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B2132071B8EF30600A39502 /* ball.png */; settings = {ASSET_TAGS = (); }; };
+		4B21320A1B8EF39000A39502 /* LibAPNGTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2132091B8EF39000A39502 /* LibAPNGTests.swift */; settings = {ASSET_TAGS = (); }; };
+		4B21320C1B8EF44800A39502 /* Disassembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B21320B1B8EF44800A39502 /* Disassembler.swift */; settings = {ASSET_TAGS = (); }; };
+		4B2132101B8EF4D500A39502 /* APNGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B21320F1B8EF4D500A39502 /* APNGImage.swift */; settings = {ASSET_TAGS = (); }; };
+		4B2132121B8EF94F00A39502 /* DisassemblerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2132111B8EF94F00A39502 /* DisassemblerTests.swift */; settings = {ASSET_TAGS = (); }; };
+		4B2132141B8EFA7900A39502 /* XCTAssertSwiftError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2132131B8EFA7900A39502 /* XCTAssertSwiftError.swift */; settings = {ASSET_TAGS = (); }; };
 		4B6B68F61B8EB33100C4868A /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68E01B8EB33100C4868A /* png.c */; settings = {ASSET_TAGS = (); }; };
 		4B6B68F71B8EB33100C4868A /* png.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B68E11B8EB33100C4868A /* png.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B6B68F81B8EB33100C4868A /* pngconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B68E21B8EB33100C4868A /* pngconf.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -57,6 +64,13 @@
 		4B0D67431B8E9DC000876BDF /* APNGKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = APNGKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B0D67481B8E9DC000876BDF /* APNGKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNGKitTests.swift; sourceTree = "<group>"; };
 		4B0D674A1B8E9DC000876BDF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B2132051B8EF20500A39502 /* Frame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
+		4B2132071B8EF30600A39502 /* ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ball.png; sourceTree = "<group>"; };
+		4B2132091B8EF39000A39502 /* LibAPNGTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibAPNGTests.swift; sourceTree = "<group>"; };
+		4B21320B1B8EF44800A39502 /* Disassembler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Disassembler.swift; sourceTree = "<group>"; };
+		4B21320F1B8EF4D500A39502 /* APNGImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImage.swift; sourceTree = "<group>"; };
+		4B2132111B8EF94F00A39502 /* DisassemblerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisassemblerTests.swift; sourceTree = "<group>"; };
+		4B2132131B8EFA7900A39502 /* XCTAssertSwiftError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCTAssertSwiftError.swift; sourceTree = "<group>"; };
 		4B6B68E01B8EB33100C4868A /* png.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = png.c; sourceTree = "<group>"; };
 		4B6B68E11B8EB33100C4868A /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
 		4B6B68E21B8EB33100C4868A /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
@@ -132,6 +146,9 @@
 				4B0D673C1B8E9DBF00876BDF /* APNGKit.h */,
 				4B0D673E1B8E9DBF00876BDF /* Info.plist */,
 				4B6B69141B8EB98300C4868A /* Reader.swift */,
+				4B2132051B8EF20500A39502 /* Frame.swift */,
+				4B21320B1B8EF44800A39502 /* Disassembler.swift */,
+				4B21320F1B8EF4D500A39502 /* APNGImage.swift */,
 			);
 			path = APNGKit;
 			sourceTree = "<group>";
@@ -139,12 +156,15 @@
 		4B0D67471B8E9DC000876BDF /* APNGKitTests */ = {
 			isa = PBXGroup;
 			children = (
+				4B2132071B8EF30600A39502 /* ball.png */,
 				4B6B69131B8EB66400C4868A /* Helpers */,
 				4B0D67481B8E9DC000876BDF /* APNGKitTests.swift */,
 				4B6B69111B8EB65F00C4868A /* Fundamental Tests.swift */,
 				4B0D674A1B8E9DC000876BDF /* Info.plist */,
 				4B6B69161B8EBFC700C4868A /* ReaderTests.swift */,
 				4B6B69181B8ED1C300C4868A /* LibPNGTests.swift */,
+				4B2132091B8EF39000A39502 /* LibAPNGTests.swift */,
+				4B2132111B8EF94F00A39502 /* DisassemblerTests.swift */,
 			);
 			path = APNGKitTests;
 			sourceTree = "<group>";
@@ -191,6 +211,7 @@
 			isa = PBXGroup;
 			children = (
 				4B6B690F1B8EB50B00C4868A /* PNGSource.swift */,
+				4B2132131B8EFA7900A39502 /* XCTAssertSwiftError.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -301,6 +322,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B2132081B8EF30600A39502 /* ball.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,6 +350,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B2132101B8EF4D500A39502 /* APNGImage.swift in Sources */,
 				4B6B69071B8EB33100C4868A /* pngtrans.c in Sources */,
 				4B6B69091B8EB33100C4868A /* pngwrite.c in Sources */,
 				4B6B690A1B8EB33100C4868A /* pngwtran.c in Sources */,
@@ -337,7 +360,9 @@
 				4B6B68F61B8EB33100C4868A /* png.c in Sources */,
 				4B6B69081B8EB33100C4868A /* pngwio.c in Sources */,
 				4B6B69051B8EB33100C4868A /* pngset.c in Sources */,
+				4B2132061B8EF20500A39502 /* Frame.swift in Sources */,
 				4B6B68FF1B8EB33100C4868A /* pngpread.c in Sources */,
+				4B21320C1B8EF44800A39502 /* Disassembler.swift in Sources */,
 				4B6B69151B8EB98300C4868A /* Reader.swift in Sources */,
 				4B6B68FB1B8EB33100C4868A /* pngget.c in Sources */,
 				4B6B69011B8EB33100C4868A /* pngread.c in Sources */,
@@ -352,8 +377,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B6B69121B8EB65F00C4868A /* Fundamental Tests.swift in Sources */,
+				4B2132121B8EF94F00A39502 /* DisassemblerTests.swift in Sources */,
 				4B6B69101B8EB50B00C4868A /* PNGSource.swift in Sources */,
 				4B6B69171B8EBFC700C4868A /* ReaderTests.swift in Sources */,
+				4B2132141B8EFA7900A39502 /* XCTAssertSwiftError.swift in Sources */,
+				4B21320A1B8EF39000A39502 /* LibAPNGTests.swift in Sources */,
 				4B0D67491B8E9DC000876BDF /* APNGKitTests.swift in Sources */,
 				4B6B69191B8ED1C300C4868A /* LibPNGTests.swift in Sources */,
 			);
