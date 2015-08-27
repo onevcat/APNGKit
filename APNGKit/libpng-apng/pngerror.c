@@ -590,6 +590,14 @@ png_fixed_error,(png_const_structrp png_ptr, png_const_charp name),PNG_NORETURN)
 #endif
 
 #ifdef PNG_SETJMP_SUPPORTED
+          
+          
+int* PNGAPI
+png_jmpbuf(png_structp png_ptr)
+{
+    return (int *)(*png_set_longjmp_fn((png_ptr), longjmp, (sizeof (jmp_buf))));
+}
+          
 /* This API only exists if ANSI-C style error handling is used,
  * otherwise it is necessary for png_default_error to be overridden.
  */

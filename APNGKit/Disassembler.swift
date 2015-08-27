@@ -18,6 +18,8 @@ func readData(pngPointer: png_structp, outBytes: png_bytep, byteCountToRead: png
     reader.read(outBytes, bytesCount: byteCountToRead)
 }
 
+let envBuffer = UnsafeMutablePointer<Int32>(malloc(Int(sizeof(jmp_buf))))
+
 enum DisassemblerError: ErrorType {
     case InvalidFormat
     case PNGStructureFailure
@@ -36,15 +38,20 @@ struct Disassembler {
         
         try checkFormat()
 
-        let pngPointer = png_create_read_struct(PNG_LIBPNG_VER_STRING, nil, nil, nil)
-        let infoPointer = png_create_info_struct(pngPointer)
-
-        if pngPointer == nil || infoPointer == nil {
+        var pngPointer = png_create_read_struct(PNG_LIBPNG_VER_STRING, nil, nil, nil)
+        if pngPointer == nil {
+            throw DisassemblerError.PNGStructureFailure
+        }
+        
+        var infoPointer = png_create_info_struct(pngPointer)
+        if infoPointer == nil {
+            png_destroy_read_struct(&pngPointer, &infoPointer, nil)
             throw DisassemblerError.PNGStructureFailure
         }
         
         png_set_read_fn(pngPointer, &reader, readData)
-        
+        png_read_info(pngPointer, infoPointer);
+                
         return APNGImage()
     }
     

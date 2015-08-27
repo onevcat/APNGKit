@@ -1114,11 +1114,12 @@ PNG_EXPORT(7, void, png_set_compression_buffer_size, (png_structrp png_ptr,
  */
 PNG_EXPORT(8, jmp_buf*, png_set_longjmp_fn, (png_structrp png_ptr,
     png_longjmp_ptr longjmp_fn, size_t jmp_buf_size));
-#  define png_jmpbuf(png_ptr) \
-      (*png_set_longjmp_fn((png_ptr), longjmp, (sizeof (jmp_buf))))
-#else
-#  define png_jmpbuf(png_ptr) \
-      (LIBPNG_WAS_COMPILED_WITH__PNG_NO_SETJMP)
+
+/* Hack for Swift support. In Swift, jmp_buf is mapped to a tuple of Int32.
+ * And there is a compiler bug to prevent a tuple be compiled.
+ * This is a temporary workaround for jmp support.
+ */
+int* png_jmpbuf(png_structp png_ptr);
 #endif
 /* This function should be used by libpng applications in place of
  * longjmp(png_ptr->jmpbuf, val).  If longjmp_fn() has been set, it
