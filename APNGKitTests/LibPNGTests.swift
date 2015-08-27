@@ -13,7 +13,7 @@ import XCTest
 // Reading callback for libpng
 func readData(png_ptr: png_structp, outBytes: png_bytep, byteCountToRead: png_size_t) {
     let io_ptr = png_get_io_ptr(png_ptr)
-    let reader = UnsafePointer<Reader>(io_ptr).memory
+    var reader = UnsafePointer<Reader>(io_ptr).memory
     
     reader.read(outBytes, bytesCount: byteCountToRead)
 }

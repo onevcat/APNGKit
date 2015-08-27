@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Reader {
+struct Reader {
     
     private let stream: NSInputStream
     private var totalBytesRead = 0
@@ -36,7 +36,7 @@ class Reader {
         stream.close()
     }
     
-    func read(buffer: UnsafeMutablePointer<UInt8>, bytesCount: Int) -> Int {
+    mutating func read(buffer: UnsafeMutablePointer<UInt8>, bytesCount: Int) -> Int {
         if stream.streamStatus == NSStreamStatus.AtEnd {
             return 0
         }
@@ -60,7 +60,7 @@ class Reader {
         }
     }
     
-    func read(bytesCount: Int) -> (data: [UInt8], bytesCount: Int) {
+    mutating func read(bytesCount: Int) -> (data: [UInt8], bytesCount: Int) {
         
         if stream.streamStatus == NSStreamStatus.AtEnd {
             return ([], 0)

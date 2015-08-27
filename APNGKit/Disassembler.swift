@@ -13,7 +13,7 @@ let signatureOfPNGLength = 8
 // Reading callback for libpng
 func readData(pngPointer: png_structp, outBytes: png_bytep, byteCountToRead: png_size_t) {
     let ioPointer = png_get_io_ptr(pngPointer)
-    let reader = UnsafePointer<Reader>(ioPointer).memory
+    var reader = UnsafePointer<Reader>(ioPointer).memory
     
     reader.read(outBytes, bytesCount: byteCountToRead)
 }

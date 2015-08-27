@@ -22,7 +22,7 @@ class ReaderTests: XCTestCase {
     }
     
     func testReader() {
-        let reader = Reader(data: minialPNGData, maxBuffer: 16)
+        var reader = Reader(data: minialPNGData, maxBuffer: 16)
         reader.beginReading()
         let result = reader.read(8) // Read 8 bytes from data, which should be the png signature
         XCTAssertEqual(result.bytesCount, 8)
@@ -38,7 +38,7 @@ class ReaderTests: XCTestCase {
     
     func testReaderWithBuffer() {
         var ptr = [UInt8](count: 8, repeatedValue: 0)
-        let reader = Reader(data: minialPNGData, maxBuffer: 0)
+        var reader = Reader(data: minialPNGData, maxBuffer: 0)
         
         var count = 0
         
