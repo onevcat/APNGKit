@@ -1,0 +1,3 @@
+[submodule "libpng-apng"]
+	path = libpng-apng
+	url = git@github.com:onevcat/libpng.git
