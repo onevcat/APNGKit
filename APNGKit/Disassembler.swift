@@ -94,11 +94,11 @@ struct Disassembler {
         width = png_get_image_width(pngPointer, infoPointer)
         height = png_get_image_height(pngPointer, infoPointer)
         let rowBytes = UInt32(png_get_rowbytes(pngPointer, infoPointer))
-        let size = height * rowBytes
+        let length = height * rowBytes
         
-        var bufferFrame = Frame(length: size, bytesInRow: rowBytes, duration: 0)
+        var bufferFrame = Frame(length: length, bytesInRow: rowBytes, duration: 0)
         var currentFrame: Frame! = nil
-        var nextFrame = Frame(length: size, bytesInRow: rowBytes, duration: 0)
+        var nextFrame = Frame(length: length, bytesInRow: rowBytes, duration: 0)
         
         // Decode acTL
         var frameCount: UInt32 = 0, playCount: UInt32 = 0
@@ -148,7 +148,7 @@ struct Disassembler {
             if (disposeOP == UInt8(PNG_DISPOSE_OP_PREVIOUS)) {
                 // For the first frame, currentFrame is not inited yet.
                 // But we can ensure the disposeOP is not PNG_DISPOSE_OP_PREVIOUS for the 1st frame
-                memcpy(nextFrame.bytes, currentFrame.bytes, Int(size));
+                memcpy(nextFrame.bytes, currentFrame.bytes, Int(length));
             }
             
             // Calculating delay (duration)
@@ -156,16 +156,19 @@ struct Disassembler {
                 delayDen = 100
             }
             let duration = Double(delayNum) / Double(delayDen)
-            currentFrame = Frame(length: size, bytesInRow: rowBytes, duration: duration)
+            currentFrame = Frame(length: length, bytesInRow: rowBytes, duration: duration)
             
             // Decode fdATs
             png_read_image(pngPointer, &bufferFrame.byteRows)
             blendFrameDstBytes(currentFrame.byteRows, srcBytes: bufferFrame.byteRows, blendOP: disposeOP, offsetX: offsetX, offsetY: offsetY, width: frameWidth, height: frameHeight)
             
+            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth))
+            currentFrame.clean()
+            
             frames.append(currentFrame)
             
             if disposeOP != UInt8(PNG_DISPOSE_OP_PREVIOUS) {
-                memcpy(nextFrame.bytes, currentFrame.bytes, Int(size))
+                memcpy(nextFrame.bytes, currentFrame.bytes, Int(length))
                 if disposeOP == UInt8(PNG_DISPOSE_OP_BACKGROUND) {
                     for j in 0 ..< frameHeight {
                         let tarPointer = nextFrame.byteRows[Int(offsetY + j)].advancedBy(Int(offsetX) * 4)
@@ -186,7 +189,12 @@ struct Disassembler {
         
         png_destroy_read_struct(&pngPointer, &infoPointer, nil)
 
-        return APNGImage(frames: frames, repeatCount: Int(playCount))
+        // Setup apng properties
+        let apng = APNGImage(frames: frames, size: CGSize(width: CGFloat(width), height: CGFloat(height)))
+        
+        apng.repeatCount = Int(playCount) - 1
+
+        return apng
     }
     
     func blendFrameDstBytes(dstBytes: Array<UnsafeMutablePointer<UInt8>>, srcBytes: Array<UnsafeMutablePointer<UInt8>>, blendOP: UInt8, offsetX: UInt32, offsetY: UInt32, width: UInt32, height: UInt32) {

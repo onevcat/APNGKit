@@ -51,14 +51,12 @@ class DisassemblerTests: XCTestCase {
             apng = try self.disassembler.decode()
         }
         
-        print(apng.frames[0])
-        print(apng.frames[1])
-        print(apng.frames[2])
-        
-        
-        
         XCTAssertNotNil(apng, "APNG Image should be created.")
         XCTAssertEqual(apng.frames.count, 20, "There should be 20 frames in this png file.")
+        XCTAssertEqual(apng.size, CGSize(width: 100, height: 100), "Size should be 100x100")
+        for f in apng.frames {
+            XCTAssertNotNil(f.CGImage, "The image should not be nil in frame.")
+        }
     }
     
 }

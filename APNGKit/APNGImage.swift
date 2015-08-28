@@ -8,31 +8,40 @@
 
 import Foundation
 
-class APNGImage {
-    let repeatCount: Int
+public let RepeatForever = -1
+
+public class APNGImage {
+    
+    public var repeatCount: Int = RepeatForever
+    public var duration: NSTimeInterval {
+        return frames.reduce(0.0) {
+            $0 + $1.duration
+        }
+    }
+
+    public let size: CGSize
+
     let frames: [Frame]
     
-    init(frames: [Frame], repeatCount: Int) {
+    init(frames: [Frame], size: CGSize) {
         self.frames = frames
-        self.repeatCount = repeatCount
-    }
-    
-    deinit {
-        for f in frames {
-            f.clean()
-        }
+        self.size = size
     }
 }
 
+
+extension APNGImage {
+    
+}
+
 extension APNGImage: CustomStringConvertible {
-    var description: String {
-        return "<APNGImage> frameCount: \(frames.count)"
+    public var description: String {
+        return "<APNGImage> size: \(size), frameCount: \(frames.count), repeatCount: \(repeatCount)"
     }
 }
 
 extension APNGImage: CustomDebugStringConvertible {
-    var debugDescription: String {
-        return ""
+    public var debugDescription: String {
+        return "<APNGImage> size: \(size), frameCount: \(frames.count), repeatCount: \(repeatCount)"
     }
 }
-

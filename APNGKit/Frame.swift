@@ -10,6 +10,8 @@ import Foundation
 
 struct Frame {
     
+    var CGImage: CGImageRef?
+    
     var bytes: UnsafeMutablePointer<UInt8>
     
     lazy var byteRows: Array<UnsafeMutablePointer<UInt8>> = {
@@ -39,20 +41,30 @@ struct Frame {
     }
     
     func clean() {
-        bytes.destroy()
+        bytes.destroy(length)
         bytes.dealloc(length)
+    }
+    
+    mutating func updateCGImageRef(width: Int, height: Int, bits: Int) {
+        let provider = CGDataProviderCreateWithData(nil, bytes, length, nil)
+        CGImage = CGImageCreate(width, height, bits, bits * 4, bytesInRow, CGColorSpaceCreateDeviceRGB(), [CGBitmapInfo.ByteOrderDefault, CGBitmapInfo(rawValue: CGImageAlphaInfo.Last.rawValue)], provider, nil, false, .RenderingIntentDefault)
     }
 }
 
 extension Frame: CustomStringConvertible {
     var description: String {
-        return ""
+        return "\(data)"
     }
 }
 
 extension Frame: CustomDebugStringConvertible {
+
+    var data: NSData {
+        let data: NSData = CGDataProviderCopyData(CGImageGetDataProvider(CGImage))!
+        return data
+    }
+    
     var debugDescription: String {
-        let data = NSData(bytes: bytes, length: length)
         return "\(description)\ndata: \(data)"
     }
 }
