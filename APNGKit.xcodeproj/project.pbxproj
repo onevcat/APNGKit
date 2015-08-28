@@ -45,6 +45,7 @@
 		4B6B69151B8EB98300C4868A /* Reader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69141B8EB98300C4868A /* Reader.swift */; settings = {ASSET_TAGS = (); }; };
 		4B6B69171B8EBFC700C4868A /* ReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69161B8EBFC700C4868A /* ReaderTests.swift */; settings = {ASSET_TAGS = (); }; };
 		4B6B69191B8ED1C300C4868A /* LibPNGTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69181B8ED1C300C4868A /* LibPNGTests.swift */; settings = {ASSET_TAGS = (); }; };
+		D17398461B90A9B200913AEA /* APNGImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17398451B90A9B200913AEA /* APNGImageView.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,6 +100,7 @@
 		4B6B69141B8EB98300C4868A /* Reader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reader.swift; sourceTree = "<group>"; };
 		4B6B69161B8EBFC700C4868A /* ReaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderTests.swift; sourceTree = "<group>"; };
 		4B6B69181B8ED1C300C4868A /* LibPNGTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibPNGTests.swift; sourceTree = "<group>"; };
+		D17398451B90A9B200913AEA /* APNGImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +151,7 @@
 				4B2132051B8EF20500A39502 /* Frame.swift */,
 				4B21320B1B8EF44800A39502 /* Disassembler.swift */,
 				4B21320F1B8EF4D500A39502 /* APNGImage.swift */,
+				D17398451B90A9B200913AEA /* APNGImageView.swift */,
 			);
 			path = APNGKit;
 			sourceTree = "<group>";
@@ -356,6 +359,7 @@
 				4B6B690A1B8EB33100C4868A /* pngwtran.c in Sources */,
 				4B6B68FA1B8EB33100C4868A /* pngerror.c in Sources */,
 				4B6B68FE1B8EB33100C4868A /* pngmem.c in Sources */,
+				D17398461B90A9B200913AEA /* APNGImageView.swift in Sources */,
 				4B6B69021B8EB33100C4868A /* pngrio.c in Sources */,
 				4B6B68F61B8EB33100C4868A /* png.c in Sources */,
 				4B6B69081B8EB33100C4868A /* pngwio.c in Sources */,

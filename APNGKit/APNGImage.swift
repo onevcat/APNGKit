@@ -29,9 +29,18 @@ public class APNGImage {
     }
 }
 
-
 extension APNGImage {
-    
+    public convenience init?(data: NSData) {
+        var disassembler = Disassembler(data: data)
+        do {
+            let (frames, size, repeatCount) = try disassembler.decodeToElements()
+            self.init(frames: frames, size: size)
+            self.repeatCount = repeatCount
+        } catch _ {
+            return nil
+        }
+    }
+
 }
 
 extension APNGImage: CustomStringConvertible {

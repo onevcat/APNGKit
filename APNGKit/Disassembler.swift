@@ -26,7 +26,7 @@ enum DisassemblerError: ErrorType {
 }
 
 // APNG Specification: https://wiki.mozilla.org/APNG_Specification
-struct Disassembler {
+public struct Disassembler {
     private(set) var reader: Reader
     let originalData: NSData
     
@@ -35,15 +35,14 @@ struct Disassembler {
         originalData = data
     }
     
-    mutating func decode() throws -> APNGImage {
-
+    mutating func decodeToElements() throws -> (frames: [Frame], size: CGSize, repeatCount: Int) {
         reader.beginReading()
         defer {
             reader.endReading()
         }
         
         try checkFormat()
-
+        
         var pngPointer = png_create_read_struct(PNG_LIBPNG_VER_STRING, nil, nil, nil)
         if pngPointer == nil {
             throw DisassemblerError.PNGStructureFailure
@@ -118,7 +117,7 @@ struct Disassembler {
         delayDen: UInt16 = 0,
         disposeOP: UInt8 = 0,
         blendOP: UInt8 = 0
-
+        
         let firstImageIndex: Int
         if png_get_first_frame_is_hidden(pngPointer, infoPointer) != 0 { // First frame is hidden
             firstImageIndex = 1
@@ -135,7 +134,7 @@ struct Disassembler {
             png_read_frame_head(pngPointer, infoPointer)
             // Decode fcTL
             png_get_next_frame_fcTL(pngPointer, infoPointer, &frameWidth, &frameHeight,
-                            &offsetX, &offsetY, &delayNum, &delayDen, &disposeOP, &blendOP)
+                &offsetX, &offsetY, &delayNum, &delayDen, &disposeOP, &blendOP)
             
             // Update disposeOP for first visable frame
             if currentIndex == firstImageIndex {
@@ -188,12 +187,17 @@ struct Disassembler {
         nextFrame.clean()
         
         png_destroy_read_struct(&pngPointer, &infoPointer, nil)
+        
+        return (frames, CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1)
+    }
+    
+    public mutating func decode() throws -> APNGImage {
+        let (frames, size, repeatCount) = try decodeToElements()
 
         // Setup apng properties
-        let apng = APNGImage(frames: frames, size: CGSize(width: CGFloat(width), height: CGFloat(height)))
+        let apng = APNGImage(frames: frames, size: size)
+        apng.repeatCount = repeatCount
         
-        apng.repeatCount = Int(playCount) - 1
-
         return apng
     }
     
