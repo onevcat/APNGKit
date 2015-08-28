@@ -10,7 +10,7 @@ import Foundation
 
 class APNGImage {
     let repeatCount: Int
-    var frames: [Frame]
+    let frames: [Frame]
     
     init(frames: [Frame], repeatCount: Int) {
         self.frames = frames
