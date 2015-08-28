@@ -9,6 +9,37 @@
 import Foundation
 
 struct Frame {
-    let data: NSData
+    
+    var bytes: UnsafeMutablePointer<UInt8>
+    
+    lazy var byteRows: Array<UnsafeMutablePointer<UInt8>> = {
+        var array = Array<UnsafeMutablePointer<UInt8>>()
+        
+        let height = self.length / self.bytesInRow
+        for i in 0 ..< height {
+            let pointer = self.bytes.advancedBy(i * self.bytesInRow)
+            array.append(pointer)
+        }
+        return array
+    }()
+    
+    let length: Int
+    let bytesInRow: Int
+    
     let duration: NSTimeInterval
+    
+    init(length: UInt32, bytesInRow: UInt32, duration: NSTimeInterval) {
+        self.length = Int(length)
+        self.bytesInRow = Int(bytesInRow)
+        self.duration = duration
+        
+        self.bytes = UnsafeMutablePointer<UInt8>.alloc(self.length)
+        self.bytes.initialize(0)
+        memset(self.bytes, 0, self.length)
+    }
+    
+    func clean() {
+        bytes.destroy()
+        bytes.dealloc(length)
+    }
 }

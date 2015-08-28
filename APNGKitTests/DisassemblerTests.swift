@@ -45,4 +45,13 @@ class DisassemblerTests: XCTestCase {
         
     }
     
+    func testDecode() {
+        do {
+            let apng = try disassembler.decode()
+            print(apng.frames)
+        } catch _ {
+            
+        }
+    }
+    
 }
