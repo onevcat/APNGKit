@@ -23,3 +23,16 @@ class APNGImage {
         }
     }
 }
+
+extension APNGImage: CustomStringConvertible {
+    var description: String {
+        return "<APNGImage> frameCount: \(frames.count)"
+    }
+}
+
+extension APNGImage: CustomDebugStringConvertible {
+    var debugDescription: String {
+        return ""
+    }
+}
+

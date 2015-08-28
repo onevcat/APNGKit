@@ -43,3 +43,16 @@ struct Frame {
         bytes.dealloc(length)
     }
 }
+
+extension Frame: CustomStringConvertible {
+    var description: String {
+        return ""
+    }
+}
+
+extension Frame: CustomDebugStringConvertible {
+    var debugDescription: String {
+        let data = NSData(bytes: bytes, length: length)
+        return "\(description)\ndata: \(data)"
+    }
+}

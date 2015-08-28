@@ -46,12 +46,19 @@ class DisassemblerTests: XCTestCase {
     }
     
     func testDecode() {
-        do {
-            let apng = try disassembler.decode()
-            print(apng.frames)
-        } catch _ {
-            
+        var apng: APNGImage! = nil
+        XCTempAssertNoThrowError("APNG signature should be the same as a regular PNG signature") { () -> () in
+            apng = try self.disassembler.decode()
         }
+        
+        print(apng.frames[0])
+        print(apng.frames[1])
+        print(apng.frames[2])
+        
+        
+        
+        XCTAssertNotNil(apng, "APNG Image should be created.")
+        XCTAssertEqual(apng.frames.count, 20, "There should be 20 frames in this png file.")
     }
     
 }
