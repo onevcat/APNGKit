@@ -8,12 +8,18 @@
 
 import Foundation
 
-struct APNGImage {
+class APNGImage {
     let repeatCount: Int
     var frames: [Frame]
     
     init(frames: [Frame], repeatCount: Int) {
         self.frames = frames
         self.repeatCount = repeatCount
+    }
+    
+    deinit {
+        for f in frames {
+            f.clean()
+        }
     }
 }
