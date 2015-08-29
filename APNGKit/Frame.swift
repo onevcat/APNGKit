@@ -10,7 +10,7 @@ import Foundation
 
 struct Frame {
     
-    var CGImage: CGImageRef?
+    var image: UIImage?
     
     var bytes: UnsafeMutablePointer<UInt8>
     
@@ -47,7 +47,13 @@ struct Frame {
     
     mutating func updateCGImageRef(width: Int, height: Int, bits: Int) {
         let provider = CGDataProviderCreateWithData(nil, bytes, length, nil)
-        CGImage = CGImageCreate(width, height, bits, bits * 4, bytesInRow, CGColorSpaceCreateDeviceRGB(), [CGBitmapInfo.ByteOrderDefault, CGBitmapInfo(rawValue: CGImageAlphaInfo.Last.rawValue)], provider, nil, false, .RenderingIntentDefault)
+        
+        if let imageRef = CGImageCreate(width, height, bits, bits * 4, bytesInRow, CGColorSpaceCreateDeviceRGB(),
+                        [CGBitmapInfo.ByteOrderDefault, CGBitmapInfo(rawValue: CGImageAlphaInfo.Last.rawValue)],
+                        provider, nil, false, .RenderingIntentDefault)
+        {
+            image = UIImage(CGImage: imageRef)
+        }
     }
 }
 
@@ -59,9 +65,11 @@ extension Frame: CustomStringConvertible {
 
 extension Frame: CustomDebugStringConvertible {
 
-    var data: NSData {
-        let data: NSData = CGDataProviderCopyData(CGImageGetDataProvider(CGImage))!
-        return data
+    var data: NSData? {
+        if let image = image {
+           return UIImagePNGRepresentation(image)
+        }
+        return nil
     }
     
     var debugDescription: String {

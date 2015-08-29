@@ -55,7 +55,7 @@ class DisassemblerTests: XCTestCase {
         XCTAssertEqual(apng.frames.count, 20, "There should be 20 frames in this png file.")
         XCTAssertEqual(apng.size, CGSize(width: 100, height: 100), "Size should be 100x100")
         for f in apng.frames {
-            XCTAssertNotNil(f.CGImage, "The image should not be nil in frame.")
+            XCTAssertNotNil(f.image, "The image should not be nil in frame.")
         }
     }
     
