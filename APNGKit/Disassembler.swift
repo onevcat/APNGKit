@@ -32,7 +32,7 @@ public struct Disassembler {
     
     init(data: NSData) {
         reader = Reader(data: data)
-        originalData = data
+        originalData = data.copy() as! NSData
     }
     
     mutating func decodeToElements() throws -> (frames: [Frame], size: CGSize, repeatCount: Int) {
@@ -162,7 +162,6 @@ public struct Disassembler {
             blendFrameDstBytes(currentFrame.byteRows, srcBytes: bufferFrame.byteRows, blendOP: disposeOP, offsetX: offsetX, offsetY: offsetY, width: frameWidth, height: frameHeight)
             
             currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth))
-            currentFrame.clean()
             
             frames.append(currentFrame)
             

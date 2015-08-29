@@ -27,6 +27,12 @@ public class APNGImage {
         self.frames = frames
         self.size = size
     }
+    
+    deinit {
+        for f in frames {
+            f.clean()
+        }
+    }
 }
 
 extension APNGImage {

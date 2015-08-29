@@ -46,6 +46,7 @@ struct Frame {
     }
     
     mutating func updateCGImageRef(width: Int, height: Int, bits: Int) {
+        
         let provider = CGDataProviderCreateWithData(nil, bytes, length, nil)
         
         if let imageRef = CGImageCreate(width, height, bits, bits * 4, bytesInRow, CGColorSpaceCreateDeviceRGB(),
