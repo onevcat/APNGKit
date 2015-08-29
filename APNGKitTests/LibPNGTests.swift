@@ -25,7 +25,7 @@ class LibPNGTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        reader = Reader(data: minialPNGData, maxBuffer: 16)
+        reader = Reader(data: redDotPNGData, maxBuffer: 16)
         reader.beginReading()
     }
     

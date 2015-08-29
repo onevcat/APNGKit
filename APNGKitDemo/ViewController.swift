@@ -14,22 +14,21 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
         var image: APNGImage?
         var imageView: APNGImageView?
         
-        for i in 0 ..< 4 {
-            for j in 0 ..< 4 {
+        for i in 0 ..< 1 {
+            for j in 0 ..< 1 {
                 if let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource("ball", ofType: "png")!) {
                     image = APNGImage(data: data)
-                    print(image)
                     imageView = APNGImageView(image: image)
+                    image?.repeatCount = 5
                     imageView!.frame = CGRect(x: j * 100, y: i * 100, width: 100, height: 100)
-                    view.addSubview(imageView!)
                 }
             }
         }
-
+        view.addSubview(imageView!)
+        imageView?.startAnimating()
     }
 
     override func didReceiveMemoryWarning() {

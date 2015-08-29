@@ -21,8 +21,9 @@ class Fundamental_Tests: XCTestCase {
     }
     
     func testMinimalPNG() {
-        let image = UIImage(data: minialPNGData)
+        let image = UIImage(data: redDotPNGData)
         XCTAssertNotNil(image, "The minimal image should not be nil")
         XCTAssertEqual(image!.size, CGSize(width: 1, height: 1), "The size of image should be 1 * 1")
+    
     }
 }
