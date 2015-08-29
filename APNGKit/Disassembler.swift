@@ -32,7 +32,7 @@ public struct Disassembler {
     
     init(data: NSData) {
         reader = Reader(data: data)
-        originalData = data.copy() as! NSData
+        originalData = data
     }
     
     mutating func decodeToElements() throws -> (frames: [Frame], size: CGSize, repeatCount: Int) {
