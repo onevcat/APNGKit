@@ -46,6 +46,16 @@
 		4B6B69171B8EBFC700C4868A /* ReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69161B8EBFC700C4868A /* ReaderTests.swift */; settings = {ASSET_TAGS = (); }; };
 		4B6B69191B8ED1C300C4868A /* LibPNGTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69181B8ED1C300C4868A /* LibPNGTests.swift */; settings = {ASSET_TAGS = (); }; };
 		D17398461B90A9B200913AEA /* APNGImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17398451B90A9B200913AEA /* APNGImageView.swift */; settings = {ASSET_TAGS = (); }; };
+		D199B1FB1B91445100BF8358 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D199B1FA1B91445100BF8358 /* AppDelegate.swift */; };
+		D199B1FD1B91445100BF8358 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D199B1FC1B91445100BF8358 /* ViewController.swift */; };
+		D199B2001B91445100BF8358 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D199B1FE1B91445100BF8358 /* Main.storyboard */; };
+		D199B2021B91445100BF8358 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D199B2011B91445100BF8358 /* Assets.xcassets */; };
+		D199B2051B91445100BF8358 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D199B2031B91445100BF8358 /* LaunchScreen.storyboard */; };
+		D199B2101B91445100BF8358 /* APNGKitDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D199B20F1B91445100BF8358 /* APNGKitDemoTests.swift */; };
+		D199B21B1B91445100BF8358 /* APNGKitDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D199B21A1B91445100BF8358 /* APNGKitDemoUITests.swift */; };
+		D199B2271B9144F600BF8358 /* ball.png in Resources */ = {isa = PBXBuildFile; fileRef = D199B2261B9144F600BF8358 /* ball.png */; };
+		D199B2281B9145F900BF8358 /* APNGKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B0D67391B8E9DBF00876BDF /* APNGKit.framework */; };
+		D199B2291B9145F900BF8358 /* APNGKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B0D67391B8E9DBF00876BDF /* APNGKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +66,42 @@
 			remoteGlobalIDString = 4B0D67381B8E9DBF00876BDF;
 			remoteInfo = APNGKit;
 		};
+		D199B20C1B91445100BF8358 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B0D67301B8E9DBF00876BDF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D199B1F71B91445100BF8358;
+			remoteInfo = APNGKitDemo;
+		};
+		D199B2171B91445100BF8358 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B0D67301B8E9DBF00876BDF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D199B1F71B91445100BF8358;
+			remoteInfo = APNGKitDemo;
+		};
+		D199B22A1B9145F900BF8358 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B0D67301B8E9DBF00876BDF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B0D67381B8E9DBF00876BDF;
+			remoteInfo = APNGKit;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D199B22C1B9145F900BF8358 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D199B2291B9145F900BF8358 /* APNGKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		4B0D67391B8E9DBF00876BDF /* APNGKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = APNGKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +146,20 @@
 		4B6B69161B8EBFC700C4868A /* ReaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderTests.swift; sourceTree = "<group>"; };
 		4B6B69181B8ED1C300C4868A /* LibPNGTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibPNGTests.swift; sourceTree = "<group>"; };
 		D17398451B90A9B200913AEA /* APNGImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageView.swift; sourceTree = "<group>"; };
+		D199B1F81B91445100BF8358 /* APNGKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = APNGKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D199B1FA1B91445100BF8358 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D199B1FC1B91445100BF8358 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D199B1FF1B91445100BF8358 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D199B2011B91445100BF8358 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D199B2041B91445100BF8358 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		D199B2061B91445100BF8358 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D199B20B1B91445100BF8358 /* APNGKitDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = APNGKitDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D199B20F1B91445100BF8358 /* APNGKitDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNGKitDemoTests.swift; sourceTree = "<group>"; };
+		D199B2111B91445100BF8358 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D199B2161B91445100BF8358 /* APNGKitDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = APNGKitDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D199B21A1B91445100BF8358 /* APNGKitDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNGKitDemoUITests.swift; sourceTree = "<group>"; };
+		D199B21C1B91445100BF8358 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D199B2261B9144F600BF8358 /* ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ball.png; path = ../APNGKitTests/ball.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +179,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D199B1F51B91445100BF8358 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D199B2281B9145F900BF8358 /* APNGKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D199B2081B91445100BF8358 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D199B2131B91445100BF8358 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -128,6 +209,9 @@
 			children = (
 				4B0D673B1B8E9DBF00876BDF /* APNGKit */,
 				4B0D67471B8E9DC000876BDF /* APNGKitTests */,
+				D199B1F91B91445100BF8358 /* APNGKitDemo */,
+				D199B20E1B91445100BF8358 /* APNGKitDemoTests */,
+				D199B2191B91445100BF8358 /* APNGKitDemoUITests */,
 				4B0D673A1B8E9DBF00876BDF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -137,6 +221,9 @@
 			children = (
 				4B0D67391B8E9DBF00876BDF /* APNGKit.framework */,
 				4B0D67431B8E9DC000876BDF /* APNGKitTests.xctest */,
+				D199B1F81B91445100BF8358 /* APNGKitDemo.app */,
+				D199B20B1B91445100BF8358 /* APNGKitDemoTests.xctest */,
+				D199B2161B91445100BF8358 /* APNGKitDemoUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -219,6 +306,38 @@
 			name = Helpers;
 			sourceTree = "<group>";
 		};
+		D199B1F91B91445100BF8358 /* APNGKitDemo */ = {
+			isa = PBXGroup;
+			children = (
+				D199B2261B9144F600BF8358 /* ball.png */,
+				D199B1FA1B91445100BF8358 /* AppDelegate.swift */,
+				D199B1FC1B91445100BF8358 /* ViewController.swift */,
+				D199B1FE1B91445100BF8358 /* Main.storyboard */,
+				D199B2011B91445100BF8358 /* Assets.xcassets */,
+				D199B2031B91445100BF8358 /* LaunchScreen.storyboard */,
+				D199B2061B91445100BF8358 /* Info.plist */,
+			);
+			path = APNGKitDemo;
+			sourceTree = "<group>";
+		};
+		D199B20E1B91445100BF8358 /* APNGKitDemoTests */ = {
+			isa = PBXGroup;
+			children = (
+				D199B20F1B91445100BF8358 /* APNGKitDemoTests.swift */,
+				D199B2111B91445100BF8358 /* Info.plist */,
+			);
+			path = APNGKitDemoTests;
+			sourceTree = "<group>";
+		};
+		D199B2191B91445100BF8358 /* APNGKitDemoUITests */ = {
+			isa = PBXGroup;
+			children = (
+				D199B21A1B91445100BF8358 /* APNGKitDemoUITests.swift */,
+				D199B21C1B91445100BF8358 /* Info.plist */,
+			);
+			path = APNGKitDemoUITests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -277,6 +396,61 @@
 			productReference = 4B0D67431B8E9DC000876BDF /* APNGKitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		D199B1F71B91445100BF8358 /* APNGKitDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D199B2231B91445100BF8358 /* Build configuration list for PBXNativeTarget "APNGKitDemo" */;
+			buildPhases = (
+				D199B1F41B91445100BF8358 /* Sources */,
+				D199B1F51B91445100BF8358 /* Frameworks */,
+				D199B1F61B91445100BF8358 /* Resources */,
+				D199B22C1B9145F900BF8358 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D199B22B1B9145F900BF8358 /* PBXTargetDependency */,
+			);
+			name = APNGKitDemo;
+			productName = APNGKitDemo;
+			productReference = D199B1F81B91445100BF8358 /* APNGKitDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D199B20A1B91445100BF8358 /* APNGKitDemoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D199B2241B91445100BF8358 /* Build configuration list for PBXNativeTarget "APNGKitDemoTests" */;
+			buildPhases = (
+				D199B2071B91445100BF8358 /* Sources */,
+				D199B2081B91445100BF8358 /* Frameworks */,
+				D199B2091B91445100BF8358 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D199B20D1B91445100BF8358 /* PBXTargetDependency */,
+			);
+			name = APNGKitDemoTests;
+			productName = APNGKitDemoTests;
+			productReference = D199B20B1B91445100BF8358 /* APNGKitDemoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D199B2151B91445100BF8358 /* APNGKitDemoUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D199B2251B91445100BF8358 /* Build configuration list for PBXNativeTarget "APNGKitDemoUITests" */;
+			buildPhases = (
+				D199B2121B91445100BF8358 /* Sources */,
+				D199B2131B91445100BF8358 /* Frameworks */,
+				D199B2141B91445100BF8358 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D199B2181B91445100BF8358 /* PBXTargetDependency */,
+			);
+			name = APNGKitDemoUITests;
+			productName = APNGKitDemoUITests;
+			productReference = D199B2161B91445100BF8358 /* APNGKitDemoUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -293,6 +467,17 @@
 					4B0D67421B8E9DC000876BDF = {
 						CreatedOnToolsVersion = 7.0;
 					};
+					D199B1F71B91445100BF8358 = {
+						CreatedOnToolsVersion = 7.0;
+					};
+					D199B20A1B91445100BF8358 = {
+						CreatedOnToolsVersion = 7.0;
+						TestTargetID = D199B1F71B91445100BF8358;
+					};
+					D199B2151B91445100BF8358 = {
+						CreatedOnToolsVersion = 7.0;
+						TestTargetID = D199B1F71B91445100BF8358;
+					};
 				};
 			};
 			buildConfigurationList = 4B0D67331B8E9DBF00876BDF /* Build configuration list for PBXProject "APNGKit" */;
@@ -301,6 +486,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 4B0D672F1B8E9DBF00876BDF;
 			productRefGroup = 4B0D673A1B8E9DBF00876BDF /* Products */;
@@ -309,6 +495,9 @@
 			targets = (
 				4B0D67381B8E9DBF00876BDF /* APNGKit */,
 				4B0D67421B8E9DC000876BDF /* APNGKitTests */,
+				D199B1F71B91445100BF8358 /* APNGKitDemo */,
+				D199B20A1B91445100BF8358 /* APNGKitDemoTests */,
+				D199B2151B91445100BF8358 /* APNGKitDemoUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -326,6 +515,31 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B2132081B8EF30600A39502 /* ball.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D199B1F61B91445100BF8358 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D199B2051B91445100BF8358 /* LaunchScreen.storyboard in Resources */,
+				D199B2021B91445100BF8358 /* Assets.xcassets in Resources */,
+				D199B2001B91445100BF8358 /* Main.storyboard in Resources */,
+				D199B2271B9144F600BF8358 /* ball.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D199B2091B91445100BF8358 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D199B2141B91445100BF8358 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,6 +605,31 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D199B1F41B91445100BF8358 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D199B1FD1B91445100BF8358 /* ViewController.swift in Sources */,
+				D199B1FB1B91445100BF8358 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D199B2071B91445100BF8358 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D199B2101B91445100BF8358 /* APNGKitDemoTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D199B2121B91445100BF8358 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D199B21B1B91445100BF8358 /* APNGKitDemoUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -399,7 +638,41 @@
 			target = 4B0D67381B8E9DBF00876BDF /* APNGKit */;
 			targetProxy = 4B0D67451B8E9DC000876BDF /* PBXContainerItemProxy */;
 		};
+		D199B20D1B91445100BF8358 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D199B1F71B91445100BF8358 /* APNGKitDemo */;
+			targetProxy = D199B20C1B91445100BF8358 /* PBXContainerItemProxy */;
+		};
+		D199B2181B91445100BF8358 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D199B1F71B91445100BF8358 /* APNGKitDemo */;
+			targetProxy = D199B2171B91445100BF8358 /* PBXContainerItemProxy */;
+		};
+		D199B22B1B9145F900BF8358 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B0D67381B8E9DBF00876BDF /* APNGKit */;
+			targetProxy = D199B22A1B9145F900BF8358 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D199B1FE1B91445100BF8358 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D199B1FF1B91445100BF8358 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		D199B2031B91445100BF8358 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D199B2041B91445100BF8358 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		4B0D674B1B8E9DC000876BDF /* Debug */ = {
@@ -546,6 +819,78 @@
 			};
 			name = Release;
 		};
+		D199B21D1B91445100BF8358 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				INFOPLIST_FILE = APNGKitDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKitDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D199B21E1B91445100BF8358 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				INFOPLIST_FILE = APNGKitDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKitDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		D199B21F1B91445100BF8358 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = APNGKitDemoTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKitDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/APNGKitDemo.app/APNGKitDemo";
+			};
+			name = Debug;
+		};
+		D199B2201B91445100BF8358 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = APNGKitDemoTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKitDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/APNGKitDemo.app/APNGKitDemo";
+			};
+			name = Release;
+		};
+		D199B2211B91445100BF8358 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = APNGKitDemoUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKitDemoUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = APNGKitDemo;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		D199B2221B91445100BF8358 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = APNGKitDemoUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKitDemoUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = APNGKitDemo;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -575,6 +920,30 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		D199B2231B91445100BF8358 /* Build configuration list for PBXNativeTarget "APNGKitDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D199B21D1B91445100BF8358 /* Debug */,
+				D199B21E1B91445100BF8358 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		D199B2241B91445100BF8358 /* Build configuration list for PBXNativeTarget "APNGKitDemoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D199B21F1B91445100BF8358 /* Debug */,
+				D199B2201B91445100BF8358 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		D199B2251B91445100BF8358 /* Build configuration list for PBXNativeTarget "APNGKitDemoUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D199B2211B91445100BF8358 /* Debug */,
+				D199B2221B91445100BF8358 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
