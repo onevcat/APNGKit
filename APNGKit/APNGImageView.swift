@@ -34,7 +34,9 @@ public class APNGImageView: UIView {
         } else {
             super.init(frame: CGRectZero)
         }
+        
         backgroundColor = UIColor.clearColor()
+        userInteractionEnabled = false
     }
 
     required public init?(coder aDecoder: NSCoder) {
