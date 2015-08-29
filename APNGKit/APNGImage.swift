@@ -46,17 +46,16 @@ extension APNGImage {
             return nil
         }
     }
-
 }
 
 extension APNGImage: CustomStringConvertible {
     public var description: String {
-        return "<APNGImage> size: \(size), frameCount: \(frames.count), repeatCount: \(repeatCount)"
-    }
-}
-
-extension APNGImage: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        return "<APNGImage> size: \(size), frameCount: \(frames.count), repeatCount: \(repeatCount)"
+        var s = "<APNGImage: \(unsafeAddressOf(self))> size: \(size), frameCount: \(frames.count), repeatCount: \(repeatCount)\n"
+        s += "["
+        for f in frames {
+            s += "\(f)\n"
+        }
+        s += "]"
+        return s
     }
 }

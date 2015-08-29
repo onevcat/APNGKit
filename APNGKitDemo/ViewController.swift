@@ -22,6 +22,7 @@ class ViewController: UIViewController {
             for j in 0 ..< 4 {
                 if let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource("ball", ofType: "png")!) {
                     image = APNGImage(data: data)
+                    print(image)
                     imageView = APNGImageView(image: image)
                     imageView!.frame = CGRect(x: j * 100, y: i * 100, width: 100, height: 100)
                     view.addSubview(imageView!)

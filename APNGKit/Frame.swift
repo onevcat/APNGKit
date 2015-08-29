@@ -60,7 +60,7 @@ struct Frame {
 
 extension Frame: CustomStringConvertible {
     var description: String {
-        return "\(data)"
+        return "<Frame: \(self.bytes)))> duration: \(self.duration), length: \(length)"
     }
 }
 
