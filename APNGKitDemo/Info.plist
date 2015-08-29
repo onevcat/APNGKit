@@ -43,5 +43,20 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>InitImages</key>
+	<array>
+		<dict>
+			<key>name</key>
+			<string>ball</string>
+			<key>description</key>
+			<string>This is a normal APNG image: 100 × 100 pixels, file size: 64 KB, looped, 20 frames</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>spinbox</string>
+			<key>description</key>
+			<string>A nice spinning fox: 148 x 148 pixels, file size: 613 KB, looped, 25 frames</string>
+		</dict>
+	</array>
 </dict>
 </plist>

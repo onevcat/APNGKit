@@ -19,11 +19,10 @@ class ViewController: UIViewController {
         
         for i in 0 ..< 1 {
             for j in 0 ..< 1 {
-                if let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource("ball", ofType: "png")!) {
+                if let data = NSData(contentsOfFile: NSBundle.mainBundle().pathForResource("spinfox", ofType: "png")!) {
                     image = APNGImage(data: data)
                     imageView = APNGImageView(image: image)
-                    image?.repeatCount = 5
-                    imageView!.frame = CGRect(x: j * 100, y: i * 100, width: 100, height: 100)
+                    imageView!.center = view.center
                 }
             }
         }

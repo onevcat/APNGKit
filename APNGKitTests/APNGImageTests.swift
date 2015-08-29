@@ -47,6 +47,25 @@ class APNGImageTests: XCTestCase {
         
         XCTAssertEqual(image?.repeatCount, RepeatForever, "The repeat count should be forever.")
         XCTAssertEqual(image?.duration, 1.0, "Total duration is 1.0 sec")
+        
+        XCTAssertEqual(image?.frames[0].duration, 0.5, "The duration of a frame should be 0.5")
     }
     
+    func testAPNGCreatingPerformance() {
+        let ballString = NSBundle(forClass: APNGImageTests.self).pathForResource("ball", ofType: "png")!
+        let data = NSData(contentsOfFile: ballString)
+        
+        self.measureBlock {
+            for _ in 0 ..< 50 {
+                _ = APNGImage(data: data!)
+            }
+        }
+    }
+    
+    func testABitLargerAPNG() {
+        let firefoxString = NSBundle(forClass: APNGImageTests.self).pathForResource("spinfox", ofType: "png")!
+        let data = NSData(contentsOfFile: firefoxString)
+        let image = APNGImage(data: data!)
+        XCTAssertEqual(image?.frames.count, 25, "")
+    }
 }

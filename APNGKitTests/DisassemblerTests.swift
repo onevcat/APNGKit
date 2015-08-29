@@ -58,5 +58,4 @@ class DisassemblerTests: XCTestCase {
             XCTAssertNotNil(f.image, "The image should not be nil in frame.")
         }
     }
-    
 }
