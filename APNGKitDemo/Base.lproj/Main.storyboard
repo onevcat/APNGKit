@@ -7,13 +7,13 @@
         <!--APNGKit-->
         <scene sceneID="aOW-PM-FDH">
             <objects>
-                <tableViewController title="APNGKit" id="WPS-Xv-atT" sceneMemberID="viewController">
+                <tableViewController title="APNGKit" id="WPS-Xv-atT" customClass="TableViewController" customModule="APNGKitDemo" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="3bB-Rh-zkX">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="iuT-Be-kCZ">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" id="iuT-Be-kCZ">
                                 <rect key="frame" x="0.0" y="92" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="iuT-Be-kCZ" id="Q4H-cf-17K">
@@ -27,7 +27,11 @@
                             <outlet property="delegate" destination="WPS-Xv-atT" id="l0i-79-DE5"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="SMS-j7-Pa8"/>
+                    <navigationItem key="navigationItem" title="APNGKit" id="SMS-j7-Pa8">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="zE8-Aq-GAX">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E98-1W-iqv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -40,6 +44,10 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="nb6-1m-24i">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.2666666667" green="0.2901960784" blue="0.34901960780000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </textAttributes>
                     </navigationBar>
                     <connections>
                         <segue destination="WPS-Xv-atT" kind="relationship" relationship="rootViewController" id="3Yp-qv-SeU"/>

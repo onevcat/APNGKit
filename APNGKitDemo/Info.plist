@@ -20,6 +20,21 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>InitImages</key>
+	<array>
+		<dict>
+			<key>description</key>
+			<string>This is a normal APNG image: 100 × 100 pixels, file size: 64 KB, looped, 20 frames</string>
+			<key>name</key>
+			<string>ball</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>A nice spinning fox: 148 x 148 pixels, file size: 613 KB, looped, 25 frames</string>
+			<key>name</key>
+			<string>spinfox</string>
+		</dict>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -30,6 +45,10 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -42,21 +61,6 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>InitImages</key>
-	<array>
-		<dict>
-			<key>name</key>
-			<string>ball</string>
-			<key>description</key>
-			<string>This is a normal APNG image: 100 × 100 pixels, file size: 64 KB, looped, 20 frames</string>
-		</dict>
-		<dict>
-			<key>name</key>
-			<string>spinbox</string>
-			<key>description</key>
-			<string>A nice spinning fox: 148 x 148 pixels, file size: 613 KB, looped, 25 frames</string>
-		</dict>
 	</array>
 </dict>
 </plist>

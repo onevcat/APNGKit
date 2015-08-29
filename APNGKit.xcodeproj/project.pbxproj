@@ -56,6 +56,7 @@
 		D1614E301B91EDF800050104 /* over_previous.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E2B1B91EDF800050104 /* over_previous.png */; settings = {ASSET_TAGS = (); }; };
 		D1614E311B91EDF800050104 /* spinfox.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E2C1B91EDF800050104 /* spinfox.png */; settings = {ASSET_TAGS = (); }; };
 		D1614E331B91EE0000050104 /* minimalAPNG.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E321B91EE0000050104 /* minimalAPNG.png */; settings = {ASSET_TAGS = (); }; };
+		D1614E351B91F28300050104 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1614E341B91F28300050104 /* TableViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		D17398461B90A9B200913AEA /* APNGImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17398451B90A9B200913AEA /* APNGImageView.swift */; settings = {ASSET_TAGS = (); }; };
 		D199B1FB1B91445100BF8358 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D199B1FA1B91445100BF8358 /* AppDelegate.swift */; };
 		D199B1FD1B91445100BF8358 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D199B1FC1B91445100BF8358 /* ViewController.swift */; };
@@ -166,6 +167,7 @@
 		D1614E2B1B91EDF800050104 /* over_previous.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = over_previous.png; path = TestImages/over_previous.png; sourceTree = SOURCE_ROOT; };
 		D1614E2C1B91EDF800050104 /* spinfox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spinfox.png; path = TestImages/spinfox.png; sourceTree = SOURCE_ROOT; };
 		D1614E321B91EE0000050104 /* minimalAPNG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = minimalAPNG.png; path = TestImages/minimalAPNG.png; sourceTree = SOURCE_ROOT; };
+		D1614E341B91F28300050104 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		D17398451B90A9B200913AEA /* APNGImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageView.swift; sourceTree = "<group>"; };
 		D199B1F81B91445100BF8358 /* APNGKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = APNGKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D199B1FA1B91445100BF8358 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -362,6 +364,7 @@
 				D199B2011B91445100BF8358 /* Assets.xcassets */,
 				D199B2031B91445100BF8358 /* LaunchScreen.storyboard */,
 				D199B2061B91445100BF8358 /* Info.plist */,
+				D1614E341B91F28300050104 /* TableViewController.swift */,
 			);
 			path = APNGKitDemo;
 			sourceTree = "<group>";
@@ -666,6 +669,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D199B1FD1B91445100BF8358 /* ViewController.swift in Sources */,
+				D1614E351B91F28300050104 /* TableViewController.swift in Sources */,
 				D199B1FB1B91445100BF8358 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
