@@ -45,6 +45,10 @@
 		4B6B69171B8EBFC700C4868A /* ReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69161B8EBFC700C4868A /* ReaderTests.swift */; settings = {ASSET_TAGS = (); }; };
 		4B6B69191B8ED1C300C4868A /* LibPNGTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69181B8ED1C300C4868A /* LibPNGTests.swift */; settings = {ASSET_TAGS = (); }; };
 		D127F6301B91D9FD0095832A /* APNGImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D127F62F1B91D9FD0095832A /* APNGImageTests.swift */; settings = {ASSET_TAGS = (); }; };
+		D14B5B4B1B92B4A600F753E1 /* APNG-cube.png in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B471B92B4A600F753E1 /* APNG-cube.png */; settings = {ASSET_TAGS = (); }; };
+		D14B5B4C1B92B4A600F753E1 /* APNG-Icos4D.png in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B481B92B4A600F753E1 /* APNG-Icos4D.png */; settings = {ASSET_TAGS = (); }; };
+		D14B5B4D1B92B4A600F753E1 /* elephant_apng.png in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B491B92B4A600F753E1 /* elephant_apng.png */; settings = {ASSET_TAGS = (); }; };
+		D14B5B4E1B92B4A600F753E1 /* pyani.png in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B4A1B92B4A600F753E1 /* pyani.png */; settings = {ASSET_TAGS = (); }; };
 		D1614E221B91EDE200050104 /* ball.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1D1B91EDE200050104 /* ball.png */; settings = {ASSET_TAGS = (); }; };
 		D1614E231B91EDE200050104 /* over_background.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1E1B91EDE200050104 /* over_background.png */; settings = {ASSET_TAGS = (); }; };
 		D1614E241B91EDE200050104 /* over_none.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1F1B91EDE200050104 /* over_none.png */; settings = {ASSET_TAGS = (); }; };
@@ -157,6 +161,10 @@
 		4B6B69161B8EBFC700C4868A /* ReaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderTests.swift; sourceTree = "<group>"; };
 		4B6B69181B8ED1C300C4868A /* LibPNGTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibPNGTests.swift; sourceTree = "<group>"; };
 		D127F62F1B91D9FD0095832A /* APNGImageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageTests.swift; sourceTree = "<group>"; };
+		D14B5B471B92B4A600F753E1 /* APNG-cube.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "APNG-cube.png"; path = "TestImages/APNG-cube.png"; sourceTree = SOURCE_ROOT; };
+		D14B5B481B92B4A600F753E1 /* APNG-Icos4D.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "APNG-Icos4D.png"; path = "TestImages/APNG-Icos4D.png"; sourceTree = SOURCE_ROOT; };
+		D14B5B491B92B4A600F753E1 /* elephant_apng.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = elephant_apng.png; path = TestImages/elephant_apng.png; sourceTree = SOURCE_ROOT; };
+		D14B5B4A1B92B4A600F753E1 /* pyani.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pyani.png; path = TestImages/pyani.png; sourceTree = SOURCE_ROOT; };
 		D1614E1D1B91EDE200050104 /* ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ball.png; path = TestImages/ball.png; sourceTree = SOURCE_ROOT; };
 		D1614E1E1B91EDE200050104 /* over_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = over_background.png; path = TestImages/over_background.png; sourceTree = SOURCE_ROOT; };
 		D1614E1F1B91EDE200050104 /* over_none.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = over_none.png; path = TestImages/over_none.png; sourceTree = SOURCE_ROOT; };
@@ -347,6 +355,10 @@
 		D1614E271B91EDEB00050104 /* TestImages */ = {
 			isa = PBXGroup;
 			children = (
+				D14B5B471B92B4A600F753E1 /* APNG-cube.png */,
+				D14B5B481B92B4A600F753E1 /* APNG-Icos4D.png */,
+				D14B5B491B92B4A600F753E1 /* elephant_apng.png */,
+				D14B5B4A1B92B4A600F753E1 /* pyani.png */,
 				D1614E281B91EDF800050104 /* ball.png */,
 				D1614E291B91EDF800050104 /* over_background.png */,
 				D1614E2A1B91EDF800050104 /* over_none.png */,
@@ -580,7 +592,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D199B2051B91445100BF8358 /* LaunchScreen.storyboard in Resources */,
+				D14B5B4E1B92B4A600F753E1 /* pyani.png in Resources */,
 				D1614E2F1B91EDF800050104 /* over_none.png in Resources */,
+				D14B5B4B1B92B4A600F753E1 /* APNG-cube.png in Resources */,
+				D14B5B4D1B92B4A600F753E1 /* elephant_apng.png in Resources */,
+				D14B5B4C1B92B4A600F753E1 /* APNG-Icos4D.png in Resources */,
 				D199B2021B91445100BF8358 /* Assets.xcassets in Resources */,
 				D1614E2D1B91EDF800050104 /* ball.png in Resources */,
 				D199B2001B91445100BF8358 /* Main.storyboard in Resources */,

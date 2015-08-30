@@ -36,19 +36,43 @@
 		</dict>
 		<dict>
 			<key>description</key>
-			<string>Blend Over. Disposal None</string>
+			<string>A color cube in APNG: 192 x 192 pixels, file size: 996 KB, looped, 100 frames</string>
+			<key>name</key>
+			<string>APNG-cube</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>4D structure: 128 x 128 pixels, file size: 992 KB, looped, 48 frames</string>
+			<key>name</key>
+			<string>APNG-Icos4D</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>Color Balls: 200 x 125 pixels, file size: 1 MB, looped, 31 frames. First frame hidden</string>
+			<key>name</key>
+			<string>pyani</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>Color Balls: 480 x 400 pixels, file size: 379 KB, looped, 34 frames.</string>
+			<key>name</key>
+			<string>elephant_apng</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>Blend Over. Disposal None: 150 x 150 pixels</string>
 			<key>name</key>
 			<string>over_none</string>
 		</dict>
 		<dict>
 			<key>description</key>
-			<string>Blend Over. Disposal Previous</string>
+			<string>Blend Over. Disposal Previous: 150 x 150 pixels</string>
 			<key>name</key>
 			<string>over_previous</string>
 		</dict>
 		<dict>
 			<key>description</key>
-			<string>Blend Over. Disposal Background</string>
+			<string>Blend Over. Disposal Background: 150 x 150 pixels</string>
 			<key>name</key>
 			<string>over_background</string>
 		</dict>
