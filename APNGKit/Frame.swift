@@ -29,6 +29,7 @@ struct Frame {
     let bytesInRow: Int
     
     var duration: NSTimeInterval = 0
+    var hidden: Bool = false
     
     init(length: UInt32, bytesInRow: UInt32) {
         self.length = Int(length)
@@ -54,10 +55,6 @@ struct Frame {
         {
             image = UIImage(CGImage: imageRef, scale: 1, orientation: .Up)
         }
-    }
-    
-    mutating func updateDuration(duration: NSTimeInterval) {
-        self.duration = duration
     }
 }
 

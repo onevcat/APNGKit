@@ -114,11 +114,20 @@ public class APNGImageView: UIView {
         
         if currentPassedDuration >= currentFrameDuration {
             currentFrameIndex = currentFrameIndex + 1
+            
             if currentFrameIndex == image.frames.count {
                 currentFrameIndex = 0
                 repeated = repeated + 1
+                
                 if image.repeatCount != RepeatForever && repeated >= image.repeatCount {
                     stopAnimating()
+                    // Stop in the last frame
+                    return
+                }
+                
+                // Only the first frame could be hidden.
+                if image.frames[currentFrameIndex].hidden {
+                    currentFrameIndex += 1
                 }
             }
             

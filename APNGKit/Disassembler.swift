@@ -119,11 +119,8 @@ public struct Disassembler {
         blendOP: UInt8 = 0
         
         let firstImageIndex: Int
-        if png_get_first_frame_is_hidden(pngPointer, infoPointer) != 0 { // First frame is hidden
-            firstImageIndex = 1
-        } else {
-            firstImageIndex = 0
-        }
+        let firstFrameHidden = png_get_first_frame_is_hidden(pngPointer, infoPointer) != 0
+        firstImageIndex = firstFrameHidden ? 1 : 0
         
         var frames = [Frame]()
         
@@ -160,8 +157,9 @@ public struct Disassembler {
                 delayDen = 100
             }
             let duration = Double(delayNum) / Double(delayDen)
-            currentFrame.updateDuration(duration)
-            
+            currentFrame.duration = duration
+            currentFrame.hidden = true
+
             currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth))
             
             frames.append(currentFrame)
