@@ -49,6 +49,7 @@
 		D14B5B4C1B92B4A600F753E1 /* APNG-Icos4D.png in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B481B92B4A600F753E1 /* APNG-Icos4D.png */; settings = {ASSET_TAGS = (); }; };
 		D14B5B4D1B92B4A600F753E1 /* elephant_apng.png in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B491B92B4A600F753E1 /* elephant_apng.png */; settings = {ASSET_TAGS = (); }; };
 		D14B5B4E1B92B4A600F753E1 /* pyani.png in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B4A1B92B4A600F753E1 /* pyani.png */; settings = {ASSET_TAGS = (); }; };
+		D14B5B501B92DE4300F753E1 /* APNGImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14B5B4F1B92DE4300F753E1 /* APNGImageCache.swift */; settings = {ASSET_TAGS = (); }; };
 		D1614E221B91EDE200050104 /* ball.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1D1B91EDE200050104 /* ball.png */; settings = {ASSET_TAGS = (); }; };
 		D1614E231B91EDE200050104 /* over_background.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1E1B91EDE200050104 /* over_background.png */; settings = {ASSET_TAGS = (); }; };
 		D1614E241B91EDE200050104 /* over_none.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1F1B91EDE200050104 /* over_none.png */; settings = {ASSET_TAGS = (); }; };
@@ -164,6 +165,7 @@
 		D14B5B481B92B4A600F753E1 /* APNG-Icos4D.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "APNG-Icos4D.png"; path = "TestImages/APNG-Icos4D.png"; sourceTree = SOURCE_ROOT; };
 		D14B5B491B92B4A600F753E1 /* elephant_apng.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = elephant_apng.png; path = TestImages/elephant_apng.png; sourceTree = SOURCE_ROOT; };
 		D14B5B4A1B92B4A600F753E1 /* pyani.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pyani.png; path = TestImages/pyani.png; sourceTree = SOURCE_ROOT; };
+		D14B5B4F1B92DE4300F753E1 /* APNGImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageCache.swift; sourceTree = "<group>"; };
 		D1614E1D1B91EDE200050104 /* ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ball.png; path = TestImages/ball.png; sourceTree = SOURCE_ROOT; };
 		D1614E1E1B91EDE200050104 /* over_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = over_background.png; path = TestImages/over_background.png; sourceTree = SOURCE_ROOT; };
 		D1614E1F1B91EDE200050104 /* over_none.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = over_none.png; path = TestImages/over_none.png; sourceTree = SOURCE_ROOT; };
@@ -268,6 +270,7 @@
 				4B2132051B8EF20500A39502 /* Frame.swift */,
 				4B21320B1B8EF44800A39502 /* Disassembler.swift */,
 				4B21320F1B8EF4D500A39502 /* APNGImage.swift */,
+				D14B5B4F1B92DE4300F753E1 /* APNGImageCache.swift */,
 				D17398451B90A9B200913AEA /* APNGImageView.swift */,
 			);
 			path = APNGKit;
@@ -649,6 +652,7 @@
 				4B6B68FE1B8EB33100C4868A /* pngmem.c in Sources */,
 				D17398461B90A9B200913AEA /* APNGImageView.swift in Sources */,
 				4B6B69021B8EB33100C4868A /* pngrio.c in Sources */,
+				D14B5B501B92DE4300F753E1 /* APNGImageCache.swift in Sources */,
 				4B6B68F61B8EB33100C4868A /* png.c in Sources */,
 				4B6B69081B8EB33100C4868A /* pngwio.c in Sources */,
 				4B6B69051B8EB33100C4868A /* pngset.c in Sources */,

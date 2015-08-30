@@ -19,10 +19,9 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        if let path = image?.path,
-               data = NSData(contentsOfFile: path){
+        if let path = image?.path, data = NSData(contentsOfFile: path) {
             let apngImage = APNGImage(data: data)
-
+            
             imageView.image = apngImage
             imageView.startAnimating()
                 
@@ -30,8 +29,6 @@ class DetailViewController: UIViewController {
                 
             title = (path as NSString).lastPathComponent
         }
-        
-        performSelector("miao", withObject: self, afterDelay: 2.0)
     }
 
     override func didReceiveMemoryWarning() {

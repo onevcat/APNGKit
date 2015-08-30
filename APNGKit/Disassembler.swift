@@ -35,7 +35,7 @@ public struct Disassembler {
         originalData = data
     }
     
-    mutating func decodeToElements() throws -> (frames: [Frame], size: CGSize, repeatCount: Int) {
+    mutating func decodeToElements(scale: Int = 1) throws -> (frames: [Frame], size: CGSize, repeatCount: Int, bitDepth: Int) {
         reader.beginReading()
         defer {
             reader.endReading()
@@ -186,15 +186,16 @@ public struct Disassembler {
         
         png_destroy_read_struct(&pngPointer, &infoPointer, nil)
         
-        return (frames, CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1)
+        return (frames, CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth))
     }
     
     public mutating func decode() throws -> APNGImage {
-        let (frames, size, repeatCount) = try decodeToElements()
+        let (frames, size, repeatCount, bitDepth) = try decodeToElements()
 
         // Setup apng properties
         let apng = APNGImage(frames: frames, size: size)
         apng.repeatCount = repeatCount
+        apng.bitDepth = bitDepth
         
         return apng
     }
