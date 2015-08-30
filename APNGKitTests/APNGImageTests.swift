@@ -14,10 +14,13 @@ class APNGImageTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        APNGImage.searchBundle = NSBundle.testBundle
+
     }
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        APNGImage.searchBundle = NSBundle.mainBundle()
         super.tearDown()
     }
     
@@ -80,29 +83,22 @@ class APNGImageTests: XCTestCase {
     }
     
     func testInitFromName() {
-        APNGImage.searchBundle = NSBundle.testBundle
         let apng1 = APNGImage(named: "ball.png")
         XCTAssertNotNil(apng1, "ball.png should be able to init")
         
         let apng2 = APNGImage(named: "no-such-file.png")
         XCTAssertNil(apng2, "There is no such file.")
-        
-        APNGImage.searchBundle = NSBundle.mainBundle()
     }
     
     func testInitFromNameWithoutPng() {
-        APNGImage.searchBundle = NSBundle.testBundle
         let apng1 = APNGImage(named: "ball")
         XCTAssertNotNil(apng1, "ball.png should be able to init")
         
         let apng2 = APNGImage(named: "no-such-file")
         XCTAssertNil(apng2, "There is no such file.")
-        
-        APNGImage.searchBundle = NSBundle.mainBundle()
     }
     
     func testInitRetinaImage() {
-        APNGImage.searchBundle = NSBundle.testBundle
         let retinaAPNG = APNGImage(named: "elephant_apng")
         XCTAssertNotNil(retinaAPNG, "elephant_apng should be able to init at 2x.")
         XCTAssertEqual(retinaAPNG?.scale, 2, "Retina version should be loaded")
@@ -120,7 +116,15 @@ class APNGImageTests: XCTestCase {
         
         let wrongAPNG = APNGImage(named: "elephant_apng@3x")
         XCTAssertNil(wrongAPNG, "elephant_apng should be able to init at 3x.")
+    }
+    
+    func testFirstFrameHidden() {
+        let firstFrameHiddenImage = APNGImage(named: "pyani")
+        XCTAssertNotNil(firstFrameHiddenImage, "image should be able to init")
+        XCTAssertTrue(firstFrameHiddenImage!.firstFrameHidden, "The first frame should be hidden.")
         
-        APNGImage.searchBundle = NSBundle.mainBundle()
+        let notHiddenImage = APNGImage(named: "ball")
+        XCTAssertNotNil(notHiddenImage, "image should be able to init")
+        XCTAssertFalse(notHiddenImage!.firstFrameHidden, "The first frame should not be hidden.")
     }
 }

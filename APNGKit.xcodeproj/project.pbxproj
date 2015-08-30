@@ -63,6 +63,7 @@
 		D1614E331B91EE0000050104 /* minimalAPNG.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E321B91EE0000050104 /* minimalAPNG.png */; settings = {ASSET_TAGS = (); }; };
 		D1614E351B91F28300050104 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1614E341B91F28300050104 /* TableViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		D17398461B90A9B200913AEA /* APNGImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17398451B90A9B200913AEA /* APNGImageView.swift */; settings = {ASSET_TAGS = (); }; };
+		D187FEE91B934F1B0013372D /* pyani.png in Resources */ = {isa = PBXBuildFile; fileRef = D187FEE81B934F1B0013372D /* pyani.png */; settings = {ASSET_TAGS = (); }; };
 		D190199A1B930E1600E16EDB /* NSBundle+APNGKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19019991B930E1600E16EDB /* NSBundle+APNGKitTests.swift */; settings = {ASSET_TAGS = (); }; };
 		D190199C1B932A8E00E16EDB /* elephant_apng@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D190199B1B932A8E00E16EDB /* elephant_apng@2x.png */; settings = {ASSET_TAGS = (); }; };
 		D190199E1B932A9600E16EDB /* elephant_apng@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D190199D1B932A9600E16EDB /* elephant_apng@2x.png */; settings = {ASSET_TAGS = (); }; };
@@ -184,6 +185,7 @@
 		D1614E321B91EE0000050104 /* minimalAPNG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = minimalAPNG.png; path = TestImages/minimalAPNG.png; sourceTree = SOURCE_ROOT; };
 		D1614E341B91F28300050104 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		D17398451B90A9B200913AEA /* APNGImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageView.swift; sourceTree = "<group>"; };
+		D187FEE81B934F1B0013372D /* pyani.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pyani.png; path = TestImages/pyani.png; sourceTree = SOURCE_ROOT; };
 		D19019991B930E1600E16EDB /* NSBundle+APNGKitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSBundle+APNGKitTests.swift"; sourceTree = "<group>"; };
 		D190199B1B932A8E00E16EDB /* elephant_apng@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "elephant_apng@2x.png"; path = "TestImages/elephant_apng@2x.png"; sourceTree = SOURCE_ROOT; };
 		D190199D1B932A9600E16EDB /* elephant_apng@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "elephant_apng@2x.png"; path = "TestImages/elephant_apng@2x.png"; sourceTree = SOURCE_ROOT; };
@@ -355,6 +357,7 @@
 		D1614E1C1B91EDD700050104 /* TestImages */ = {
 			isa = PBXGroup;
 			children = (
+				D187FEE81B934F1B0013372D /* pyani.png */,
 				D190199F1B93351300E16EDB /* elephant_apng.png */,
 				D190199B1B932A8E00E16EDB /* elephant_apng@2x.png */,
 				D1614E321B91EE0000050104 /* minimalAPNG.png */,
@@ -600,6 +603,7 @@
 				D1614E221B91EDE200050104 /* ball.png in Resources */,
 				D1614E241B91EDE200050104 /* over_none.png in Resources */,
 				D1614E231B91EDE200050104 /* over_background.png in Resources */,
+				D187FEE91B934F1B0013372D /* pyani.png in Resources */,
 				D190199C1B932A8E00E16EDB /* elephant_apng@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
