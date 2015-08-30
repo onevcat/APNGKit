@@ -134,8 +134,8 @@ public class APNGImageView: UIView {
                 }
                 
                 // Only the first frame could be hidden.
-                if image.frames[currentFrameIndex].hidden {
-                    currentFrameIndex += 1
+                if image.firstFrameHidden {
+                    currentFrameIndex = 1
                 }
             }
             

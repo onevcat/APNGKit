@@ -29,7 +29,6 @@ struct Frame {
     let bytesInRow: Int
     
     var duration: NSTimeInterval = 0
-    var hidden: Bool = false
     
     init(length: UInt32, bytesInRow: UInt32) {
         self.length = Int(length)

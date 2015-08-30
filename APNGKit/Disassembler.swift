@@ -35,7 +35,8 @@ public struct Disassembler {
         originalData = data
     }
     
-    mutating func decodeToElements(scale: CGFloat = 1) throws -> (frames: [Frame], size: CGSize, repeatCount: Int, bitDepth: Int) {
+    mutating func decodeToElements(scale: CGFloat = 1) throws
+            -> (frames: [Frame], size: CGSize, repeatCount: Int, bitDepth: Int, firstFrameHidden: Bool) {
         reader.beginReading()
         defer {
             reader.endReading()
@@ -111,7 +112,7 @@ public struct Disassembler {
             
             png_read_image(pngPointer, &currentFrame.byteRows)
             png_read_end(pngPointer, infoPointer)
-            return ([currentFrame], CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth))
+            return ([currentFrame], CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth), false)
         }
         
         var bufferFrame = Frame(length: length, bytesInRow: rowBytes)
@@ -169,7 +170,6 @@ public struct Disassembler {
             }
             let duration = Double(delayNum) / Double(delayDen)
             currentFrame.duration = duration
-            currentFrame.hidden = true // TODO: Make hidden in APNGImage instead of here.
 
             currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale)
             
@@ -195,14 +195,14 @@ public struct Disassembler {
         bufferFrame.clean()
         currentFrame.clean()
                 
-        return (frames, CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth))
+        return (frames, CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth), firstFrameHidden)
     }
     
     public mutating func decode(scale: CGFloat = 1) throws -> APNGImage {
-        let (frames, size, repeatCount, bitDepth) = try decodeToElements(scale)
+        let (frames, size, repeatCount, bitDepth, firstFrameHidden) = try decodeToElements(scale)
 
         // Setup apng properties
-        let apng = APNGImage(frames: frames, size: size, scale: scale, bitDepth: bitDepth, repeatCount: repeatCount)
+        let apng = APNGImage(frames: frames, size: size, scale: scale, bitDepth: bitDepth, repeatCount: repeatCount, firstFrameHidden: firstFrameHidden)
         return apng
     }
     

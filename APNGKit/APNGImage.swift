@@ -25,18 +25,21 @@ public class APNGImage {
     }
     
     public let scale: CGFloat
+    
+    let firstFrameHidden: Bool
     var frames: [Frame]
     var bitDepth: Int
     public var repeatCount: Int
     
     static var searchBundle: NSBundle = NSBundle.mainBundle()
 
-    init(frames: [Frame], size: CGSize, scale: CGFloat, bitDepth: Int, repeatCount: Int) {
+    init(frames: [Frame], size: CGSize, scale: CGFloat, bitDepth: Int, repeatCount: Int, firstFrameHidden hidden: Bool) {
         self.frames = frames
         self.internalSize = size
         self.scale = scale
         self.bitDepth = bitDepth
         self.repeatCount = repeatCount
+        self.firstFrameHidden = hidden
     }
     
     init(apng: APNGImage) {
@@ -45,16 +48,14 @@ public class APNGImage {
         self.internalSize = apng.internalSize
         self.scale = apng.scale
         self.repeatCount = apng.repeatCount
+        self.firstFrameHidden = apng.firstFrameHidden
         
         var frames = [Frame]()
         for f in apng.frames {
             var frame = Frame(length: UInt32(f.length), bytesInRow: UInt32(f.bytesInRow))
             memcpy(frame.bytes, f.bytes, f.length)
             frame.duration = f.duration
-            frame.hidden = f.hidden
-            
             frame.updateCGImageRef(Int(apng.internalSize.width), height: Int(apng.internalSize.height), bits: apng.bitDepth, scale: apng.scale)
-
             frames.append(frame)
         }
         self.frames = frames
@@ -106,8 +107,8 @@ public class APNGImage {
     convenience init?(data: NSData, scale: CGFloat) {
         var disassembler = Disassembler(data: data)
         do {
-            let (frames, size, repeatCount, bitDepth) = try disassembler.decodeToElements(scale)
-            self.init(frames: frames, size: size, scale: scale, bitDepth: bitDepth, repeatCount: repeatCount)
+            let (frames, size, repeatCount, bitDepth, firstFrameHidden) = try disassembler.decodeToElements(scale)
+            self.init(frames: frames, size: size, scale: scale, bitDepth: bitDepth, repeatCount: repeatCount, firstFrameHidden: firstFrameHidden)
         } catch _ {
             return nil
         }
