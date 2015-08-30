@@ -63,6 +63,7 @@
 		D1614E331B91EE0000050104 /* minimalAPNG.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E321B91EE0000050104 /* minimalAPNG.png */; settings = {ASSET_TAGS = (); }; };
 		D1614E351B91F28300050104 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1614E341B91F28300050104 /* TableViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		D17398461B90A9B200913AEA /* APNGImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17398451B90A9B200913AEA /* APNGImageView.swift */; settings = {ASSET_TAGS = (); }; };
+		D190199A1B930E1600E16EDB /* NSBundle+APNGKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19019991B930E1600E16EDB /* NSBundle+APNGKitTests.swift */; settings = {ASSET_TAGS = (); }; };
 		D199B1FB1B91445100BF8358 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D199B1FA1B91445100BF8358 /* AppDelegate.swift */; };
 		D199B2001B91445100BF8358 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D199B1FE1B91445100BF8358 /* Main.storyboard */; };
 		D199B2021B91445100BF8358 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D199B2011B91445100BF8358 /* Assets.xcassets */; };
@@ -179,6 +180,7 @@
 		D1614E321B91EE0000050104 /* minimalAPNG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = minimalAPNG.png; path = TestImages/minimalAPNG.png; sourceTree = SOURCE_ROOT; };
 		D1614E341B91F28300050104 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		D17398451B90A9B200913AEA /* APNGImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageView.swift; sourceTree = "<group>"; };
+		D19019991B930E1600E16EDB /* NSBundle+APNGKitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSBundle+APNGKitTests.swift"; sourceTree = "<group>"; };
 		D199B1F81B91445100BF8358 /* APNGKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = APNGKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D199B1FA1B91445100BF8358 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D199B1FF1B91445100BF8358 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -336,6 +338,7 @@
 			children = (
 				4B6B690F1B8EB50B00C4868A /* PNGSource.swift */,
 				4B2132131B8EFA7900A39502 /* XCTAssertSwiftError.swift */,
+				D19019991B930E1600E16EDB /* NSBundle+APNGKitTests.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -673,6 +676,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B6B69121B8EB65F00C4868A /* Fundamental Tests.swift in Sources */,
+				D190199A1B930E1600E16EDB /* NSBundle+APNGKitTests.swift in Sources */,
 				4B2132121B8EF94F00A39502 /* DisassemblerTests.swift in Sources */,
 				4B6B69101B8EB50B00C4868A /* PNGSource.swift in Sources */,
 				4B6B69171B8EBFC700C4868A /* ReaderTests.swift in Sources */,

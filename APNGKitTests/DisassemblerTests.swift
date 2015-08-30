@@ -37,7 +37,7 @@ class DisassemblerTests: XCTestCase {
             try dis1.checkFormat()
         }
         
-        let infoPlistData = NSData(contentsOfFile: NSBundle(forClass: APNGKitTests.self).pathForResource("Info", ofType: ".plist")!)!
+        let infoPlistData = NSData(contentsOfFile: NSBundle.testBundle.pathForResource("Info", ofType: ".plist")!)!
         let dis2 = Disassembler(data: infoPlistData)
         XCTempAssertThrowsSpecificError(DisassemblerError.InvalidFormat, "Empty data should throw invalid format") { () -> () in
             try dis2.checkFormat()
@@ -57,5 +57,17 @@ class DisassemblerTests: XCTestCase {
         for f in apng.frames {
             XCTAssertNotNil(f.image, "The image should not be nil in frame.")
         }
+    }
+    
+    func testOverBlendDecode() {
+        let data = NSData(contentsOfFile: NSBundle.testBundle.pathForResource("over_previous", ofType: "png")!)!
+        disassembler = Disassembler(data: data)
+        
+        var apng: APNGImage! = nil
+        XCTempAssertNoThrowError("APNG signature should be the same as a regular PNG signature") { () -> () in
+            apng = try self.disassembler.decode()
+        }
+        
+        XCTAssertNotNil(apng, "APNG Image should be created.")
     }
 }

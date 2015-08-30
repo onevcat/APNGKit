@@ -24,10 +24,13 @@ public class APNGImage {
     let frames: [Frame]
     var bitDepth: Int = 8
     
+    static var searchBundle: NSBundle = NSBundle.mainBundle()
+    
     init(frames: [Frame], size: CGSize) {
         self.frames = frames
         self.size = size
     }
+    
     
     init(apng: APNGImage) {
         
@@ -48,30 +51,16 @@ public class APNGImage {
         self.frames = frames
     }
     
-    deinit {
-        for f in frames {
-            f.clean()
-        }
-    }
-}
-
-extension APNGImage {
-    static func cacheImage(image: APNGImage, withName: String) {
-        
-    }
-}
-
-extension APNGImage {
-    public convenience init?(data: NSData) {
-        self.init(data: data, scale: 1)
-    }
-    
     public convenience init?(named imageName: String) {
-        if let path = imageName.apng_filePathByCheckingNameExisting() {
+        if let path = imageName.apng_filePathByCheckingNameExistingInBundle(APNGImage.searchBundle) {
             self.init(contentsOfFile:path, saveToCache: true)
         } else {
             return nil
         }
+    }
+    
+    public convenience init?(data: NSData) {
+        self.init(data: data, scale: 1)
     }
     
     public convenience init?(contentsOfFile path: String) {
@@ -79,7 +68,7 @@ extension APNGImage {
     }
     
     convenience init?(contentsOfFile path: String, saveToCache: Bool) {
-
+        
         if let apng = APNGCache.defaultCache.imageForKey(path) { // Found in the cache
             print("From cache")
             self.init(apng: apng)
@@ -104,6 +93,18 @@ extension APNGImage {
             return nil
         }
     }
+    
+    deinit {
+        for f in frames {
+            f.clean()
+        }
+    }
+}
+
+extension APNGImage {
+    static func cacheImage(image: APNGImage, withName: String) {
+        
+    }
 }
 
 extension APNGImage: CustomStringConvertible {
@@ -119,14 +120,14 @@ extension APNGImage: CustomStringConvertible {
 }
 
 extension String {
-    func apng_filePathByCheckingNameExisting() -> String? {
+    func apng_filePathByCheckingNameExistingInBundle(bundle: NSBundle) -> String? {
         let name = self as NSString
         let fileExtension = name.pathExtension
         let fileName = name.stringByDeletingPathExtension
         
         // If the name is suffixed by 2x or 3x, we think users want to the specified version
         if fileName.hasSuffix("@2x") || fileName.hasSuffix("@3x") {
-            let path = NSBundle.mainBundle().pathForResource(fileName, ofType: fileExtension)
+            let path = bundle.pathForResource(fileName, ofType: fileExtension)
             return path
         }
         
@@ -134,14 +135,14 @@ extension String {
         var path: String? = nil
         let scale = Int(UIScreen.mainScreen().scale)
         
-        path = NSBundle.mainBundle().pathForResource("\(fileName)@\(scale)x", ofType: fileExtension)
+        path = bundle.pathForResource("\(fileName)@\(scale)x", ofType: fileExtension)
         
         if path != nil {
             return path
         }
         
         // Matched scaled version not found, use the 1x version
-        return NSBundle.mainBundle().pathForResource(fileName, ofType: fileExtension)
+        return bundle.pathForResource(fileName, ofType: fileExtension)
     }
 }
 

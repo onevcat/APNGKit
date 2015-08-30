@@ -52,7 +52,7 @@ class APNGImageTests: XCTestCase {
     }
     
     func testAPNGCreatingPerformance() {
-        let ballString = NSBundle(forClass: APNGImageTests.self).pathForResource("ball", ofType: "png")!
+        let ballString = NSBundle.testBundle.pathForResource("ball", ofType: "png")!
         let data = NSData(contentsOfFile: ballString)
         
         self.measureBlock {
@@ -63,9 +63,27 @@ class APNGImageTests: XCTestCase {
     }
     
     func testABitLargerAPNG() {
-        let firefoxString = NSBundle(forClass: APNGImageTests.self).pathForResource("spinfox", ofType: "png")!
+        let firefoxString = NSBundle.testBundle.pathForResource("spinfox", ofType: "png")!
         let data = NSData(contentsOfFile: firefoxString)
         let image = APNGImage(data: data!)
         XCTAssertEqual(image?.frames.count, 25, "")
+    }
+    
+    func testInitContentsOfFile() {
+        let path = NSBundle.testBundle.pathForResource("ball", ofType: "png")!
+        let apng1 = APNGImage(contentsOfFile: path)
+        XCTAssertNotNil(apng1, "ball.png should be able to init")
+    }
+    
+    func testInitFromName() {
+        APNGImage.searchBundle = NSBundle.testBundle
+        let apng1 = APNGImage(named: "ball.png")
+        XCTAssertNotNil(apng1, "ball.png should be able to init")
+        
+        
+        let apng2 = APNGImage(named: "no-such-file.png")
+        XCTAssertNil(apng2, "There is no such file.")
+        
+        APNGImage.searchBundle = NSBundle.mainBundle()
     }
 }
