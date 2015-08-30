@@ -70,4 +70,15 @@ class DisassemblerTests: XCTestCase {
         
         XCTAssertNotNil(apng, "APNG Image should be created.")
     }
+    
+    func testRegularPNG() {
+        disassembler = Disassembler(data: redDotPNGData)
+        var apng: APNGImage! = nil
+        XCTempAssertNoThrowError("APNG signature should be the same as a regular PNG signature") { () -> () in
+            apng = try self.disassembler.decode()
+        }
+        XCTAssertNotNil(apng, "APNG Image should be created.")
+        XCTAssertEqual(apng.frames.count, 1, "There should be only 1 frame.")
+        XCTAssertEqual(apng.frames.first!.image?.size, CGSizeMake(1, 1), "The frame is 1x1 dot.")
+    }
 }

@@ -44,18 +44,22 @@ public struct Disassembler {
         try checkFormat()
         
         var pngPointer = png_create_read_struct(PNG_LIBPNG_VER_STRING, nil, nil, nil)
+        
         if pngPointer == nil {
             throw DisassemblerError.PNGStructureFailure
         }
         
         var infoPointer = png_create_info_struct(pngPointer)
-        if infoPointer == nil {
+        
+        defer {
             png_destroy_read_struct(&pngPointer, &infoPointer, nil)
+        }
+        
+        if infoPointer == nil {
             throw DisassemblerError.PNGStructureFailure
         }
         
         if setjmp(png_jmpbuf(pngPointer)) != 0 {
-            png_destroy_read_struct(&pngPointer, &infoPointer, nil)
             throw DisassemblerError.PNGInternalError
         }
         
@@ -95,17 +99,24 @@ public struct Disassembler {
         let rowBytes = UInt32(png_get_rowbytes(pngPointer, infoPointer))
         let length = height * rowBytes
         
-        var bufferFrame = Frame(length: length, bytesInRow: rowBytes)
-        var currentFrame = Frame(length: length, bytesInRow: rowBytes)
-        var nextFrame: Frame!
-        
         // Decode acTL
         var frameCount: UInt32 = 0, playCount: UInt32 = 0
         png_get_acTL(pngPointer, infoPointer, &frameCount, &playCount)
         
         if frameCount == 0 {
-            // TODO: - Fallback to normal PNG
+            // Fallback to regular PNG
+            var currentFrame = Frame(length: length, bytesInRow: rowBytes)
+            currentFrame.duration = Double.infinity
+            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale)
+            
+            png_read_image(pngPointer, &currentFrame.byteRows)
+            png_read_end(pngPointer, infoPointer)
+            return ([currentFrame], CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth))
         }
+        
+        var bufferFrame = Frame(length: length, bytesInRow: rowBytes)
+        var currentFrame = Frame(length: length, bytesInRow: rowBytes)
+        var nextFrame: Frame!
         
         // Setup values for reading frames
         var
@@ -158,7 +169,7 @@ public struct Disassembler {
             }
             let duration = Double(delayNum) / Double(delayDen)
             currentFrame.duration = duration
-            currentFrame.hidden = true
+            currentFrame.hidden = true // TODO: Make hidden in APNGImage instead of here.
 
             currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale)
             
@@ -183,9 +194,7 @@ public struct Disassembler {
         
         bufferFrame.clean()
         currentFrame.clean()
-        
-        png_destroy_read_struct(&pngPointer, &infoPointer, nil)
-        
+                
         return (frames, CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth))
     }
     
