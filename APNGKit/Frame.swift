@@ -28,12 +28,11 @@ struct Frame {
     let length: Int
     let bytesInRow: Int
     
-    let duration: NSTimeInterval
+    var duration: NSTimeInterval = 0
     
-    init(length: UInt32, bytesInRow: UInt32, duration: NSTimeInterval) {
+    init(length: UInt32, bytesInRow: UInt32) {
         self.length = Int(length)
         self.bytesInRow = Int(bytesInRow)
-        self.duration = duration
         
         self.bytes = UnsafeMutablePointer<UInt8>.alloc(self.length)
         self.bytes.initialize(0)
@@ -55,6 +54,10 @@ struct Frame {
         {
             image = UIImage(CGImage: imageRef, scale: 1, orientation: .Up)
         }
+    }
+    
+    mutating func updateDuration(duration: NSTimeInterval) {
+        self.duration = duration
     }
 }
 

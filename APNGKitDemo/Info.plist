@@ -34,6 +34,24 @@
 			<key>name</key>
 			<string>spinfox</string>
 		</dict>
+		<dict>
+			<key>description</key>
+			<string>Blend Over. Disposal None</string>
+			<key>name</key>
+			<string>over_none</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>Blend Over. Disposal Previous</string>
+			<key>name</key>
+			<string>over_previous</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>Blend Over. Disposal Background</string>
+			<key>name</key>
+			<string>over_background</string>
+		</dict>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

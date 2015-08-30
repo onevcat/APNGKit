@@ -95,9 +95,9 @@ public struct Disassembler {
         let rowBytes = UInt32(png_get_rowbytes(pngPointer, infoPointer))
         let length = height * rowBytes
         
-        var bufferFrame = Frame(length: length, bytesInRow: rowBytes, duration: 0)
-        var currentFrame: Frame! = nil
-        var nextFrame = Frame(length: length, bytesInRow: rowBytes, duration: 0)
+        var bufferFrame = Frame(length: length, bytesInRow: rowBytes)
+        var currentFrame = Frame(length: length, bytesInRow: rowBytes)
+        var nextFrame: Frame!
         
         // Decode acTL
         var frameCount: UInt32 = 0, playCount: UInt32 = 0
@@ -144,22 +144,23 @@ public struct Disassembler {
                 }
             }
             
+            nextFrame = Frame(length: length, bytesInRow: rowBytes)
+            
             if (disposeOP == UInt8(PNG_DISPOSE_OP_PREVIOUS)) {
                 // For the first frame, currentFrame is not inited yet.
                 // But we can ensure the disposeOP is not PNG_DISPOSE_OP_PREVIOUS for the 1st frame
                 memcpy(nextFrame.bytes, currentFrame.bytes, Int(length));
             }
             
+            // Decode fdATs
+            png_read_image(pngPointer, &bufferFrame.byteRows)
+            blendFrameDstBytes(currentFrame.byteRows, srcBytes: bufferFrame.byteRows, blendOP: blendOP, offsetX: offsetX, offsetY: offsetY, width: frameWidth, height: frameHeight)
             // Calculating delay (duration)
             if delayDen == 0 {
                 delayDen = 100
             }
             let duration = Double(delayNum) / Double(delayDen)
-            currentFrame = Frame(length: length, bytesInRow: rowBytes, duration: duration)
-            
-            // Decode fdATs
-            png_read_image(pngPointer, &bufferFrame.byteRows)
-            blendFrameDstBytes(currentFrame.byteRows, srcBytes: bufferFrame.byteRows, blendOP: disposeOP, offsetX: offsetX, offsetY: offsetY, width: frameWidth, height: frameHeight)
+            currentFrame.updateDuration(duration)
             
             currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth))
             
@@ -183,7 +184,7 @@ public struct Disassembler {
         png_read_end(pngPointer, infoPointer)
         
         bufferFrame.clean()
-        nextFrame.clean()
+        currentFrame.clean()
         
         png_destroy_read_struct(&pngPointer, &infoPointer, nil)
         

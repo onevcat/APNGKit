@@ -18,13 +18,13 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        if let path = image?.path,
-               data = NSData(contentsOfFile: path){
-            let apngImage = APNGImage(data: data)
+            if let path = image?.path,
+                   data = NSData(contentsOfFile: path){
+                let apngImage = APNGImage(data: data)
 
-            imageView.image = apngImage
-            imageView.startAnimating()
-        }
+                imageView.image = apngImage
+                imageView.startAnimating()
+            }
     }
 
     override func didReceiveMemoryWarning() {
