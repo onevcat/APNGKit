@@ -35,7 +35,7 @@ public struct Disassembler {
         originalData = data
     }
     
-    mutating func decodeToElements(scale: Int = 1) throws -> (frames: [Frame], size: CGSize, repeatCount: Int, bitDepth: Int) {
+    mutating func decodeToElements(scale: CGFloat = 1) throws -> (frames: [Frame], size: CGSize, repeatCount: Int, bitDepth: Int) {
         reader.beginReading()
         defer {
             reader.endReading()
@@ -160,7 +160,7 @@ public struct Disassembler {
             currentFrame.duration = duration
             currentFrame.hidden = true
 
-            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth))
+            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale)
             
             frames.append(currentFrame)
             
@@ -189,14 +189,11 @@ public struct Disassembler {
         return (frames, CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth))
     }
     
-    public mutating func decode() throws -> APNGImage {
-        let (frames, size, repeatCount, bitDepth) = try decodeToElements()
+    public mutating func decode(scale: CGFloat = 1) throws -> APNGImage {
+        let (frames, size, repeatCount, bitDepth) = try decodeToElements(scale)
 
         // Setup apng properties
-        let apng = APNGImage(frames: frames, size: size)
-        apng.repeatCount = repeatCount
-        apng.bitDepth = bitDepth
-        
+        let apng = APNGImage(frames: frames, size: size, scale: scale, bitDepth: bitDepth, repeatCount: repeatCount)
         return apng
     }
     

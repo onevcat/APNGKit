@@ -80,7 +80,6 @@ class APNGImageTests: XCTestCase {
         let apng1 = APNGImage(named: "ball.png")
         XCTAssertNotNil(apng1, "ball.png should be able to init")
         
-        
         let apng2 = APNGImage(named: "no-such-file.png")
         XCTAssertNil(apng2, "There is no such file.")
         

@@ -11,8 +11,7 @@ import Foundation
 public let RepeatForever = -1
 
 public class APNGImage {
-    
-    public var repeatCount: Int = RepeatForever
+
     public var duration: NSTimeInterval {
         return frames.reduce(0.0) {
             $0 + $1.duration
@@ -20,22 +19,27 @@ public class APNGImage {
     }
 
     public let size: CGSize
-
-    let frames: [Frame]
-    var bitDepth: Int = 8
+    public let scale: CGFloat
+    var frames: [Frame]
+    var bitDepth: Int
+    public var repeatCount: Int
     
     static var searchBundle: NSBundle = NSBundle.mainBundle()
-    
-    init(frames: [Frame], size: CGSize) {
+
+    init(frames: [Frame], size: CGSize, scale: CGFloat, bitDepth: Int, repeatCount: Int) {
         self.frames = frames
-        self.size = size
+        self.size = CGSizeMake(size.width / scale, size.height / scale)
+        self.scale = scale
+        self.bitDepth = bitDepth
+        self.repeatCount = repeatCount
     }
-    
     
     init(apng: APNGImage) {
         
         self.bitDepth = apng.bitDepth
         self.size = apng.size
+        self.scale = apng.scale
+        self.repeatCount = apng.repeatCount
         
         var frames = [Frame]()
         for f in apng.frames {
@@ -44,7 +48,7 @@ public class APNGImage {
             frame.duration = f.duration
             frame.hidden = f.hidden
             
-            frame.updateCGImageRef(Int(apng.size.width), height: Int(apng.size.height), bits: apng.bitDepth)
+            frame.updateCGImageRef(Int(apng.size.width), height: Int(apng.size.height), bits: apng.bitDepth, scale: apng.scale)
 
             frames.append(frame)
         }
@@ -70,11 +74,20 @@ public class APNGImage {
     convenience init?(contentsOfFile path: String, saveToCache: Bool) {
         
         if let apng = APNGCache.defaultCache.imageForKey(path) { // Found in the cache
-            print("From cache")
             self.init(apng: apng)
         } else {
             if let data = NSData(contentsOfFile: path) {
-                self.init(data: data)
+                let fileName = (path as NSString).stringByDeletingPathExtension
+                
+                var scale: CGFloat = 1
+                if fileName.hasSuffix("@2x") {
+                    scale = 2
+                }
+                if fileName.hasSuffix("@3x") {
+                    scale = 3
+                }
+                
+                self.init(data: data, scale: scale)
                 APNGCache.defaultCache.setImage(self, forKey: path)
             } else {
                 return nil
@@ -82,13 +95,11 @@ public class APNGImage {
         }
     }
     
-    convenience init?(data: NSData, scale: Int) {
+    convenience init?(data: NSData, scale: CGFloat) {
         var disassembler = Disassembler(data: data)
         do {
             let (frames, size, repeatCount, bitDepth) = try disassembler.decodeToElements(scale)
-            self.init(frames: frames, size: size)
-            self.repeatCount = repeatCount
-            self.bitDepth = bitDepth
+            self.init(frames: frames, size: size, scale: scale, bitDepth: bitDepth, repeatCount: repeatCount)
         } catch _ {
             return nil
         }
@@ -98,12 +109,6 @@ public class APNGImage {
         for f in frames {
             f.clean()
         }
-    }
-}
-
-extension APNGImage {
-    static func cacheImage(image: APNGImage, withName: String) {
-        
     }
 }
 

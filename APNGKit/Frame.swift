@@ -45,7 +45,7 @@ struct Frame {
         bytes.dealloc(length)
     }
     
-    mutating func updateCGImageRef(width: Int, height: Int, bits: Int) {
+    mutating func updateCGImageRef(width: Int, height: Int, bits: Int, scale: CGFloat) {
         
         let provider = CGDataProviderCreateWithData(nil, bytes, length, nil)
         
@@ -53,7 +53,7 @@ struct Frame {
                         [CGBitmapInfo.ByteOrderDefault, CGBitmapInfo(rawValue: CGImageAlphaInfo.Last.rawValue)],
                         provider, nil, false, .RenderingIntentDefault)
         {
-            image = UIImage(CGImage: imageRef, scale: 1, orientation: .Up)
+            image = UIImage(CGImage: imageRef, scale: scale, orientation: .Up)
         }
     }
 }
