@@ -13,7 +13,7 @@ public class APNGImageView: UIView {
     public var image: APNGImage? { // Setter should be run on main thread
         didSet {
             stopAnimating()
-            updateContents(image?.frames.first?.image?.CGImage)
+            updateContents(image?.frames.first?.image)
         }
     }
     
@@ -38,14 +38,14 @@ public class APNGImageView: UIView {
         backgroundColor = UIColor.clearColor()
         userInteractionEnabled = false
     }
+    
+    deinit {
+        stopAnimating()
+    }
 
     required public init?(coder aDecoder: NSCoder) {
         isAnimating = false
         super.init(coder: aDecoder)
-    }
-    
-    public override func drawRect(rect: CGRect) {
-        image?.frames.first?.image?.drawInRect(rect)
     }
     
     public func startAnimating() {
@@ -116,12 +116,28 @@ public class APNGImageView: UIView {
             }
             
             currentPassedDuration = currentPassedDuration - currentFrameDuration
-            updateContents(image.frames[currentFrameIndex].image?.CGImage)
+            updateContents(image.frames[currentFrameIndex].image)
         }
         
     }
     
-    func updateContents(image: CGImageRef?) {
-        layer.contents = image
+    func updateContents(image: UIImage?) {
+        let currentImage: CGImageRef?
+        if layer.contents != nil {
+            currentImage = (layer.contents as! CGImageRef)
+        } else {
+            currentImage = nil
+        }
+
+        let cgImage = image?.CGImage
+
+        if cgImage !== currentImage {
+            layer.contents = cgImage
+            if let image = image {
+                layer.contentsScale = image.scale
+            }
+
+        }
+        
     }
 }

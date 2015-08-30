@@ -12,6 +12,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" id="iuT-Be-kCZ">
                                 <rect key="frame" x="0.0" y="92" width="600" height="44"/>
@@ -20,6 +21,9 @@
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="bjL-LU-leO" kind="show" identifier="showDetail" id="itd-PM-eYN"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -30,12 +34,69 @@
                     <navigationItem key="navigationItem" title="APNGKit" id="SMS-j7-Pa8">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="zE8-Aq-GAX">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <segue destination="7hn-Le-1RA" kind="presentation" id="qyt-yL-B5l"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E98-1W-iqv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="56" y="150"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="44s-rV-NwL">
+            <objects>
+                <viewController id="7hn-Le-1RA" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Ecv-A2-a4v"/>
+                        <viewControllerLayoutGuide type="bottom" id="usy-nZ-ke9"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="tx9-fN-4iX">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ApS-ct-qEw" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="773" y="395"/>
+        </scene>
+        <!--Detail View Controller-->
+        <scene sceneID="qcp-bn-0Nr">
+            <objects>
+                <viewController id="bjL-LU-leO" customClass="DetailViewController" customModule="APNGKitDemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ihd-sQ-Fxg"/>
+                        <viewControllerLayoutGuide type="bottom" id="HMu-Fk-LW9"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="bMJ-ec-MPI">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="5IW-Oc-eee" customClass="APNGImageView" customModule="APNGKit">
+                                <rect key="frame" x="175" y="98" width="250" height="250"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="250" id="Umd-eJ-Agm"/>
+                                    <constraint firstAttribute="width" constant="250" id="d2P-nY-5oj"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="5IW-Oc-eee" firstAttribute="top" secondItem="ihd-sQ-Fxg" secondAttribute="bottom" constant="34" id="dIj-Lb-eMD"/>
+                            <constraint firstItem="5IW-Oc-eee" firstAttribute="centerX" secondItem="bMJ-ec-MPI" secondAttribute="centerX" id="mfA-05-cRu"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="imageView" destination="5IW-Oc-eee" id="Tmd-M5-S4W"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ehF-EY-Fww" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="773" y="-301"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="WMV-Dd-uwZ">

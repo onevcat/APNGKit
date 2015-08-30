@@ -67,6 +67,7 @@
 		D199B21B1B91445100BF8358 /* APNGKitDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D199B21A1B91445100BF8358 /* APNGKitDemoUITests.swift */; };
 		D199B2281B9145F900BF8358 /* APNGKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B0D67391B8E9DBF00876BDF /* APNGKit.framework */; };
 		D199B2291B9145F900BF8358 /* APNGKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B0D67391B8E9DBF00876BDF /* APNGKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D1CFDB821B92051900B12135 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CFDB811B92051900B12135 /* DetailViewController.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -182,6 +183,7 @@
 		D199B2161B91445100BF8358 /* APNGKitDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = APNGKitDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D199B21A1B91445100BF8358 /* APNGKitDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNGKitDemoUITests.swift; sourceTree = "<group>"; };
 		D199B21C1B91445100BF8358 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D1CFDB811B92051900B12135 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -365,6 +367,7 @@
 				D199B2031B91445100BF8358 /* LaunchScreen.storyboard */,
 				D199B2061B91445100BF8358 /* Info.plist */,
 				D1614E341B91F28300050104 /* TableViewController.swift */,
+				D1CFDB811B92051900B12135 /* DetailViewController.swift */,
 			);
 			path = APNGKitDemo;
 			sourceTree = "<group>";
@@ -671,6 +674,7 @@
 				D199B1FD1B91445100BF8358 /* ViewController.swift in Sources */,
 				D1614E351B91F28300050104 /* TableViewController.swift in Sources */,
 				D199B1FB1B91445100BF8358 /* AppDelegate.swift in Sources */,
+				D1CFDB821B92051900B12135 /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

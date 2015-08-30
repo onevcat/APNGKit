@@ -53,7 +53,7 @@ struct Frame {
                         [CGBitmapInfo.ByteOrderDefault, CGBitmapInfo(rawValue: CGImageAlphaInfo.Last.rawValue)],
                         provider, nil, false, .RenderingIntentDefault)
         {
-            image = UIImage(CGImage: imageRef)
+            image = UIImage(CGImage: imageRef, scale: 1, orientation: .Up)
         }
     }
 }
