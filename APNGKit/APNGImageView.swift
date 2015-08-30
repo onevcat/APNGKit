@@ -42,6 +42,13 @@ public class APNGImageView: UIView {
     deinit {
         stopAnimating()
     }
+    
+    public override func didMoveToWindow() {
+        super.didMoveToWindow()
+        if window == nil {
+            stopAnimating()
+        }
+    }
 
     required public init?(coder aDecoder: NSCoder) {
         isAnimating = false
