@@ -24,7 +24,7 @@ public class APNGImage {
         return CGSizeMake(internalSize.width / scale, internalSize.height / scale)
     }
     
-    public var scale: CGFloat
+    public let scale: CGFloat
     var frames: [Frame]
     var bitDepth: Int
     public var repeatCount: Int
