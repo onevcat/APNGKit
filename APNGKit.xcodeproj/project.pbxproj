@@ -66,6 +66,8 @@
 		D190199A1B930E1600E16EDB /* NSBundle+APNGKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19019991B930E1600E16EDB /* NSBundle+APNGKitTests.swift */; settings = {ASSET_TAGS = (); }; };
 		D190199C1B932A8E00E16EDB /* elephant_apng@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D190199B1B932A8E00E16EDB /* elephant_apng@2x.png */; settings = {ASSET_TAGS = (); }; };
 		D190199E1B932A9600E16EDB /* elephant_apng@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D190199D1B932A9600E16EDB /* elephant_apng@2x.png */; settings = {ASSET_TAGS = (); }; };
+		D19019A01B93351400E16EDB /* elephant_apng.png in Resources */ = {isa = PBXBuildFile; fileRef = D190199F1B93351300E16EDB /* elephant_apng.png */; settings = {ASSET_TAGS = (); }; };
+		D19019A21B9336B100E16EDB /* APNGImageCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19019A11B9336B100E16EDB /* APNGImageCacheTests.swift */; settings = {ASSET_TAGS = (); }; };
 		D199B1FB1B91445100BF8358 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D199B1FA1B91445100BF8358 /* AppDelegate.swift */; };
 		D199B2001B91445100BF8358 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D199B1FE1B91445100BF8358 /* Main.storyboard */; };
 		D199B2021B91445100BF8358 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D199B2011B91445100BF8358 /* Assets.xcassets */; };
@@ -185,6 +187,8 @@
 		D19019991B930E1600E16EDB /* NSBundle+APNGKitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSBundle+APNGKitTests.swift"; sourceTree = "<group>"; };
 		D190199B1B932A8E00E16EDB /* elephant_apng@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "elephant_apng@2x.png"; path = "TestImages/elephant_apng@2x.png"; sourceTree = SOURCE_ROOT; };
 		D190199D1B932A9600E16EDB /* elephant_apng@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "elephant_apng@2x.png"; path = "TestImages/elephant_apng@2x.png"; sourceTree = SOURCE_ROOT; };
+		D190199F1B93351300E16EDB /* elephant_apng.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = elephant_apng.png; path = TestImages/elephant_apng.png; sourceTree = SOURCE_ROOT; };
+		D19019A11B9336B100E16EDB /* APNGImageCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageCacheTests.swift; sourceTree = "<group>"; };
 		D199B1F81B91445100BF8358 /* APNGKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = APNGKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D199B1FA1B91445100BF8358 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D199B1FF1B91445100BF8358 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -295,6 +299,7 @@
 				4B2132091B8EF39000A39502 /* LibAPNGTests.swift */,
 				4B2132111B8EF94F00A39502 /* DisassemblerTests.swift */,
 				D127F62F1B91D9FD0095832A /* APNGImageTests.swift */,
+				D19019A11B9336B100E16EDB /* APNGImageCacheTests.swift */,
 			);
 			path = APNGKitTests;
 			sourceTree = "<group>";
@@ -350,6 +355,7 @@
 		D1614E1C1B91EDD700050104 /* TestImages */ = {
 			isa = PBXGroup;
 			children = (
+				D190199F1B93351300E16EDB /* elephant_apng.png */,
 				D190199B1B932A8E00E16EDB /* elephant_apng@2x.png */,
 				D1614E321B91EE0000050104 /* minimalAPNG.png */,
 				D1614E1D1B91EDE200050104 /* ball.png */,
@@ -589,6 +595,7 @@
 			files = (
 				D1614E251B91EDE200050104 /* over_previous.png in Resources */,
 				D1614E331B91EE0000050104 /* minimalAPNG.png in Resources */,
+				D19019A01B93351400E16EDB /* elephant_apng.png in Resources */,
 				D1614E261B91EDE200050104 /* spinfox.png in Resources */,
 				D1614E221B91EDE200050104 /* ball.png in Resources */,
 				D1614E241B91EDE200050104 /* over_none.png in Resources */,
@@ -691,6 +698,7 @@
 				4B2132141B8EFA7900A39502 /* XCTAssertSwiftError.swift in Sources */,
 				4B21320A1B8EF39000A39502 /* LibAPNGTests.swift in Sources */,
 				4B0D67491B8E9DC000876BDF /* APNGKitTests.swift in Sources */,
+				D19019A21B9336B100E16EDB /* APNGImageCacheTests.swift in Sources */,
 				D127F6301B91D9FD0095832A /* APNGImageTests.swift in Sources */,
 				4B6B69191B8ED1C300C4868A /* LibPNGTests.swift in Sources */,
 			);

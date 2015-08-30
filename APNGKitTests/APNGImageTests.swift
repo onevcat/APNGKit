@@ -73,6 +73,10 @@ class APNGImageTests: XCTestCase {
         let path = NSBundle.testBundle.pathForResource("ball", ofType: "png")!
         let apng1 = APNGImage(contentsOfFile: path)
         XCTAssertNotNil(apng1, "ball.png should be able to init")
+        
+        let wrongPath = NSBundle.testBundle.pathForResource("ball", ofType: "png")!.stringByReplacingOccurrencesOfString("ball", withString: "vall")
+        let apng2 = APNGImage(contentsOfFile: wrongPath)
+        XCTAssertNil(apng2, "ball.png should be able to init")
     }
     
     func testInitFromName() {
@@ -82,6 +86,40 @@ class APNGImageTests: XCTestCase {
         
         let apng2 = APNGImage(named: "no-such-file.png")
         XCTAssertNil(apng2, "There is no such file.")
+        
+        APNGImage.searchBundle = NSBundle.mainBundle()
+    }
+    
+    func testInitFromNameWithoutPng() {
+        APNGImage.searchBundle = NSBundle.testBundle
+        let apng1 = APNGImage(named: "ball")
+        XCTAssertNotNil(apng1, "ball.png should be able to init")
+        
+        let apng2 = APNGImage(named: "no-such-file")
+        XCTAssertNil(apng2, "There is no such file.")
+        
+        APNGImage.searchBundle = NSBundle.mainBundle()
+    }
+    
+    func testInitRetinaImage() {
+        APNGImage.searchBundle = NSBundle.testBundle
+        let retinaAPNG = APNGImage(named: "elephant_apng")
+        XCTAssertNotNil(retinaAPNG, "elephant_apng should be able to init at 2x.")
+        XCTAssertEqual(retinaAPNG?.scale, 2, "Retina version should be loaded")
+        XCTAssertEqual(retinaAPNG?.size, CGSizeMake(240, 200), "Size should be in point, not pixel.")
+
+        let anotherRetinaAPNG = APNGImage(named: "elephant_apng@2x")
+        XCTAssertNotNil(anotherRetinaAPNG, "elephant_apng should be able to init at 2x.")
+        XCTAssertEqual(anotherRetinaAPNG?.scale, 2, "Retina version should be loaded")
+        XCTAssertEqual(anotherRetinaAPNG?.size, CGSizeMake(240, 200), "Size should be in point, not pixel.")
+        
+        let normalAPNG = APNGImage(data: NSData(contentsOfFile: NSBundle.testBundle.pathForResource("elephant_apng", ofType: "png")!)!)
+        XCTAssertNotNil(normalAPNG, "elephant_apng should be able to init at 1x.")
+        XCTAssertEqual(normalAPNG?.scale, 1, "Retina version should be loaded")
+        XCTAssertEqual(normalAPNG?.size, CGSizeMake(480, 400), "Size should be in point, not pixel.")
+        
+        let wrongAPNG = APNGImage(named: "elephant_apng@3x")
+        XCTAssertNil(wrongAPNG, "elephant_apng should be able to init at 3x.")
         
         APNGImage.searchBundle = NSBundle.mainBundle()
     }

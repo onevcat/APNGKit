@@ -93,7 +93,10 @@ public class APNGImage {
                 }
                 
                 self.init(data: data, scale: scale)
-                APNGCache.defaultCache.setImage(self, forKey: path)
+                
+                if saveToCache {
+                    APNGCache.defaultCache.setImage(self, forKey: path)
+                }
             } else {
                 return nil
             }
