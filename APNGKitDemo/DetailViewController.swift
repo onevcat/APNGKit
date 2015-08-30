@@ -19,8 +19,13 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        if let path = image?.path, data = NSData(contentsOfFile: path) {
-            let apngImage = APNGImage(data: data)
+        if let path = image?.path {
+            let apngImage: APNGImage?
+            if path.containsString("@2x") {
+                apngImage = APNGImage(named: (path as NSString).lastPathComponent)
+            } else {
+                apngImage = APNGImage(data: NSData(contentsOfFile: path)!)
+            }
             
             imageView.image = apngImage
             imageView.startAnimating()

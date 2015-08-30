@@ -53,7 +53,7 @@ public class APNGImage {
             frame.duration = f.duration
             frame.hidden = f.hidden
             
-            frame.updateCGImageRef(Int(apng.size.width), height: Int(apng.size.height), bits: apng.bitDepth, scale: apng.scale)
+            frame.updateCGImageRef(Int(apng.internalSize.width), height: Int(apng.internalSize.height), bits: apng.bitDepth, scale: apng.scale)
 
             frames.append(frame)
         }

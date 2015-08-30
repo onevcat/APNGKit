@@ -54,9 +54,15 @@
 		</dict>
 		<dict>
 			<key>description</key>
-			<string>Color Balls: 480 x 400 pixels, file size: 379 KB, looped, 34 frames.</string>
+			<string>Cartoon Elephant: 480 x 400 pixels, file size: 379 KB, looped, 34 frames.</string>
 			<key>name</key>
 			<string>elephant_apng</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>Cartoon Elephant retina: 480 x 400 pixels, file size: 379 KB, looped, 34 frames.</string>
+			<key>name</key>
+			<string>elephant_apng@2x</string>
 		</dict>
 		<dict>
 			<key>description</key>
