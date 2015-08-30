@@ -18,8 +18,13 @@ public class APNGImage {
         }
     }
 
-    public let size: CGSize
-    public let scale: CGFloat
+    private let internalSize: CGSize
+    
+    public var size: CGSize {
+        return CGSizeMake(internalSize.width / scale, internalSize.height / scale)
+    }
+    
+    public var scale: CGFloat
     var frames: [Frame]
     var bitDepth: Int
     public var repeatCount: Int
@@ -28,7 +33,7 @@ public class APNGImage {
 
     init(frames: [Frame], size: CGSize, scale: CGFloat, bitDepth: Int, repeatCount: Int) {
         self.frames = frames
-        self.size = CGSizeMake(size.width / scale, size.height / scale)
+        self.internalSize = size
         self.scale = scale
         self.bitDepth = bitDepth
         self.repeatCount = repeatCount
@@ -37,7 +42,7 @@ public class APNGImage {
     init(apng: APNGImage) {
         
         self.bitDepth = apng.bitDepth
-        self.size = apng.size
+        self.internalSize = apng.internalSize
         self.scale = apng.scale
         self.repeatCount = apng.repeatCount
         

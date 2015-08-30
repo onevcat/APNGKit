@@ -43,6 +43,10 @@ class APNGCache {
     }
     
     @objc func clearMemoryCache() {
+        // The cache will not work once it receives a memory warning from iOS 8.
+        // It seems an intended behaviours to reduce memory pressure.
+        // See http://stackoverflow.com/questions/27289360/nscache-objectforkey-always-return-nil-after-memory-warning-on-ios-8
+        // The solution in that post does not work on iOS 9. I guess just follow the system behavior would be good.
         cacheObject.removeAllObjects()
     }
 }
