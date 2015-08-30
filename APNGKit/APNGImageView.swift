@@ -12,8 +12,13 @@ public class APNGImageView: UIView {
     
     public var image: APNGImage? { // Setter should be run on main thread
         didSet {
+            let animating = isAnimating
             stopAnimating()
             updateContents(image?.frames.first?.image)
+            
+            if animating {
+                startAnimating()
+            }
         }
     }
     
@@ -88,6 +93,9 @@ public class APNGImageView: UIView {
         
         isAnimating = false
         repeated = 0
+        lastTimestamp = 0
+        currentPassedDuration = 0
+        currentFrameIndex = 0
         
         timer?.invalidate()
         timer = nil

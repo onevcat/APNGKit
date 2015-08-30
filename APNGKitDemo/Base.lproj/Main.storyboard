@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8187.4" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="jLs-K8-13n">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8151.3"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--APNGKit-->
@@ -82,16 +83,26 @@
                                     <constraint firstAttribute="width" constant="250" id="d2P-nY-5oj"/>
                                 </constraints>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dad-BJ-Xc0">
+                                <rect key="frame" x="20" y="361" width="560" height="14.5"/>
+                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="12"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="Dad-BJ-Xc0" secondAttribute="trailing" id="SPd-u8-GdM"/>
                             <constraint firstItem="5IW-Oc-eee" firstAttribute="top" secondItem="ihd-sQ-Fxg" secondAttribute="bottom" constant="34" id="dIj-Lb-eMD"/>
+                            <constraint firstItem="Dad-BJ-Xc0" firstAttribute="top" secondItem="5IW-Oc-eee" secondAttribute="bottom" constant="13" id="mWJ-0m-PhY"/>
                             <constraint firstItem="5IW-Oc-eee" firstAttribute="centerX" secondItem="bMJ-ec-MPI" secondAttribute="centerX" id="mfA-05-cRu"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="Dad-BJ-Xc0" secondAttribute="leading" id="uxw-JH-8pR"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="imageView" destination="5IW-Oc-eee" id="Tmd-M5-S4W"/>
+                        <outlet property="textLabel" destination="Dad-BJ-Xc0" id="rea-jO-Bx7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ehF-EY-Fww" userLabel="First Responder" sceneMemberID="firstResponder"/>

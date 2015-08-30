@@ -13,10 +13,11 @@ class DetailViewController: UIViewController {
 
     var image: Image?
     
+    @IBOutlet weak var textLabel: UILabel!
     @IBOutlet weak var imageView: APNGImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
         if let path = image?.path,
                data = NSData(contentsOfFile: path){
@@ -24,7 +25,13 @@ class DetailViewController: UIViewController {
 
             imageView.image = apngImage
             imageView.startAnimating()
+                
+            textLabel.text = image!.description
+                
+            title = (path as NSString).lastPathComponent
         }
+        
+        performSelector("miao", withObject: self, afterDelay: 2.0)
     }
 
     override func didReceiveMemoryWarning() {
