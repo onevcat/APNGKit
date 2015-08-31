@@ -8,8 +8,15 @@
 
 import Foundation
 
+/// An APNG image view object provides a view-based container for displaying an APNG image.
+/// You can control the starting and stopping of the animation, as well as the repeat count.
+/// All images associated with an APNGImageView object should use the same scale. 
+/// If your application uses images with different scales, they may render incorrectly.
 public class APNGImageView: UIView {
     
+    /// The image displayed in the image view.
+    /// If you change the image when the animation playing, 
+    /// the animation of original image will stop, and the new one will start automatically.
     public var image: APNGImage? { // Setter should be run on main thread
         didSet {
             let animating = isAnimating
@@ -22,6 +29,7 @@ public class APNGImageView: UIView {
         }
     }
     
+    /// A Bool value indicating whether the animation is running.
     public private(set) var isAnimating: Bool
     
     var timer: CADisplayLink?
@@ -30,6 +38,18 @@ public class APNGImageView: UIView {
     var currentFrameIndex: Int = 0
     var repeated: Int = 0
     
+    /**
+    Initialize an APNG image view with the specified image.
+    
+    - note: This method adjusts the frame of the receiver to match the 
+            size of the specified image. It also disables user interactions 
+            for the image view by default.
+            The first frame of image (default image) will be displayed.
+    
+    - parameter image: The initial APNG image to display in the image view.
+    
+    - returns: An initialized image view object.
+    */
     public init(image: APNGImage?) {
         self.image = image
         isAnimating = false
@@ -48,18 +68,35 @@ public class APNGImageView: UIView {
         stopAnimating()
     }
     
-    public override func didMoveToWindow() {
+    /**
+    This method will be called by system when this view is removed from windown (or its superview)
+    The animation is stopped in this method, that means you cannot play the animation offscreen.
+    */
+    override public func didMoveToWindow() {
+        //TODO: Change to globle timer later to solve possible retain cycle from offscreen animation.
         super.didMoveToWindow()
         if window == nil {
             stopAnimating()
         }
     }
 
+    /**
+    Initialize an APNG image view with a decoder.
+    
+    - note: You should never call this init method from your code.
+    
+    - parameter aDecoder: A decoder used to decode the view from nib.
+    
+    - returns: An initialized image view object.
+    */
     required public init?(coder aDecoder: NSCoder) {
         isAnimating = false
         super.init(coder: aDecoder)
     }
     
+    /**
+    Starts animation contained in the image.
+    */
     public func startAnimating() {
         let mainRunLoop = NSRunLoop.mainRunLoop()
         let currentRunLoop = NSRunLoop.currentRunLoop()
@@ -78,6 +115,9 @@ public class APNGImageView: UIView {
         timer?.addToRunLoop(mainRunLoop, forMode: NSDefaultRunLoopMode)
     }
     
+    /**
+    Starts animation contained in the image.
+    */
     public func stopAnimating() {
         let mainRunLoop = NSRunLoop.mainRunLoop()
         let currentRunLoop = NSRunLoop.currentRunLoop()

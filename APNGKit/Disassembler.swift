@@ -19,20 +19,61 @@ func readData(pngPointer: png_structp, outBytes: png_bytep, byteCountToRead: png
     reader.read(outBytes, bytesCount: byteCountToRead)
 }
 
+/**
+Disassembler Errors. An error will be thrown if the disassembler encounters 
+unexpected error.
+
+- InvalidFormat:       The file is not a PNG format.
+- PNGStructureFailure: Fail on creating a PNG structure. It might due to out of memory.
+- PNGInternalError:    Internal error when decoding a PNG image.
+*/
 public enum DisassemblerError: ErrorType {
     case InvalidFormat
     case PNGStructureFailure
     case PNGInternalError
 }
 
-// APNG Specification: https://wiki.mozilla.org/APNG_Specification
+/**
+*  Disassemble APNG data. 
+*  See APNG Specification: https://wiki.mozilla.org/APNG_Specification for defination of APNG.
+*  This Disassembler is using a patched libpng with supporting of apng to read APNG data.
+*  See https://github.com/onevcat/libpng for more.
+*/
 public struct Disassembler {
     private(set) var reader: Reader
     let originalData: NSData
     
+    /**
+    Init a disassembler with APNG data.
+    
+    - parameter data: Data object of an APNG file.
+    
+    - returns: The disassembler ready to use.
+    */
     public init(data: NSData) {
         reader = Reader(data: data)
         originalData = data
+    }
+    
+    /**
+    Decode the data to a high level `APNGImage` object.
+    
+    - parameter scale: The screen scale should be used when decoding. 
+    You should pass 1 if you want to use the dosassembler separately.
+    If you need to display the image on the screen later, use `UIScreen.mainScreen().scale`.
+    Default is 1.0.
+    
+    - throws: A `DisassemblerError` when error happens.
+    
+    - returns: A decoded `APNGImage` object at given scale.
+    */
+    public mutating func decode(scale: CGFloat = 1) throws -> APNGImage {
+        let (frames, size, repeatCount, bitDepth, firstFrameHidden) = try decodeToElements(scale)
+        
+        // Setup apng properties
+        let apng = APNGImage(frames: frames, size: size, scale: scale,
+            bitDepth: bitDepth, repeatCount: repeatCount, firstFrameHidden: firstFrameHidden)
+        return apng
     }
     
     mutating func decodeToElements(scale: CGFloat = 1) throws
@@ -197,15 +238,6 @@ public struct Disassembler {
         currentFrame.clean()
                 
         return (frames, CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth), firstFrameHidden)
-    }
-    
-    public mutating func decode(scale: CGFloat = 1) throws -> APNGImage {
-        let (frames, size, repeatCount, bitDepth, firstFrameHidden) = try decodeToElements(scale)
-
-        // Setup apng properties
-        let apng = APNGImage(frames: frames, size: size, scale: scale,
-                        bitDepth: bitDepth, repeatCount: repeatCount, firstFrameHidden: firstFrameHidden)
-        return apng
     }
     
     func blendFrameDstBytes(dstBytes: Array<UnsafeMutablePointer<UInt8>>,

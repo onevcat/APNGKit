@@ -8,12 +8,18 @@
 
 import Foundation
 
+/**
+*  Represents a frame in an APNG file. 
+*  It contains a whole IDAT chunk data for a PNG image.
+*/
 struct Frame {
     
     var image: UIImage?
     
+    /// Data chunk.
     var bytes: UnsafeMutablePointer<UInt8>
     
+    /// An array of raw data row pointer. A decoder should fill this area with image raw data.
     lazy var byteRows: Array<UnsafeMutablePointer<UInt8>> = {
         var array = Array<UnsafeMutablePointer<UInt8>>()
         
@@ -26,6 +32,8 @@ struct Frame {
     }()
     
     let length: Int
+    
+    /// How many bytes in a row. Regularly it is width * (bitDepth / 2)
     let bytesInRow: Int
     
     var duration: NSTimeInterval = 0
