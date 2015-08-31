@@ -12,6 +12,9 @@ public let RepeatForever = -1
 
 public class APNGImage {
 
+    // Strong refrence to another APNG to hold data if this image object is retrieved from cache
+    private let dataOwner: APNGImage?
+    
     public var duration: NSTimeInterval {
         return frames.reduce(0.0) {
             $0 + $1.duration
@@ -40,25 +43,20 @@ public class APNGImage {
         self.bitDepth = bitDepth
         self.repeatCount = repeatCount
         self.firstFrameHidden = hidden
+        dataOwner = nil
     }
     
     init(apng: APNGImage) {
+        
+        dataOwner = apng
         
         self.bitDepth = apng.bitDepth
         self.internalSize = apng.internalSize
         self.scale = apng.scale
         self.repeatCount = apng.repeatCount
         self.firstFrameHidden = apng.firstFrameHidden
-        
-        var frames = [Frame]()
-        for f in apng.frames {
-            var frame = Frame(length: UInt32(f.length), bytesInRow: UInt32(f.bytesInRow))
-            memcpy(frame.bytes, f.bytes, f.length)
-            frame.duration = f.duration
-            frame.updateCGImageRef(Int(apng.internalSize.width), height: Int(apng.internalSize.height), bits: apng.bitDepth, scale: apng.scale)
-            frames.append(frame)
-        }
-        self.frames = frames
+
+        self.frames = apng.frames
     }
     
     public convenience init?(named imageName: String) {
@@ -115,8 +113,10 @@ public class APNGImage {
     }
     
     deinit {
-        for f in frames {
-            f.clean()
+        if dataOwner == nil { // Only clean when self owns the data
+            for f in frames {
+                f.clean()
+            }
         }
     }
 }
