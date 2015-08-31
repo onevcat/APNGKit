@@ -9,7 +9,7 @@
 import Foundation
 
 let signatureOfPNGLength = 8
-let kMaxPNGSize = 1000000;
+let kMaxPNGSize: UInt32 = 1000000;
 
 // Reading callback for libpng
 func readData(pngPointer: png_structp, outBytes: png_bytep, byteCountToRead: png_size_t) {
@@ -26,11 +26,13 @@ unexpected error.
 - InvalidFormat:       The file is not a PNG format.
 - PNGStructureFailure: Fail on creating a PNG structure. It might due to out of memory.
 - PNGInternalError:    Internal error when decoding a PNG image.
+- FileSizeExceeded:    The file is too large. There is a limitation of APNGKit that the max width and height is 1M pixel.
 */
 public enum DisassemblerError: ErrorType {
     case InvalidFormat
     case PNGStructureFailure
     case PNGInternalError
+    case FileSizeExceeded
 }
 
 /**
@@ -77,7 +79,8 @@ public struct Disassembler {
     }
     
     mutating func decodeToElements(scale: CGFloat = 1) throws
-            -> (frames: [Frame], size: CGSize, repeatCount: Int, bitDepth: Int, firstFrameHidden: Bool) {
+            -> (frames: [Frame], size: CGSize, repeatCount: Int, bitDepth: Int, firstFrameHidden: Bool)
+    {
         reader.beginReading()
         defer {
             reader.endReading()
@@ -117,6 +120,10 @@ public struct Disassembler {
         // Decode IHDR
         png_get_IHDR(pngPointer, infoPointer, &width, &height, &bitDepth, &colorType, nil, nil, nil)
         
+        if width > kMaxPNGSize || height > kMaxPNGSize {
+            throw DisassemblerError.FileSizeExceeded
+        }
+                
         // Transforms. We only handle 8-bit RGBA images.
         png_set_expand(pngPointer)
         
