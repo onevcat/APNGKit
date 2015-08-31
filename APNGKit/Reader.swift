@@ -42,7 +42,10 @@ struct Reader {
         }
         
         if stream.streamStatus != NSStreamStatus.Open {
-            fatalError("The stream is not in Open status. This may occur when you try to read before calling beginReading() or after endReading(). It could also be caused by you are trying to read from multiple threads. Reader is not support multithreads reading! Current status is: \(stream.streamStatus.rawValue)")
+            fatalError("The stream is not in Open status. This may occur when you try " +
+                       "to read before calling beginReading() or after endReading(). " +
+                       "It could also be caused by you are trying to read from multiple threads. " +
+                       "Reader is not support multithreads reading! Current status is: \(stream.streamStatus.rawValue)")
         }
         
         if bytesCount == 0 {
@@ -67,11 +70,15 @@ struct Reader {
         }
         
         if stream.streamStatus != NSStreamStatus.Open {
-            fatalError("The stream is not in Open status. This may occur when you try to read before calling beginReading() or after endReading(). It could also be caused by you are trying to read from multiple threads. Reader is not support multithreads reading! Current status is: \(stream.streamStatus.rawValue)")
+            fatalError("The stream is not in Open status. This may occur when you try to read before " +
+                       "calling beginReading() or after endReading(). It could also be caused by you are " +
+                       "trying to read from multiple threads. Reader is not support multithreads reading! " +
+                       "Current status is: \(stream.streamStatus.rawValue)")
         }
         
         if bytesCount > maxBufferCount {
-            fatalError("Can not read byte count: \(bytesCount) since it beyonds the maxBufferCount of the reader, which is \(maxBufferCount). Please try to use a larger buffer.")
+            fatalError("Can not read byte count: \(bytesCount) since it beyonds the maxBufferCount of " +
+                       "the reader, which is \(maxBufferCount). Please try to use a larger buffer.")
         }
         
         if bytesCount == 0 {

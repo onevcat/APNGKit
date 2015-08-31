@@ -19,7 +19,7 @@ func readData(pngPointer: png_structp, outBytes: png_bytep, byteCountToRead: png
     reader.read(outBytes, bytesCount: byteCountToRead)
 }
 
-enum DisassemblerError: ErrorType {
+public enum DisassemblerError: ErrorType {
     case InvalidFormat
     case PNGStructureFailure
     case PNGInternalError
@@ -30,7 +30,7 @@ public struct Disassembler {
     private(set) var reader: Reader
     let originalData: NSData
     
-    init(data: NSData) {
+    public init(data: NSData) {
         reader = Reader(data: data)
         originalData = data
     }
@@ -163,7 +163,8 @@ public struct Disassembler {
             
             // Decode fdATs
             png_read_image(pngPointer, &bufferFrame.byteRows)
-            blendFrameDstBytes(currentFrame.byteRows, srcBytes: bufferFrame.byteRows, blendOP: blendOP, offsetX: offsetX, offsetY: offsetY, width: frameWidth, height: frameHeight)
+            blendFrameDstBytes(currentFrame.byteRows, srcBytes: bufferFrame.byteRows, blendOP: blendOP,
+                                    offsetX: offsetX, offsetY: offsetY, width: frameWidth, height: frameHeight)
             // Calculating delay (duration)
             if delayDen == 0 {
                 delayDen = 100
@@ -202,12 +203,19 @@ public struct Disassembler {
         let (frames, size, repeatCount, bitDepth, firstFrameHidden) = try decodeToElements(scale)
 
         // Setup apng properties
-        let apng = APNGImage(frames: frames, size: size, scale: scale, bitDepth: bitDepth, repeatCount: repeatCount, firstFrameHidden: firstFrameHidden)
+        let apng = APNGImage(frames: frames, size: size, scale: scale,
+                        bitDepth: bitDepth, repeatCount: repeatCount, firstFrameHidden: firstFrameHidden)
         return apng
     }
     
-    func blendFrameDstBytes(dstBytes: Array<UnsafeMutablePointer<UInt8>>, srcBytes: Array<UnsafeMutablePointer<UInt8>>, blendOP: UInt8, offsetX: UInt32, offsetY: UInt32, width: UInt32, height: UInt32) {
-        
+    func blendFrameDstBytes(dstBytes: Array<UnsafeMutablePointer<UInt8>>,
+                            srcBytes: Array<UnsafeMutablePointer<UInt8>>,
+                             blendOP: UInt8,
+                             offsetX: UInt32,
+                             offsetY: UInt32,
+                               width: UInt32,
+                              height: UInt32)
+    {
         var u: Int = 0, v: Int = 0, al: Int = 0
         
         for j in 0 ..< Int(height) {

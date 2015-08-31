@@ -11,28 +11,29 @@ import Foundation
 public let RepeatForever = -1
 
 public class APNGImage {
-
-    // Strong refrence to another APNG to hold data if this image object is retrieved from cache
-    private let dataOwner: APNGImage?
     
     public var duration: NSTimeInterval {
         return frames.reduce(0.0) {
             $0 + $1.duration
         }
     }
-
-    private let internalSize: CGSize
     
     public var size: CGSize {
         return CGSizeMake(internalSize.width / scale, internalSize.height / scale)
     }
     
     public let scale: CGFloat
+    public var repeatCount: Int
     
     let firstFrameHidden: Bool
     var frames: [Frame]
     var bitDepth: Int
-    public var repeatCount: Int
+    
+    // Strong refrence to another APNG to hold data if this image object is retrieved from cache
+    // The frames data will not be changed once a frame is setup.
+    // So we could share the bytes in it between two "same" APNG image objects.
+    private let dataOwner: APNGImage?
+    private let internalSize: CGSize // size in pixel
     
     static var searchBundle: NSBundle = NSBundle.mainBundle()
 
@@ -47,7 +48,7 @@ public class APNGImage {
     }
     
     init(apng: APNGImage) {
-        
+        // The image init from this method will share the same data trunk with the other apng obj
         dataOwner = apng
         
         self.bitDepth = apng.bitDepth
