@@ -26,11 +26,25 @@ public class APNGImageView: UIView {
             if animating {
                 startAnimating()
             }
+            
+            if autoStartAnimation {
+                startAnimating()
+            }
         }
     }
     
     /// A Bool value indicating whether the animation is running.
     public private(set) var isAnimating: Bool
+    
+    /// A Bool value indicating whether the animation should be 
+    /// started automatically after an image is set. Default is false.
+    public var autoStartAnimation: Bool {
+        didSet {
+            if autoStartAnimation {
+                startAnimating()
+            }
+        }
+    }
     
     var timer: CADisplayLink?
     var lastTimestamp: NSTimeInterval = 0
@@ -53,6 +67,7 @@ public class APNGImageView: UIView {
     public init(image: APNGImage?) {
         self.image = image
         isAnimating = false
+        autoStartAnimation = false
         
         if let image = image {
             super.init(frame: CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height))
@@ -91,6 +106,7 @@ public class APNGImageView: UIView {
     */
     required public init?(coder aDecoder: NSCoder) {
         isAnimating = false
+        autoStartAnimation = false
         super.init(coder: aDecoder)
     }
     
