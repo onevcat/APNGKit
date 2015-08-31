@@ -8,13 +8,24 @@
 
 import Foundation
 
+/**
+*  Reader for binary data.
+*  Put input data into an input stream and read it on requested.
+*/
 struct Reader {
     
     private let stream: NSInputStream
     private var totalBytesRead = 0
     private let dataLength: Int
     
-    private var buffers = [Int: Array<UInt8>]()
+    /// Built-in buffers. It will not be initiated until used.
+    lazy var buffers: [Int: Array<UInt8>] = {
+        var buffers = [Int: Array<UInt8>]()
+        for i in 0...self.maxBufferCount {
+            buffers[i] = Array<UInt8>(count: i, repeatedValue: 0)
+        }
+        return buffers
+    }()
     
     let maxBufferCount: Int
     
@@ -22,10 +33,6 @@ struct Reader {
         stream = NSInputStream(data: data)
         maxBufferCount = maxBuffer
         dataLength = data.length
-        
-        for i in 0...maxBuffer {
-            buffers[i] = Array<UInt8>(count: i, repeatedValue: 0)
-        }
     }
     
     func beginReading() {
@@ -36,6 +43,14 @@ struct Reader {
         stream.close()
     }
     
+    /**
+    Read some data into the input buffer.
+    
+    - parameter buffer:     Buffer to hold the data.
+    - parameter bytesCount: The count of bytes should be read.
+    
+    - returns: The count of bytes read.
+    */
     mutating func read(buffer: UnsafeMutablePointer<UInt8>, bytesCount: Int) -> Int {
         if stream.streamStatus == NSStreamStatus.AtEnd {
             return 0
@@ -63,6 +78,13 @@ struct Reader {
         }
     }
     
+    /**
+    Use built-in buffer to read data.
+    
+    - parameter bytesCount: The count of bytes should be read.
+    
+    - returns: Raw data and the count of bytes read.
+    */
     mutating func read(bytesCount: Int) -> (data: [UInt8], bytesCount: Int) {
         
         if stream.streamStatus == NSStreamStatus.AtEnd {
