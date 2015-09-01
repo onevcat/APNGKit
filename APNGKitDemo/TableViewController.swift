@@ -104,6 +104,18 @@ class TableViewController: UITableViewController {
                 (segue.destinationViewController as! DetailViewController).image = images[indexPath.section][indexPath.row]
             }
         }
+        
+    }
+    
+    override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
+        if identifier == "showCreate" {
+            let alert = UIAlertController(title: nil, message: "Creating of APNG is supported yet.", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
+            presentViewController(alert, animated: true, completion: nil)
+            return false
+        }
+        
+        return true
     }
 
 }
