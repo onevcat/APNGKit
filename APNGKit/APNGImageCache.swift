@@ -8,10 +8,14 @@
 
 import Foundation
 
+/// Cache for APNGKit. It will hold apng images initialized from specified init methods.
+/// If the same file is requested later, APNGKit will look it up in this cache first to improve performance.
 public class APNGCache {
     
     private static let defaultCacheInstance = APNGCache()
     
+    /// The default cache object. It is used internal in APNGKit.
+    /// You should always use this object to interact with APNG cache as well.
     public class var defaultCache: APNGCache {
         return defaultCacheInstance
     }
@@ -32,11 +36,22 @@ public class APNGCache {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    func setImage(image: APNGImage, forKey key: String) {
+    /**
+    Cache an APNG image with specified key.
+    
+    - parameter image: The image should be cached.
+    - parameter key:   The key of that image
+    */
+    public func setImage(image: APNGImage, forKey key: String) {
         cacheObject.setObject(image, forKey: key, cost: image.cost)
     }
     
-    func removeImageForKey(key: String) {
+    /**
+    Remove an APNG image from cache with specified key.
+    
+    - parameter key: The key of that image
+    */
+    public func removeImageForKey(key: String) {
         cacheObject.removeObjectForKey(key)
     }
     
@@ -44,6 +59,14 @@ public class APNGCache {
         return cacheObject.objectForKey(key) as? APNGImage
     }
     
+    /**
+    Clear the memory cache.
+    - note: Generally speaking you could just use APNGKit without worrying the memory and cache.
+            The cached images will be removed when a memory warning is received or your app is switched to background.
+            However, there is a chance that you want to do an operation requiring huge amount of memory, which may cause
+            your app OOM directly without receiving a memory warning. In this situation, you could call this method first 
+            to release the APNG cache for your memory costing operation.
+    */
     @objc public func clearMemoryCache() {
         // The cache will not work once it receives a memory warning from iOS 8.
         // It seems an intended behaviours to reduce memory pressure.
