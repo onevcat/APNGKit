@@ -453,6 +453,7 @@
 				4B0D67351B8E9DBF00876BDF /* Frameworks */,
 				4B0D67361B8E9DBF00876BDF /* Headers */,
 				4B0D67371B8E9DBF00876BDF /* Resources */,
+				4B7D4ED31B955193005C0598 /* Update version */,
 			);
 			buildRules = (
 			);
@@ -661,6 +662,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "./sync-libpng-apng";
+		};
+		4B7D4ED31B955193005C0598 /* Update version */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Update version";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "agvtool next-version -all";
 		};
 /* End PBXShellScriptBuildPhase section */
 
