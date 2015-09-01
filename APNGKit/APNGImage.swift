@@ -204,10 +204,9 @@ extension String {
         // If the name is suffixed by 2x or 3x, we think users want to the specified version
         if fileName.hasSuffix("@2x") || fileName.hasSuffix("@3x") {
             var path: String?
-            path = bundle.pathForResource(fileName, ofType: fileExtension)
-            if path == nil { // If not found. Add png extension and try again
-                path = bundle.pathForResource(fileName, ofType: "png")
-            }
+            path = bundle.pathForResource(fileName, ofType: fileExtension) ??
+                   bundle.pathForResource(fileName, ofType: "apng") ??
+                   bundle.pathForResource(fileName, ofType: "png")
             return path
         }
         
@@ -216,8 +215,10 @@ extension String {
         let scale = Int(UIScreen.mainScreen().scale)
         
         path = bundle.pathForResource("\(fileName)@\(scale)x", ofType: fileExtension) ??
+               bundle.pathForResource("\(fileName)@\(scale)x", ofType: "apng") ??
                bundle.pathForResource("\(fileName)@\(scale)x", ofType: "png") ??
                bundle.pathForResource(fileName, ofType: fileExtension) ?? // Matched scaled version not found, use the 1x version
+               bundle.pathForResource(fileName, ofType: "apng") ??
                bundle.pathForResource(fileName, ofType: "png")
         
         return path

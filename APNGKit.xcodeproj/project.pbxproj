@@ -49,29 +49,29 @@
 		4B7D4ED91B955CBF005C0598 /* arm_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D4ED81B955CBF005C0598 /* arm_init.c */; settings = {ASSET_TAGS = (); }; };
 		4BF022041B94442800F00CDE /* APNGImageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF022031B94442800F00CDE /* APNGImageViewTests.swift */; settings = {ASSET_TAGS = (); }; };
 		D127F6301B91D9FD0095832A /* APNGImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D127F62F1B91D9FD0095832A /* APNGImageTests.swift */; settings = {ASSET_TAGS = (); }; };
-		D14B5B4B1B92B4A600F753E1 /* APNG-cube.png in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B471B92B4A600F753E1 /* APNG-cube.png */; settings = {ASSET_TAGS = (); }; };
-		D14B5B4C1B92B4A600F753E1 /* APNG-Icos4D.png in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B481B92B4A600F753E1 /* APNG-Icos4D.png */; settings = {ASSET_TAGS = (); }; };
-		D14B5B4D1B92B4A600F753E1 /* elephant_apng.png in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B491B92B4A600F753E1 /* elephant_apng.png */; settings = {ASSET_TAGS = (); }; };
-		D14B5B4E1B92B4A600F753E1 /* pyani.png in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B4A1B92B4A600F753E1 /* pyani.png */; settings = {ASSET_TAGS = (); }; };
+		D14B5B4B1B92B4A600F753E1 /* APNG-cube.apng in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B471B92B4A600F753E1 /* APNG-cube.apng */; settings = {ASSET_TAGS = (); }; };
+		D14B5B4C1B92B4A600F753E1 /* APNG-Icos4D.apng in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B481B92B4A600F753E1 /* APNG-Icos4D.apng */; settings = {ASSET_TAGS = (); }; };
+		D14B5B4D1B92B4A600F753E1 /* elephant_apng.apng in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B491B92B4A600F753E1 /* elephant_apng.apng */; settings = {ASSET_TAGS = (); }; };
+		D14B5B4E1B92B4A600F753E1 /* pyani.apng in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B4A1B92B4A600F753E1 /* pyani.apng */; settings = {ASSET_TAGS = (); }; };
 		D14B5B501B92DE4300F753E1 /* APNGImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14B5B4F1B92DE4300F753E1 /* APNGImageCache.swift */; settings = {ASSET_TAGS = (); }; };
-		D1614E221B91EDE200050104 /* ball.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1D1B91EDE200050104 /* ball.png */; settings = {ASSET_TAGS = (); }; };
-		D1614E231B91EDE200050104 /* over_background.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1E1B91EDE200050104 /* over_background.png */; settings = {ASSET_TAGS = (); }; };
-		D1614E241B91EDE200050104 /* over_none.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1F1B91EDE200050104 /* over_none.png */; settings = {ASSET_TAGS = (); }; };
-		D1614E251B91EDE200050104 /* over_previous.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E201B91EDE200050104 /* over_previous.png */; settings = {ASSET_TAGS = (); }; };
-		D1614E261B91EDE200050104 /* spinfox.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E211B91EDE200050104 /* spinfox.png */; settings = {ASSET_TAGS = (); }; };
-		D1614E2D1B91EDF800050104 /* ball.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E281B91EDF800050104 /* ball.png */; settings = {ASSET_TAGS = (); }; };
-		D1614E2E1B91EDF800050104 /* over_background.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E291B91EDF800050104 /* over_background.png */; settings = {ASSET_TAGS = (); }; };
-		D1614E2F1B91EDF800050104 /* over_none.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E2A1B91EDF800050104 /* over_none.png */; settings = {ASSET_TAGS = (); }; };
-		D1614E301B91EDF800050104 /* over_previous.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E2B1B91EDF800050104 /* over_previous.png */; settings = {ASSET_TAGS = (); }; };
-		D1614E311B91EDF800050104 /* spinfox.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E2C1B91EDF800050104 /* spinfox.png */; settings = {ASSET_TAGS = (); }; };
-		D1614E331B91EE0000050104 /* minimalAPNG.png in Resources */ = {isa = PBXBuildFile; fileRef = D1614E321B91EE0000050104 /* minimalAPNG.png */; settings = {ASSET_TAGS = (); }; };
+		D1614E221B91EDE200050104 /* ball.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1D1B91EDE200050104 /* ball.apng */; settings = {ASSET_TAGS = (); }; };
+		D1614E231B91EDE200050104 /* over_background.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1E1B91EDE200050104 /* over_background.apng */; settings = {ASSET_TAGS = (); }; };
+		D1614E241B91EDE200050104 /* over_none.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1F1B91EDE200050104 /* over_none.apng */; settings = {ASSET_TAGS = (); }; };
+		D1614E251B91EDE200050104 /* over_previous.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E201B91EDE200050104 /* over_previous.apng */; settings = {ASSET_TAGS = (); }; };
+		D1614E261B91EDE200050104 /* spinfox.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E211B91EDE200050104 /* spinfox.apng */; settings = {ASSET_TAGS = (); }; };
+		D1614E2D1B91EDF800050104 /* ball.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E281B91EDF800050104 /* ball.apng */; settings = {ASSET_TAGS = (); }; };
+		D1614E2E1B91EDF800050104 /* over_background.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E291B91EDF800050104 /* over_background.apng */; settings = {ASSET_TAGS = (); }; };
+		D1614E2F1B91EDF800050104 /* over_none.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E2A1B91EDF800050104 /* over_none.apng */; settings = {ASSET_TAGS = (); }; };
+		D1614E301B91EDF800050104 /* over_previous.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E2B1B91EDF800050104 /* over_previous.apng */; settings = {ASSET_TAGS = (); }; };
+		D1614E311B91EDF800050104 /* spinfox.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E2C1B91EDF800050104 /* spinfox.apng */; settings = {ASSET_TAGS = (); }; };
+		D1614E331B91EE0000050104 /* minimalAPNG.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E321B91EE0000050104 /* minimalAPNG.apng */; settings = {ASSET_TAGS = (); }; };
 		D1614E351B91F28300050104 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1614E341B91F28300050104 /* TableViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		D17398461B90A9B200913AEA /* APNGImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17398451B90A9B200913AEA /* APNGImageView.swift */; settings = {ASSET_TAGS = (); }; };
-		D187FEE91B934F1B0013372D /* pyani.png in Resources */ = {isa = PBXBuildFile; fileRef = D187FEE81B934F1B0013372D /* pyani.png */; settings = {ASSET_TAGS = (); }; };
+		D187FEE91B934F1B0013372D /* pyani.apng in Resources */ = {isa = PBXBuildFile; fileRef = D187FEE81B934F1B0013372D /* pyani.apng */; settings = {ASSET_TAGS = (); }; };
 		D190199A1B930E1600E16EDB /* NSBundle+APNGKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19019991B930E1600E16EDB /* NSBundle+APNGKitTests.swift */; settings = {ASSET_TAGS = (); }; };
-		D190199C1B932A8E00E16EDB /* elephant_apng@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D190199B1B932A8E00E16EDB /* elephant_apng@2x.png */; settings = {ASSET_TAGS = (); }; };
-		D190199E1B932A9600E16EDB /* elephant_apng@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D190199D1B932A9600E16EDB /* elephant_apng@2x.png */; settings = {ASSET_TAGS = (); }; };
-		D19019A01B93351400E16EDB /* elephant_apng.png in Resources */ = {isa = PBXBuildFile; fileRef = D190199F1B93351300E16EDB /* elephant_apng.png */; settings = {ASSET_TAGS = (); }; };
+		D190199C1B932A8E00E16EDB /* elephant_apng@2x.apng in Resources */ = {isa = PBXBuildFile; fileRef = D190199B1B932A8E00E16EDB /* elephant_apng@2x.apng */; settings = {ASSET_TAGS = (); }; };
+		D190199E1B932A9600E16EDB /* elephant_apng@2x.apng in Resources */ = {isa = PBXBuildFile; fileRef = D190199D1B932A9600E16EDB /* elephant_apng@2x.apng */; settings = {ASSET_TAGS = (); }; };
+		D19019A01B93351400E16EDB /* elephant_apng.apng in Resources */ = {isa = PBXBuildFile; fileRef = D190199F1B93351300E16EDB /* elephant_apng.apng */; settings = {ASSET_TAGS = (); }; };
 		D19019A21B9336B100E16EDB /* APNGImageCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19019A11B9336B100E16EDB /* APNGImageCacheTests.swift */; settings = {ASSET_TAGS = (); }; };
 		D199B1FB1B91445100BF8358 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D199B1FA1B91445100BF8358 /* AppDelegate.swift */; };
 		D199B2001B91445100BF8358 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D199B1FE1B91445100BF8358 /* Main.storyboard */; };
@@ -175,29 +175,29 @@
 		4B7D4ED81B955CBF005C0598 /* arm_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = arm_init.c; sourceTree = "<group>"; };
 		4BF022031B94442800F00CDE /* APNGImageViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageViewTests.swift; sourceTree = "<group>"; };
 		D127F62F1B91D9FD0095832A /* APNGImageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageTests.swift; sourceTree = "<group>"; };
-		D14B5B471B92B4A600F753E1 /* APNG-cube.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "APNG-cube.png"; path = "TestImages/APNG-cube.png"; sourceTree = SOURCE_ROOT; };
-		D14B5B481B92B4A600F753E1 /* APNG-Icos4D.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "APNG-Icos4D.png"; path = "TestImages/APNG-Icos4D.png"; sourceTree = SOURCE_ROOT; };
-		D14B5B491B92B4A600F753E1 /* elephant_apng.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = elephant_apng.png; path = TestImages/elephant_apng.png; sourceTree = SOURCE_ROOT; };
-		D14B5B4A1B92B4A600F753E1 /* pyani.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pyani.png; path = TestImages/pyani.png; sourceTree = SOURCE_ROOT; };
+		D14B5B471B92B4A600F753E1 /* APNG-cube.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = "APNG-cube.apng"; path = "TestImages/APNG-cube.apng"; sourceTree = SOURCE_ROOT; };
+		D14B5B481B92B4A600F753E1 /* APNG-Icos4D.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = "APNG-Icos4D.apng"; path = "TestImages/APNG-Icos4D.apng"; sourceTree = SOURCE_ROOT; };
+		D14B5B491B92B4A600F753E1 /* elephant_apng.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = elephant_apng.apng; path = TestImages/elephant_apng.apng; sourceTree = SOURCE_ROOT; };
+		D14B5B4A1B92B4A600F753E1 /* pyani.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = pyani.apng; path = TestImages/pyani.apng; sourceTree = SOURCE_ROOT; };
 		D14B5B4F1B92DE4300F753E1 /* APNGImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageCache.swift; sourceTree = "<group>"; };
-		D1614E1D1B91EDE200050104 /* ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ball.png; path = TestImages/ball.png; sourceTree = SOURCE_ROOT; };
-		D1614E1E1B91EDE200050104 /* over_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = over_background.png; path = TestImages/over_background.png; sourceTree = SOURCE_ROOT; };
-		D1614E1F1B91EDE200050104 /* over_none.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = over_none.png; path = TestImages/over_none.png; sourceTree = SOURCE_ROOT; };
-		D1614E201B91EDE200050104 /* over_previous.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = over_previous.png; path = TestImages/over_previous.png; sourceTree = SOURCE_ROOT; };
-		D1614E211B91EDE200050104 /* spinfox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spinfox.png; path = TestImages/spinfox.png; sourceTree = SOURCE_ROOT; };
-		D1614E281B91EDF800050104 /* ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ball.png; path = TestImages/ball.png; sourceTree = SOURCE_ROOT; };
-		D1614E291B91EDF800050104 /* over_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = over_background.png; path = TestImages/over_background.png; sourceTree = SOURCE_ROOT; };
-		D1614E2A1B91EDF800050104 /* over_none.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = over_none.png; path = TestImages/over_none.png; sourceTree = SOURCE_ROOT; };
-		D1614E2B1B91EDF800050104 /* over_previous.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = over_previous.png; path = TestImages/over_previous.png; sourceTree = SOURCE_ROOT; };
-		D1614E2C1B91EDF800050104 /* spinfox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spinfox.png; path = TestImages/spinfox.png; sourceTree = SOURCE_ROOT; };
-		D1614E321B91EE0000050104 /* minimalAPNG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = minimalAPNG.png; path = TestImages/minimalAPNG.png; sourceTree = SOURCE_ROOT; };
+		D1614E1D1B91EDE200050104 /* ball.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = ball.apng; path = TestImages/ball.apng; sourceTree = SOURCE_ROOT; };
+		D1614E1E1B91EDE200050104 /* over_background.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = over_background.apng; path = TestImages/over_background.apng; sourceTree = SOURCE_ROOT; };
+		D1614E1F1B91EDE200050104 /* over_none.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = over_none.apng; path = TestImages/over_none.apng; sourceTree = SOURCE_ROOT; };
+		D1614E201B91EDE200050104 /* over_previous.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = over_previous.apng; path = TestImages/over_previous.apng; sourceTree = SOURCE_ROOT; };
+		D1614E211B91EDE200050104 /* spinfox.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = spinfox.apng; path = TestImages/spinfox.apng; sourceTree = SOURCE_ROOT; };
+		D1614E281B91EDF800050104 /* ball.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = ball.apng; path = TestImages/ball.apng; sourceTree = SOURCE_ROOT; };
+		D1614E291B91EDF800050104 /* over_background.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = over_background.apng; path = TestImages/over_background.apng; sourceTree = SOURCE_ROOT; };
+		D1614E2A1B91EDF800050104 /* over_none.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = over_none.apng; path = TestImages/over_none.apng; sourceTree = SOURCE_ROOT; };
+		D1614E2B1B91EDF800050104 /* over_previous.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = over_previous.apng; path = TestImages/over_previous.apng; sourceTree = SOURCE_ROOT; };
+		D1614E2C1B91EDF800050104 /* spinfox.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = spinfox.apng; path = TestImages/spinfox.apng; sourceTree = SOURCE_ROOT; };
+		D1614E321B91EE0000050104 /* minimalAPNG.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = minimalAPNG.apng; path = TestImages/minimalAPNG.apng; sourceTree = SOURCE_ROOT; };
 		D1614E341B91F28300050104 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		D17398451B90A9B200913AEA /* APNGImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageView.swift; sourceTree = "<group>"; };
-		D187FEE81B934F1B0013372D /* pyani.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pyani.png; path = TestImages/pyani.png; sourceTree = SOURCE_ROOT; };
+		D187FEE81B934F1B0013372D /* pyani.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = pyani.apng; path = TestImages/pyani.apng; sourceTree = SOURCE_ROOT; };
 		D19019991B930E1600E16EDB /* NSBundle+APNGKitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSBundle+APNGKitTests.swift"; sourceTree = "<group>"; };
-		D190199B1B932A8E00E16EDB /* elephant_apng@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "elephant_apng@2x.png"; path = "TestImages/elephant_apng@2x.png"; sourceTree = SOURCE_ROOT; };
-		D190199D1B932A9600E16EDB /* elephant_apng@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "elephant_apng@2x.png"; path = "TestImages/elephant_apng@2x.png"; sourceTree = SOURCE_ROOT; };
-		D190199F1B93351300E16EDB /* elephant_apng.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = elephant_apng.png; path = TestImages/elephant_apng.png; sourceTree = SOURCE_ROOT; };
+		D190199B1B932A8E00E16EDB /* elephant_apng@2x.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = "elephant_apng@2x.apng"; path = "TestImages/elephant_apng@2x.apng"; sourceTree = SOURCE_ROOT; };
+		D190199D1B932A9600E16EDB /* elephant_apng@2x.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = "elephant_apng@2x.apng"; path = "TestImages/elephant_apng@2x.apng"; sourceTree = SOURCE_ROOT; };
+		D190199F1B93351300E16EDB /* elephant_apng.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = elephant_apng.apng; path = TestImages/elephant_apng.apng; sourceTree = SOURCE_ROOT; };
 		D19019A11B9336B100E16EDB /* APNGImageCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageCacheTests.swift; sourceTree = "<group>"; };
 		D199B1F81B91445100BF8358 /* APNGKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = APNGKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D199B1FA1B91445100BF8358 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -369,15 +369,15 @@
 		D1614E1C1B91EDD700050104 /* TestImages */ = {
 			isa = PBXGroup;
 			children = (
-				D187FEE81B934F1B0013372D /* pyani.png */,
-				D190199F1B93351300E16EDB /* elephant_apng.png */,
-				D190199B1B932A8E00E16EDB /* elephant_apng@2x.png */,
-				D1614E321B91EE0000050104 /* minimalAPNG.png */,
-				D1614E1D1B91EDE200050104 /* ball.png */,
-				D1614E1E1B91EDE200050104 /* over_background.png */,
-				D1614E1F1B91EDE200050104 /* over_none.png */,
-				D1614E201B91EDE200050104 /* over_previous.png */,
-				D1614E211B91EDE200050104 /* spinfox.png */,
+				D187FEE81B934F1B0013372D /* pyani.apng */,
+				D190199F1B93351300E16EDB /* elephant_apng.apng */,
+				D190199B1B932A8E00E16EDB /* elephant_apng@2x.apng */,
+				D1614E321B91EE0000050104 /* minimalAPNG.apng */,
+				D1614E1D1B91EDE200050104 /* ball.apng */,
+				D1614E1E1B91EDE200050104 /* over_background.apng */,
+				D1614E1F1B91EDE200050104 /* over_none.apng */,
+				D1614E201B91EDE200050104 /* over_previous.apng */,
+				D1614E211B91EDE200050104 /* spinfox.apng */,
 			);
 			name = TestImages;
 			sourceTree = "<group>";
@@ -385,16 +385,16 @@
 		D1614E271B91EDEB00050104 /* TestImages */ = {
 			isa = PBXGroup;
 			children = (
-				D190199D1B932A9600E16EDB /* elephant_apng@2x.png */,
-				D14B5B471B92B4A600F753E1 /* APNG-cube.png */,
-				D14B5B481B92B4A600F753E1 /* APNG-Icos4D.png */,
-				D14B5B491B92B4A600F753E1 /* elephant_apng.png */,
-				D14B5B4A1B92B4A600F753E1 /* pyani.png */,
-				D1614E281B91EDF800050104 /* ball.png */,
-				D1614E291B91EDF800050104 /* over_background.png */,
-				D1614E2A1B91EDF800050104 /* over_none.png */,
-				D1614E2B1B91EDF800050104 /* over_previous.png */,
-				D1614E2C1B91EDF800050104 /* spinfox.png */,
+				D190199D1B932A9600E16EDB /* elephant_apng@2x.apng */,
+				D14B5B471B92B4A600F753E1 /* APNG-cube.apng */,
+				D14B5B481B92B4A600F753E1 /* APNG-Icos4D.apng */,
+				D14B5B491B92B4A600F753E1 /* elephant_apng.apng */,
+				D14B5B4A1B92B4A600F753E1 /* pyani.apng */,
+				D1614E281B91EDF800050104 /* ball.apng */,
+				D1614E291B91EDF800050104 /* over_background.apng */,
+				D1614E2A1B91EDF800050104 /* over_none.apng */,
+				D1614E2B1B91EDF800050104 /* over_previous.apng */,
+				D1614E2C1B91EDF800050104 /* spinfox.apng */,
 			);
 			name = TestImages;
 			sourceTree = "<group>";
@@ -609,15 +609,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D1614E251B91EDE200050104 /* over_previous.png in Resources */,
-				D1614E331B91EE0000050104 /* minimalAPNG.png in Resources */,
-				D19019A01B93351400E16EDB /* elephant_apng.png in Resources */,
-				D1614E261B91EDE200050104 /* spinfox.png in Resources */,
-				D1614E221B91EDE200050104 /* ball.png in Resources */,
-				D1614E241B91EDE200050104 /* over_none.png in Resources */,
-				D1614E231B91EDE200050104 /* over_background.png in Resources */,
-				D187FEE91B934F1B0013372D /* pyani.png in Resources */,
-				D190199C1B932A8E00E16EDB /* elephant_apng@2x.png in Resources */,
+				D1614E251B91EDE200050104 /* over_previous.apng in Resources */,
+				D1614E331B91EE0000050104 /* minimalAPNG.apng in Resources */,
+				D19019A01B93351400E16EDB /* elephant_apng.apng in Resources */,
+				D1614E261B91EDE200050104 /* spinfox.apng in Resources */,
+				D1614E221B91EDE200050104 /* ball.apng in Resources */,
+				D1614E241B91EDE200050104 /* over_none.apng in Resources */,
+				D1614E231B91EDE200050104 /* over_background.apng in Resources */,
+				D187FEE91B934F1B0013372D /* pyani.apng in Resources */,
+				D190199C1B932A8E00E16EDB /* elephant_apng@2x.apng in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -626,18 +626,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				D199B2051B91445100BF8358 /* LaunchScreen.storyboard in Resources */,
-				D14B5B4E1B92B4A600F753E1 /* pyani.png in Resources */,
-				D1614E2F1B91EDF800050104 /* over_none.png in Resources */,
-				D14B5B4B1B92B4A600F753E1 /* APNG-cube.png in Resources */,
-				D14B5B4D1B92B4A600F753E1 /* elephant_apng.png in Resources */,
-				D190199E1B932A9600E16EDB /* elephant_apng@2x.png in Resources */,
-				D14B5B4C1B92B4A600F753E1 /* APNG-Icos4D.png in Resources */,
+				D14B5B4E1B92B4A600F753E1 /* pyani.apng in Resources */,
+				D1614E2F1B91EDF800050104 /* over_none.apng in Resources */,
+				D14B5B4B1B92B4A600F753E1 /* APNG-cube.apng in Resources */,
+				D14B5B4D1B92B4A600F753E1 /* elephant_apng.apng in Resources */,
+				D190199E1B932A9600E16EDB /* elephant_apng@2x.apng in Resources */,
+				D14B5B4C1B92B4A600F753E1 /* APNG-Icos4D.apng in Resources */,
 				D199B2021B91445100BF8358 /* Assets.xcassets in Resources */,
-				D1614E2D1B91EDF800050104 /* ball.png in Resources */,
+				D1614E2D1B91EDF800050104 /* ball.apng in Resources */,
 				D199B2001B91445100BF8358 /* Main.storyboard in Resources */,
-				D1614E311B91EDF800050104 /* spinfox.png in Resources */,
-				D1614E301B91EDF800050104 /* over_previous.png in Resources */,
-				D1614E2E1B91EDF800050104 /* over_background.png in Resources */,
+				D1614E311B91EDF800050104 /* spinfox.apng in Resources */,
+				D1614E301B91EDF800050104 /* over_previous.apng in Resources */,
+				D1614E2E1B91EDF800050104 /* over_background.apng in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

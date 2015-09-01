@@ -26,7 +26,7 @@ class DisassemblerTests: XCTestCase {
         super.tearDown()
     }
     
-    func testCheckFormat() {
+    func testCheckForamat() {
         XCTempAssertNoThrowError("APNG signature should be the same as a regular PNG signature") { () -> () in
             try self.disassembler.checkFormat()
         }
@@ -60,7 +60,7 @@ class DisassemblerTests: XCTestCase {
     }
     
     func testOverBlendDecode() {
-        let data = NSData(contentsOfFile: NSBundle.testBundle.pathForResource("over_previous", ofType: "png")!)!
+        let data = NSData(contentsOfFile: NSBundle.testBundle.pathForResource("over_previous", ofType: "apng")!)!
         disassembler = Disassembler(data: data)
         
         var apng: APNGImage! = nil

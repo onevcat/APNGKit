@@ -16,4 +16,4 @@ let greenDotPNGData = NSData(bytes: &greenDotPNG, length: greenDotPNG.count)
 
 let signatureOfPNG: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]
 
-let ballAPNGData = NSData(contentsOfFile: NSBundle(forClass: APNGKitTests.self).pathForResource("ball", ofType: "png")!)!
+let ballAPNGData = NSData(contentsOfFile: NSBundle.testBundle.pathForResource("ball", ofType: "apng")!)!

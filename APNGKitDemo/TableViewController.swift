@@ -21,7 +21,7 @@ class TableViewController: UITableViewController {
         if let info = NSBundle.mainBundle().objectForInfoDictionaryKey("InitImages") as? [Dictionary<String, String>] {
             for dic in info {
                 let name = dic["name"]
-                if let path = NSBundle.mainBundle().pathForResource(name, ofType: "png"),
+                if let path = NSBundle.mainBundle().pathForResource(name, ofType: "apng"),
                     des = dic["description"] {
                     images[0].append(Image(path: path, description: des))
                 }

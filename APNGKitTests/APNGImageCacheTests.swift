@@ -25,7 +25,7 @@ class APNGImageCacheTests: XCTestCase {
     }
     
     func testImageShouldBeCached() {
-        let key = NSBundle.testBundle.pathForResource("ball", ofType: "png")
+        let key = NSBundle.testBundle.pathForResource("ball", ofType: "apng")
         XCTAssertNil(APNGCache.defaultCache.imageForKey(key!), "The ball image should not be cached in memory.")
         
         let image = APNGImage(named: "ball")
@@ -34,7 +34,7 @@ class APNGImageCacheTests: XCTestCase {
     }
     
     func testImageShouldNotBeCache() {
-        let key = NSBundle.testBundle.pathForResource("ball", ofType: "png")
+        let key = NSBundle.testBundle.pathForResource("ball", ofType: "apng")
         XCTAssertNil(APNGCache.defaultCache.imageForKey(key!), "The ball image should not be cached in memory.")
 
         let image = APNGImage(contentsOfFile: key!)
