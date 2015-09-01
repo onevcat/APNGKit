@@ -44,6 +44,9 @@
 		4B6B69151B8EB98300C4868A /* Reader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69141B8EB98300C4868A /* Reader.swift */; settings = {ASSET_TAGS = (); }; };
 		4B6B69171B8EBFC700C4868A /* ReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69161B8EBFC700C4868A /* ReaderTests.swift */; settings = {ASSET_TAGS = (); }; };
 		4B6B69191B8ED1C300C4868A /* LibPNGTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69181B8ED1C300C4868A /* LibPNGTests.swift */; settings = {ASSET_TAGS = (); }; };
+		4B7D4ED61B9559BF005C0598 /* filter_neon_intrinsics.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D4ED41B9559BF005C0598 /* filter_neon_intrinsics.c */; settings = {ASSET_TAGS = (); }; };
+		4B7D4ED71B9559BF005C0598 /* filter_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D4ED51B9559BF005C0598 /* filter_neon.S */; settings = {ASSET_TAGS = (); }; };
+		4B7D4ED91B955CBF005C0598 /* arm_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D4ED81B955CBF005C0598 /* arm_init.c */; settings = {ASSET_TAGS = (); }; };
 		4BF022041B94442800F00CDE /* APNGImageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF022031B94442800F00CDE /* APNGImageViewTests.swift */; settings = {ASSET_TAGS = (); }; };
 		D127F6301B91D9FD0095832A /* APNGImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D127F62F1B91D9FD0095832A /* APNGImageTests.swift */; settings = {ASSET_TAGS = (); }; };
 		D14B5B4B1B92B4A600F753E1 /* APNG-cube.png in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B471B92B4A600F753E1 /* APNG-cube.png */; settings = {ASSET_TAGS = (); }; };
@@ -167,6 +170,9 @@
 		4B6B69141B8EB98300C4868A /* Reader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reader.swift; sourceTree = "<group>"; };
 		4B6B69161B8EBFC700C4868A /* ReaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderTests.swift; sourceTree = "<group>"; };
 		4B6B69181B8ED1C300C4868A /* LibPNGTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibPNGTests.swift; sourceTree = "<group>"; };
+		4B7D4ED41B9559BF005C0598 /* filter_neon_intrinsics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = filter_neon_intrinsics.c; sourceTree = "<group>"; };
+		4B7D4ED51B9559BF005C0598 /* filter_neon.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = filter_neon.S; sourceTree = "<group>"; };
+		4B7D4ED81B955CBF005C0598 /* arm_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = arm_init.c; sourceTree = "<group>"; };
 		4BF022031B94442800F00CDE /* APNGImageViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageViewTests.swift; sourceTree = "<group>"; };
 		D127F62F1B91D9FD0095832A /* APNGImageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageTests.swift; sourceTree = "<group>"; };
 		D14B5B471B92B4A600F753E1 /* APNG-cube.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "APNG-cube.png"; path = "TestImages/APNG-cube.png"; sourceTree = SOURCE_ROOT; };
@@ -313,6 +319,9 @@
 			isa = PBXGroup;
 			children = (
 				4B6B690E1B8EB3B100C4868A /* lib */,
+				4B7D4ED41B9559BF005C0598 /* filter_neon_intrinsics.c */,
+				4B7D4ED51B9559BF005C0598 /* filter_neon.S */,
+				4B7D4ED81B955CBF005C0598 /* arm_init.c */,
 				4B6B68E01B8EB33100C4868A /* png.c */,
 				4B6B68E11B8EB33100C4868A /* png.h */,
 				4B6B68E21B8EB33100C4868A /* pngconf.h */,
@@ -690,9 +699,12 @@
 				4B6B690A1B8EB33100C4868A /* pngwtran.c in Sources */,
 				4B6B68FA1B8EB33100C4868A /* pngerror.c in Sources */,
 				4B6B68FE1B8EB33100C4868A /* pngmem.c in Sources */,
+				4B7D4ED91B955CBF005C0598 /* arm_init.c in Sources */,
+				4B7D4ED71B9559BF005C0598 /* filter_neon.S in Sources */,
 				D17398461B90A9B200913AEA /* APNGImageView.swift in Sources */,
 				4B6B69021B8EB33100C4868A /* pngrio.c in Sources */,
 				D14B5B501B92DE4300F753E1 /* APNGImageCache.swift in Sources */,
+				4B7D4ED61B9559BF005C0598 /* filter_neon_intrinsics.c in Sources */,
 				4B6B68F61B8EB33100C4868A /* png.c in Sources */,
 				4B6B69081B8EB33100C4868A /* pngwio.c in Sources */,
 				4B6B69051B8EB33100C4868A /* pngset.c in Sources */,
@@ -897,6 +909,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = APNGKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -915,6 +928,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = APNGKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
