@@ -14,22 +14,28 @@ class DetailViewController: UIViewController {
     var image: Image?
     
     @IBOutlet weak var textLabel: UILabel!
+    @IBOutlet weak var timingLabel: UILabel!
+    
     @IBOutlet weak var imageView: APNGImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
         if let path = image?.path {
+            
+            let start = CACurrentMediaTime()
             let apngImage: APNGImage?
             if path.containsString("@2x") {
                 apngImage = APNGImage(named: (path as NSString).lastPathComponent)
             } else {
                 apngImage = APNGImage(contentsOfFile: path, saveToCache: true)
             }
+            let end = CACurrentMediaTime()
             
             imageView.image = apngImage
             imageView.startAnimating()
-                
+            
+            timingLabel.text = "Loaded in: \((end - start) * 1000)ms"
             textLabel.text = image!.description
                 
             title = (path as NSString).lastPathComponent

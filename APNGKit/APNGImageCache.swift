@@ -8,11 +8,11 @@
 
 import Foundation
 
-class APNGCache {
+public class APNGCache {
     
     private static let defaultCacheInstance = APNGCache()
     
-    class var defaultCache: APNGCache {
+    public class var defaultCache: APNGCache {
         return defaultCacheInstance
     }
     
@@ -44,7 +44,7 @@ class APNGCache {
         return cacheObject.objectForKey(key) as? APNGImage
     }
     
-    @objc func clearMemoryCache() {
+    @objc public func clearMemoryCache() {
         // The cache will not work once it receives a memory warning from iOS 8.
         // It seems an intended behaviours to reduce memory pressure.
         // See http://stackoverflow.com/questions/27289360/nscache-objectforkey-always-return-nil-after-memory-warning-on-ios-8

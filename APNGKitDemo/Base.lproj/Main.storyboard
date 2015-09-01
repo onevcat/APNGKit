@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8187.4" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="jLs-K8-13n">
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8151.3"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -33,6 +34,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="APNGKit" id="SMS-j7-Pa8">
+                        <barButtonItem key="leftBarButtonItem" title="Clear Cache" id="8gT-ZY-DiJ">
+                            <connections>
+                                <action selector="clearCache:" destination="WPS-Xv-atT" id="P1c-Be-fck"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="zE8-Aq-GAX">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
@@ -83,19 +89,28 @@
                                     <constraint firstAttribute="width" constant="250" id="d2P-nY-5oj"/>
                                 </constraints>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dad-BJ-Xc0">
-                                <rect key="frame" x="20" y="361" width="560" height="15"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dad-BJ-Xc0">
+                                <rect key="frame" x="20" y="352" width="560" height="0.0"/>
                                 <fontDescription key="fontDescription" type="system" weight="thin" pointSize="12"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="esm-b5-QSO" userLabel="Timing">
+                                <rect key="frame" x="20" y="356" width="560" height="0.0"/>
+                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="12"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="esm-b5-QSO" firstAttribute="top" secondItem="Dad-BJ-Xc0" secondAttribute="bottom" constant="4" id="8Ou-tR-xdh"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="esm-b5-QSO" secondAttribute="trailing" id="Gez-xp-Aec"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Dad-BJ-Xc0" secondAttribute="trailing" id="SPd-u8-GdM"/>
                             <constraint firstItem="5IW-Oc-eee" firstAttribute="top" secondItem="ihd-sQ-Fxg" secondAttribute="bottom" constant="34" id="dIj-Lb-eMD"/>
-                            <constraint firstItem="Dad-BJ-Xc0" firstAttribute="top" secondItem="5IW-Oc-eee" secondAttribute="bottom" constant="13" id="mWJ-0m-PhY"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="esm-b5-QSO" secondAttribute="leading" id="ddX-XO-7jn"/>
+                            <constraint firstItem="Dad-BJ-Xc0" firstAttribute="top" secondItem="5IW-Oc-eee" secondAttribute="bottom" constant="4" id="mWJ-0m-PhY"/>
                             <constraint firstItem="5IW-Oc-eee" firstAttribute="centerX" secondItem="bMJ-ec-MPI" secondAttribute="centerX" id="mfA-05-cRu"/>
                             <constraint firstAttribute="leadingMargin" secondItem="Dad-BJ-Xc0" secondAttribute="leading" id="uxw-JH-8pR"/>
                         </constraints>
@@ -103,6 +118,7 @@
                     <connections>
                         <outlet property="imageView" destination="5IW-Oc-eee" id="Tmd-M5-S4W"/>
                         <outlet property="textLabel" destination="Dad-BJ-Xc0" id="rea-jO-Bx7"/>
+                        <outlet property="timingLabel" destination="esm-b5-QSO" id="ccf-42-F7e"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ehF-EY-Fww" userLabel="First Responder" sceneMemberID="firstResponder"/>

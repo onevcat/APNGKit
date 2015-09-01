@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import APNGKit
 
 struct Image {
     let path: String
@@ -37,6 +38,12 @@ class TableViewController: UITableViewController {
         }
     }
 
+    @IBAction func clearCache(sender: AnyObject) {
+        // Normally, you do not need to call this. 
+        // The cached memory will be released when receiving a memory warning or switched to background.
+        APNGCache.defaultCache.clearMemoryCache()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
