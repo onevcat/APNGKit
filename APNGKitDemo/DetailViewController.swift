@@ -24,7 +24,7 @@ class DetailViewController: UIViewController {
             if path.containsString("@2x") {
                 apngImage = APNGImage(named: (path as NSString).lastPathComponent)
             } else {
-                apngImage = APNGImage(data: NSData(contentsOfFile: path)!)
+                apngImage = APNGImage(contentsOfFile: path, saveToCache: true)
             }
             
             imageView.image = apngImage

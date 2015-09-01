@@ -83,7 +83,11 @@ public class APNGImage {
     - note: This method will cache the result image in APNGKit cache system to improve performance. 
             Images in Asset Category is not supported, you can only load files from the app's main bundle.
     
-    - parameter imageName: The name of the file. If this is the first time the image is being loaded, 
+    - note: The image file should not be compressed by Xcode. By default, Xcode will compress PNG files in the app bundle by using a private pngcrush 
+            version, which will opt-out all frames data except the first frame from the APNG image. You should change your APNG file extension to "apng" 
+            (or anything besides "png") or just turn off the PNG compression in Xcode build settings to avoid this.
+    
+    - parameter imageName: The name of the file. If this is the first time the image is being loaded,
     the method looks for an image with the specified name in the application’s main bundle.
     
     - returns: The image object for the specified file, or nil if the method could not find the specified image.
@@ -139,8 +143,12 @@ public class APNGImage {
     Creates and returns an image object by loading the image data from the file at the specified path.
     
     - note: This method does not cache the image object by default. 
-            But it is recommended to enable the cache to improve performance, 
+            But it is recommended to enable the cache to improve performance,
             especially if you have multiple same APNG image to show at the same time.
+    
+    - note: The image file should not be compressed by Xcode. By default, Xcode will compress PNG files in the app bundle by using a private pngcrush
+            version, which will opt-out all frames data except the first frame from the APNG image. You should change your APNG file extension to "apng"
+            (or anything besides "png") or just turn off the PNG compression in Xcode build settings to avoid this.
     
     - parameter path:        The path to the file.
     - parameter saveToCache: Should the result image saved to APNGKit caches. Default is false.
