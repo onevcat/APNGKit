@@ -2,7 +2,7 @@
 
 require 'FileUtils'
 
-exit unless File.directory?("./libpng-apng/")
+exit unless File.directory?("./libpng-apng/") && Dir.entries('./libpng-apng/').include?("png.c")
 
 files = ["png.c", "png.h", "pngconf.h", "pngdebug.h", "pngerror.c", "pngget.c", "pnginfo.h", "pngmem.c", "pngpread.c", "pngpriv.h", "pngread.c", "pngrio.c", "pngrtran.c", "pngrutil.c", "pngset.c", "pngstruct.h", "pngtrans.c", "pngwio.c", "pngwrite.c", "pngwtran.c", "pngwutil.c", "arm/filter_neon_intrinsics.c", "arm/filter_neon.S", "arm/arm_init.c"]
 
