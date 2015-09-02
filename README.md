@@ -1,3 +1,5 @@
+# APNGKit
+
 APNGKit is a high performance framework for loading and displaying APNG images in iOS. It's built on top of a [modified version of libpng](https://github.com/onevcat/libpng) with APNG support and written in Swift. High-level abstractions of Cocoa Touch is used for a delightful API. Since that, you will feel at home and joy when using APNGKit to play with images in APNG format.
 
 ## APNG, what and why?
