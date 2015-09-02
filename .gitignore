@@ -147,3 +147,5 @@ Carthage/Build
 
 ### Objective-C Patch ###
 *.xcscmblueprint
+
+Reference/
