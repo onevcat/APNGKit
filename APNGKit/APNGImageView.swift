@@ -100,18 +100,6 @@ public class APNGImageView: UIView {
     deinit {
         stopAnimating()
     }
-    
-    /**
-    This method will be called by system when this view is removed from windown (or its superview)
-    The animation is stopped in this method, that means you cannot play the animation offscreen.
-    */
-    override public func didMoveToWindow() {
-        //TODO: Change to globle timer later to solve possible retain cycle from offscreen animation.
-        super.didMoveToWindow()
-        if window == nil {
-            stopAnimating()
-        }
-    }
 
     /**
     Initialize an APNG image view with a decoder.
@@ -145,7 +133,9 @@ public class APNGImageView: UIView {
         }
         
         isAnimating = true
-        timer = CADisplayLink(target: self, selector: "tick:")
+        timer = CADisplayLink.apng_displayLink({ [weak self] (displayLink) -> () in
+            self?.tick(displayLink)
+        })
         timer?.addToRunLoop(mainRunLoop, forMode: NSDefaultRunLoopMode)
     }
     
@@ -238,4 +228,39 @@ public class APNGImageView: UIView {
         }
         
     }
+}
+
+class Block<T> {
+    let f : T
+    init (_ f: T) { self.f = f }
+}
+
+private var apng_userInfoKey: Void?
+extension CADisplayLink {
+    
+    public var apng_userInfo: AnyObject? {
+        get {
+            return objc_getAssociatedObject(self, &apng_userInfoKey)
+        }
+    }
+    
+    private func apng_setUserInfo(userInfo: AnyObject?) {
+        objc_setAssociatedObject(self, &apng_userInfoKey, userInfo, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+    
+    static func apng_displayLink(block: (CADisplayLink) -> ()) -> CADisplayLink
+    {
+        let displayLink = CADisplayLink(target: self, selector: "apng_blockInvoke:")
+        
+        let block = Block(block)
+        displayLink.apng_setUserInfo(block)
+        return displayLink
+    }
+    
+    static func apng_blockInvoke(sender: CADisplayLink) {
+        if let block = sender.apng_userInfo as? Block<(CADisplayLink)->()> {
+            block.f(sender)
+        }
+    }
+    
 }
