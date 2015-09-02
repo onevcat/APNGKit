@@ -1,0 +1,2 @@
+special-vendored-path/* linguist-vendored
+APNGKit/libpng-apng linguist-vendored=true
