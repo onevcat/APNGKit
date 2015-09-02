@@ -32,7 +32,7 @@ public let RepeatForever = -1
 /// Represents a decoded APNG image. 
 /// You can use instance of this class to get image information or display it on screen with `APNGImageView`.
 /// `APNGImage` can hold an APNG image or a regular PNG image. If latter, there will be only one frame in the image.
-public class APNGImage {
+public class APNGImage: NSObject { // For ObjC compatibility
     
     /// Total duration of the animation
     public var duration: NSTimeInterval {
@@ -209,8 +209,8 @@ public class APNGImage {
     }
 }
 
-extension APNGImage: CustomStringConvertible {
-    public var description: String {
+extension APNGImage {
+    override public var description: String {
         var s = "<APNGImage: \(unsafeAddressOf(self))> size: \(size), frameCount: \(frames.count), repeatCount: \(repeatCount)\n"
         s += "["
         for f in frames {
