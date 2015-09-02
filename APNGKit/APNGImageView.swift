@@ -95,6 +95,7 @@ public class APNGImageView: UIView {
         
         backgroundColor = UIColor.clearColor()
         userInteractionEnabled = false
+        updateContents(image?.frames.first?.image)
     }
     
     deinit {
