@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import Foundation
+import UIKit
 
 /// Cache for APNGKit. It will hold apng images initialized from specified init methods.
 /// If the same file is requested later, APNGKit will look it up in this cache first to improve performance.
