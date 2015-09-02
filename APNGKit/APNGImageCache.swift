@@ -41,7 +41,13 @@ public class APNGCache {
     let cacheObject = NSCache()
     
     init() {
-        cacheObject.totalCostLimit = 0
+        // Limit the cache to prevent memory warning as possible.
+        // The cache will be invalidated once a memory warning received, 
+        // so we need to keep cache in limitation and try to not trigger the memory warning.
+        // See clearMemoryCache() for more.
+        cacheObject.totalCostLimit = 100 * 1024 * 1024 //100 MB
+        cacheObject.countLimit = 15
+        
         cacheObject.name = "com.onevcat.APNGKit.cache"
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "clearMemoryCache",
@@ -99,6 +105,7 @@ extension APNGImage {
         var s = 0
         for f in frames {
             if let image = f.image {
+                // Totol bytes
                 s += Int(image.size.height * image.size.width * image.scale * image.scale * CGFloat(self.bitDepth))
             }
         }
