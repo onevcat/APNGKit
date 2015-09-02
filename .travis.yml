@@ -3,3 +3,4 @@ os: osx
 osx_image: xcode7
 xcode_project: APNGKit.xcodeproj
 xcode_scheme: APNGKit
+ 
