@@ -4,7 +4,7 @@ osx_image: xcode7
 xcode_project: APNGKit.xcodeproj
 xcode_scheme: APNGKit
 
-script: xctool -project APNGKit.xcodeproj -scheme APNGKit test CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+script: xcodebuild -project APNGKit.xcodeproj -scheme APNGKit -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 6,OS=latest' test
 
 git:
   submodules: false
