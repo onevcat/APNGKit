@@ -231,7 +231,7 @@ public class APNGImageView: UIView {
     }
 }
 
-class Block<T> {
+private class Block<T> {
     let f : T
     init (_ f: T) { self.f = f }
 }
@@ -239,13 +239,13 @@ class Block<T> {
 private var apng_userInfoKey: Void?
 extension CADisplayLink {
     
-    public var apng_userInfo: AnyObject? {
+    var apng_userInfo: AnyObject? {
         get {
             return objc_getAssociatedObject(self, &apng_userInfoKey)
         }
     }
     
-    private func apng_setUserInfo(userInfo: AnyObject?) {
+    func apng_setUserInfo(userInfo: AnyObject?) {
         objc_setAssociatedObject(self, &apng_userInfoKey, userInfo, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
