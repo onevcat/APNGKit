@@ -20,7 +20,7 @@ The [Animated Portable Network Graphics (APNG)](https://en.wikipedia.org/wiki/AP
 Talk is cheap, show me the image. You can click on the image to see how it looks like when animating.
 
 <p align="center">
-<a href="http://apng.onevcat.com/demo"><img src="https://raw.githubusercontent.com/onevcat/APNGKit/master/images/demo.png" alt="APNGKit Demo" title="APNGKit Demo"/></a>
+<a href="http://apng.onevcat.com/demo" target="_blank"><img src="https://raw.githubusercontent.com/onevcat/APNGKit/master/images/demo.png" alt="APNGKit Demo" title="APNGKit Demo"/></a>
 </p>
 
 That's cool, APNG is much better! But wait...why didn't I even not have heard about APNG before? It is not a popular format, why should I use it in my next great iOS app?
