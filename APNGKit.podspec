@@ -19,7 +19,8 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = "8.0"
   s.source       = { :git => "https://github.com/onevcat/APNGKit.git", :tag => s.version }
   
-  s.source_files  = "APNGKit/*.{h, swift}", "APNGKit/libpng-apng/*.{h,c,S}"
+  s.source_files  = "APNGKit/*.{h,swift}", "APNGKit/libpng-apng/*.{h,c,S}"
+  s.public_header_files = ["APNGKit/APNGKit.h", "APNGKit/libpng-apng/png.h", "APNGKit/libpng-apng/pnglibconf.h", "APNGKit/libpng-apng/pngconf.h"]
   s.library   = "z"
 
 end
