@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/onevcat/APNGKit/master/images/logo.png" alt="APNGKit" title="APNGKit" width="557"/>
+<img src="https://raw.githubusercontent.com/onevcat/APNGKit/master/images/logo.png" alt="APNGKit" title="APNGKit" width="1000"/>
 </p>
 
 <p align="center">
@@ -25,7 +25,7 @@ Talk is cheap, show me the image. You can click on the image to see how it looks
 
 That's cool, APNG is much better! But wait...why didn't I even not have heard about APNG before? It is not a popular format, why should I use it in my next great iOS app?
 
-Good question! APNG is an excellent extension for regular PNG, and it is also very simple to use and has no conflicting with current PNG standard (It consists a standard PNG header, so if your platform does not support APNG, it will be recognized as a normal PNG with its first frame being displayed as a static image). But unfortunately, it is a rebel format so that it is not accepted by the PNG group. However, it is accepted by many vendors and is even mentioned in [W3C Standards](http://www.w3.org/TR/html5/embedded-content-0.html#the-img-element). There is another format called MNG (Multiple-image Network Graphics), which is created by the same team as PNG. It is a comprehensive format, but very very very complex. It is so complex that despite being a "standard", it was almost universally rejected. There is only one "popular" browser called [Konqueror](https://konqueror.org)(at least I have used it before when I was in high school) supports MNG, which is really a sad but reasonable story.
+Good question! APNG is an excellent extension for regular PNG, and it is also very simple to use and has no conflicting with current PNG standard (It consists a standard PNG header, so if your platform does not support APNG, it will be recognized as a normal PNG with its first frame being displayed as a static image). But unfortunately, it is a rebel format so that it is not accepted by the PNG group. However, it is accepted by many vendors and is even mentioned in [W3C Standards](http://www.w3.org/TR/html5/embedded-content-0.html#the-img-element). There is another format called MNG (Multiple-image Network Graphics), which is created by the same team as PNG. It is a comprehensive format, but very very very (重要的事要说三遍) complex. It is so complex that despite being a "standard", it was almost universally rejected. There is only one "popular" browser called [Konqueror](https://konqueror.org)(at least I have used it before when I was in high school) supports MNG, which is really a sad but reasonable story.
 
 Even APNG is not accepted currently, we continue to see the widespread implementation of it. Apple recently supported APNG in both [desktop and mobile Safari](http://www.macrumors.com/2014/09/28/ios-8-safari-supports-animated-png-images/). [Microsoft Edge](https://wpdev.uservoice.com/forums/257854-microsoft-edge-developer/suggestions/6513393-apng-animated-png-images-support-firefox-and-sa) and [Chrome](https://code.google.com/p/chromium/issues/detail?id=437662) are also considering to add APNG support since it is already officially added in [WebKit core](https://bugs.webkit.org/show_bug.cgi?id=17022).
 
@@ -220,6 +220,17 @@ APNGKit is built on top of a [modified version of libpng](https://github.com/one
 The demo images in README file is stolen from ICS Lab, you can find the original post [here](http://ics-web.jp/lab/archives/2441).
 
 The logo of this APNGKit is designed by [Rain (yuchen liu)](https://dribbble.com/yuchenliu), who is an brilliant designer as well as a skillful coder.
+
+## Reference
+
+If you are interested in APNG, you can know more about it from the links below (some of them are written in Chinese).
+
+* [APNG Specification](https://wiki.mozilla.org/APNG_Specification)
+* [APNG - Wikipedia](https://www.google.co.jp/url?sa=t&rct=j&q=&esrc=s&source=web&cd=2&cad=rja&uact=8&ved=0CCkQFjABahUKEwjYxdSQjtrHAhWIn5QKHVDkAHs&url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FAPNG&usg=AFQjCNF2CJ-OePHGKIhR14TdrCuEn9nn1A&sig2=188CAiDHZv0FVn7QVnhVVQ)
+* [小牛犊 APNG 力挫老古董 MNG](http://blog.wuxinan.net/archives/313)
+* [再回眸，丽影如初](http://isux.tencent.com/introduction-of-apng.html)
+
+APNGKit can only load and display APNG image now. The creating feature will be developed later. If you need to create APNG file now, I suggest to use [iSparta](http://isparta.github.io) or [apngasm](http://apngasm.sourceforge.net) instead for now.
 
 ## License
 
