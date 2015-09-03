@@ -1,5 +1,3 @@
-# APNGKit
-
 <p align="center">
 <img src="https://raw.githubusercontent.com/onevcat/APNGKit/master/images/logo.png" alt="APNGKit" title="APNGKit" width="557"/>
 </p>
