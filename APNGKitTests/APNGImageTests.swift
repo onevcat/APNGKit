@@ -145,4 +145,38 @@ class APNGImageTests: XCTestCase {
         XCTAssertNotNil(notHiddenImage, "image should be able to init")
         XCTAssertFalse(notHiddenImage!.firstFrameHidden, "The first frame should not be hidden.")
     }
+    
+    func testNormalPNG() {
+        let image = APNGImage(named: "demo")
+        XCTAssertNotNil(image, "Normal image should be created.")
+        XCTAssertEqual(image?.frames.count, 1, "There should be only one frame")
+        XCTAssertNotNil(image?.frames.first?.image,"The image of frame should not be nil")
+        XCTAssertEqual(image?.frames.first?.duration, NSTimeInterval.infinity, "And this frame lasts forever.")
+        XCTAssertFalse(image!.frames.first!.image!.isEmpty(), "This frame should not be an empty frame.")
+    }
+}
+
+extension UIImage {
+    func isEmpty() -> Bool {
+        let cgImage = self.CGImage
+        
+        let w = CGImageGetWidth(cgImage)
+        let h = CGImageGetHeight(cgImage)
+        
+        let data = UnsafeMutablePointer<UInt8>.alloc(w * h * 4)
+        let aaa = CGImageGetBitsPerComponent(cgImage)
+        let color = CGImageGetColorSpace(cgImage)
+        
+        let context = CGBitmapContextCreate(data, w, h, aaa, w * 4, color, CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue).rawValue)
+        CGContextSetBlendMode(context, CGBlendMode.Copy);
+        CGContextDrawImage(context, CGRectMake(0, 0, CGFloat(w), CGFloat(h)), cgImage);
+
+        for i in 0 ..< w * h {
+            if data.advancedBy(i).memory != 0 {
+                print("\(i):\(data.advancedBy(i).memory)")
+                return false
+            }
+        }
+        return true
+    }
 }
