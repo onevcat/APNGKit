@@ -16,6 +16,7 @@
 		4B2132101B8EF4D500A39502 /* APNGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B21320F1B8EF4D500A39502 /* APNGImage.swift */; settings = {ASSET_TAGS = (); }; };
 		4B2132121B8EF94F00A39502 /* DisassemblerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2132111B8EF94F00A39502 /* DisassemblerTests.swift */; settings = {ASSET_TAGS = (); }; };
 		4B2132141B8EFA7900A39502 /* XCTAssertSwiftError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2132131B8EFA7900A39502 /* XCTAssertSwiftError.swift */; settings = {ASSET_TAGS = (); }; };
+		4B5DF6841B99718C00C4D421 /* demo.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B5DF6831B99718C00C4D421 /* demo.png */; settings = {ASSET_TAGS = (); }; };
 		4B6B68F61B8EB33100C4868A /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68E01B8EB33100C4868A /* png.c */; settings = {ASSET_TAGS = (); }; };
 		4B6B68F71B8EB33100C4868A /* png.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B68E11B8EB33100C4868A /* png.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B6B68F81B8EB33100C4868A /* pngconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B68E21B8EB33100C4868A /* pngconf.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -142,6 +143,7 @@
 		4B21320F1B8EF4D500A39502 /* APNGImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImage.swift; sourceTree = "<group>"; };
 		4B2132111B8EF94F00A39502 /* DisassemblerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisassemblerTests.swift; sourceTree = "<group>"; };
 		4B2132131B8EFA7900A39502 /* XCTAssertSwiftError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCTAssertSwiftError.swift; sourceTree = "<group>"; };
+		4B5DF6831B99718C00C4D421 /* demo.png */ = {isa = PBXFileReference; explicitFileType = compiled; name = demo.png; path = images/demo.png; sourceTree = SOURCE_ROOT; };
 		4B6B68E01B8EB33100C4868A /* png.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = png.c; sourceTree = "<group>"; };
 		4B6B68E11B8EB33100C4868A /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
 		4B6B68E21B8EB33100C4868A /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
@@ -369,6 +371,7 @@
 		D1614E1C1B91EDD700050104 /* TestImages */ = {
 			isa = PBXGroup;
 			children = (
+				4B5DF6831B99718C00C4D421 /* demo.png */,
 				D187FEE81B934F1B0013372D /* pyani.apng */,
 				D190199F1B93351300E16EDB /* elephant_apng.apng */,
 				D190199B1B932A8E00E16EDB /* elephant_apng@2x.apng */,
@@ -615,6 +618,7 @@
 				D1614E261B91EDE200050104 /* spinfox.apng in Resources */,
 				D1614E221B91EDE200050104 /* ball.apng in Resources */,
 				D1614E241B91EDE200050104 /* over_none.apng in Resources */,
+				4B5DF6841B99718C00C4D421 /* demo.png in Resources */,
 				D1614E231B91EDE200050104 /* over_background.apng in Resources */,
 				D187FEE91B934F1B0013372D /* pyani.apng in Resources */,
 				D190199C1B932A8E00E16EDB /* elephant_apng@2x.apng in Resources */,
@@ -829,7 +833,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 25;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -877,7 +881,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 25;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -905,7 +909,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 23;
+				DYLIB_CURRENT_VERSION = 25;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = APNGKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -924,7 +928,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 23;
+				DYLIB_CURRENT_VERSION = 25;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = APNGKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
