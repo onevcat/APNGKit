@@ -153,7 +153,7 @@ public struct Disassembler {
             png_set_gray_to_rgb(pngPointer);
         }
         
-        if colorType == PNG_COLOR_TYPE_RGB || colorType == PNG_COLOR_TYPE_GRAY {
+        if colorType == PNG_COLOR_TYPE_RGB || colorType == PNG_COLOR_TYPE_PALETTE || colorType == PNG_COLOR_TYPE_GRAY {
             png_set_add_alpha(pngPointer, 0xff, PNG_FILLER_AFTER);
         }
         
@@ -174,9 +174,10 @@ public struct Disassembler {
             // Fallback to regular PNG
             var currentFrame = Frame(length: length, bytesInRow: rowBytes)
             currentFrame.duration = Double.infinity
-            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale)
             
             png_read_image(pngPointer, &currentFrame.byteRows)
+            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale)
+            
             png_read_end(pngPointer, infoPointer)
             return ([currentFrame], CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth), false)
         }
