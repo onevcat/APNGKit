@@ -5,6 +5,7 @@
 <p align="center">
 <a href="https://travis-ci.org/onevcat/APNGKit"><img src="https://img.shields.io/travis/onevcat/APNGKit/master.svg"></a>
 <a href="https://github.com/Carthage/Carthage/"><img src="https://img.shields.io/badge/Carthage-✔-f2a77e.svg?style=flat"></a>
+<a href="https://github.com/Carthage/Carthage/"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat"></a>
 <a href="http://cocoadocs.org/docsets/APNGKit"><img src="https://img.shields.io/cocoapods/v/APNGKit.svg?style=flat"></a>
 <a href="https://raw.githubusercontent.com/onevcat/APNGKit/master/LICENSE"><img src="https://img.shields.io/cocoapods/l/APNGKit.svg?style=flat"></a>
 <a href="http://cocoadocs.org/docsets/APNGKit"><img src="https://img.shields.io/cocoapods/p/APNGKit.svg?style=flat"></a>
