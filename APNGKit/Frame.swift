@@ -75,7 +75,7 @@ struct Frame {
         let provider = CGDataProviderCreateWithData(nil, bytes, length, nil)
         
         if let imageRef = CGImageCreate(width, height, bits, bits * 4, bytesInRow, CGColorSpaceCreateDeviceRGB(),
-                        [CGBitmapInfo.ByteOrderDefault, CGBitmapInfo(rawValue: CGImageAlphaInfo.Last.rawValue)],
+                        [CGBitmapInfo.ByteOrderDefault, CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue)],
                         provider, nil, false, .RenderingIntentDefault)
         {
             image = UIImage(CGImage: imageRef, scale: scale, orientation: .Up)
