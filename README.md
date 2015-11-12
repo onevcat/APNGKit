@@ -183,7 +183,7 @@ And play the animation:
 imageView.startAnimating()
 ```
 
-If you are an Interface Builder lover, drag a `UIView` to the canvas, and modify its class to `APNGImageView`. Then, you can drag an `IBOutlet` and play with it as usual.
+If you are an Interface Builder lover, drag a `UIView` (Please note, not a `UIImageView`) to the canvas, and modify its class to `APNGImageView`. Then, you can drag an `IBOutlet` and play with it as usual.
 
 ### Caches
 
