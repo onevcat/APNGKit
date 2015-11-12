@@ -149,3 +149,5 @@ Carthage/Build
 *.xcscmblueprint
 
 Reference/
+test_output
+fastlane
