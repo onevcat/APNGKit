@@ -70,12 +70,12 @@ struct Frame {
         bytes.dealloc(length)
     }
     
-    mutating func updateCGImageRef(width: Int, height: Int, bits: Int, scale: CGFloat) {
+    mutating func updateCGImageRef(width: Int, height: Int, bits: Int, scale: CGFloat, blend: Bool) {
         
         let provider = CGDataProviderCreateWithData(nil, bytes, length, nil)
         
         if let imageRef = CGImageCreate(width, height, bits, bits * 4, bytesInRow, CGColorSpaceCreateDeviceRGB(),
-                        [CGBitmapInfo.ByteOrderDefault, CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue)],
+            [CGBitmapInfo.ByteOrder32Big, CGBitmapInfo(rawValue: blend ? CGImageAlphaInfo.Last.rawValue : CGImageAlphaInfo.PremultipliedLast.rawValue)],
                         provider, nil, false, .RenderingIntentDefault)
         {
             image = UIImage(CGImage: imageRef, scale: scale, orientation: .Up)

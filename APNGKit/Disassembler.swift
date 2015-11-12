@@ -176,7 +176,7 @@ public struct Disassembler {
             currentFrame.duration = Double.infinity
             
             png_read_image(pngPointer, &currentFrame.byteRows)
-            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale)
+            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale, blend: false)
             
             png_read_end(pngPointer, infoPointer)
             return ([currentFrame], CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth), false)
@@ -239,7 +239,7 @@ public struct Disassembler {
             let duration = Double(delayNum) / Double(delayDen)
             currentFrame.duration = duration
 
-            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale)
+            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale, blend: blendOP != UInt8(PNG_BLEND_OP_SOURCE))
             
             frames.append(currentFrame)
             
