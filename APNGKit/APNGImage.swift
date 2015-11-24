@@ -236,13 +236,19 @@ extension String {
             return path
         }
         
-        // Else, user is passing a common name. We will try to find the version match current scale first
+        // Else, user is passing a common name without known suffix.
+        // We will try to find the version match current scale first, then the one with 1 less scale factor.
         var path: String?
-        let scale = Int(UIScreen.mainScreen().scale)
+        let scales = 1 ... Int(UIScreen.mainScreen().scale)
         
-        path = bundle.pathForResource("\(fileName)@\(scale)x", ofType: fileExtension) ??
-               bundle.pathForResource("\(fileName)@\(scale)x", ofType: "apng") ??
-               bundle.pathForResource("\(fileName)@\(scale)x", ofType: "png") ??
+        path = scales.reverse().reduce(nil) { (result, scale) -> String? in
+            return result ??
+                   bundle.pathForResource("\(fileName)@\(scale)x", ofType: fileExtension) ??
+                   bundle.pathForResource("\(fileName)@\(scale)x", ofType: "apng") ??
+                   bundle.pathForResource("\(fileName)@\(scale)x", ofType: "png")
+        }
+        
+        path = path ??
                bundle.pathForResource(fileName, ofType: fileExtension) ?? // Matched scaled version not found, use the 1x version
                bundle.pathForResource(fileName, ofType: "apng") ??
                bundle.pathForResource(fileName, ofType: "png")
