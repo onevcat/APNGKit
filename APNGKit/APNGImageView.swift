@@ -64,6 +64,8 @@ public class APNGImageView: UIView {
         }
     }
     
+    public var allowAnimationInScrollView:Bool = false;
+    
     var timer: CADisplayLink?
     var lastTimestamp: NSTimeInterval = 0
     var currentPassedDuration: NSTimeInterval = 0
@@ -137,7 +139,7 @@ public class APNGImageView: UIView {
         timer = CADisplayLink.apng_displayLink({ [weak self] (displayLink) -> () in
             self?.tick(displayLink)
         })
-        timer?.addToRunLoop(mainRunLoop, forMode: NSDefaultRunLoopMode)
+        timer?.addToRunLoop(mainRunLoop, forMode: (self.allowAnimationInScrollView ? NSRunLoopCommonModes : NSDefaultRunLoopMode))
     }
     
     /**
