@@ -64,9 +64,9 @@ public class APNGImageView: UIView {
         }
     }
     
-    // If true runs animation timer with option: NSRunLoopCommonModes
-    // ScrollView(CollectionView, TableView) items with Animated APNGImageView will not freez during scrolling
-    // Warning: this may decrease scrolling smoothness with lot's of animations
+    /// If true runs animation timer with option `NSRunLoopCommonModes`.
+    /// ScrollView(CollectionView, TableView) items with Animated APNGImageView will not freeze during scrolling
+    /// - Note: This may decrease scrolling smoothness with lot's of animations
     public var allowAnimationInScrollView = false
     
     var timer: CADisplayLink?
