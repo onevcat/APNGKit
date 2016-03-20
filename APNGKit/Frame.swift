@@ -26,14 +26,33 @@
 
 import UIKit
 
+public class SharedFrame {
+    static var allocatedCount: Int = 0
+    static var deallocatedCount: Int = 0
+    
+    init(image: UIImage?, bytes: UnsafeMutablePointer<UInt8>, length: Int, duration: NSTimeInterval) {
+        self.image = image
+        self.bytes = bytes
+        self.length = length
+        self.duration = duration
+    }
+    
+    let length: Int
+    let image: UIImage?
+    let bytes: UnsafeMutablePointer<UInt8>
+    let duration: NSTimeInterval
+    
+    deinit {
+        bytes.destroy(length)
+        bytes.dealloc(length)
+    }
+}
+
 /**
-*  Represents a frame in an APNG file. 
+*  Represents a frame in an APNG file.
 *  It contains a whole IDAT chunk data for a PNG image.
 */
 struct Frame {
-    
-    var image: UIImage?
-    
     /// Data chunk.
     var bytes: UnsafeMutablePointer<UInt8>
     
@@ -70,15 +89,17 @@ struct Frame {
         bytes.dealloc(length)
     }
     
-    mutating func updateCGImageRef(width: Int, height: Int, bits: Int, scale: CGFloat, blend: Bool) {
-        
+    func createSharedFrame(width: Int, height: Int, bits: Int, scale: CGFloat, blend: Bool) -> SharedFrame {
         let provider = CGDataProviderCreateWithData(nil, bytes, length, nil)
         
         if let imageRef = CGImageCreate(width, height, bits, bits * 4, bytesInRow, CGColorSpaceCreateDeviceRGB(),
             [CGBitmapInfo.ByteOrder32Big, CGBitmapInfo(rawValue: blend ? CGImageAlphaInfo.Last.rawValue : CGImageAlphaInfo.PremultipliedLast.rawValue)],
-                        provider, nil, false, .RenderingIntentDefault)
+            provider, nil, false, .RenderingIntentDefault)
         {
-            image = UIImage(CGImage: imageRef, scale: scale, orientation: .Up)
+            let image = UIImage(CGImage: imageRef, scale: scale, orientation: .Up)
+            return SharedFrame.init(image: image, bytes: bytes, length: length, duration: duration)
+        } else {
+            return SharedFrame.init(image: nil, bytes: bytes, length: length, duration: duration)
         }
     }
 }
@@ -89,15 +110,21 @@ extension Frame: CustomStringConvertible {
     }
 }
 
-extension Frame: CustomDebugStringConvertible {
+extension SharedFrame: CustomStringConvertible {
+    public var description: String {
+        return "<Frame: \(self.bytes)))> duration: \(self.duration), length: \(length)"
+    }
+}
+
+extension SharedFrame: CustomDebugStringConvertible {
 
     var data: NSData? {
         if let image = image {
-           return UIImagePNGRepresentation(image)
+            return UIImagePNGRepresentation(image)
         }
         return nil
     }
-    
+  public   
     var debugDescription: String {
         return "\(description)\ndata: \(data)"
     }

@@ -42,13 +42,24 @@ class DetailViewController: UIViewController {
         if let path = image?.path {
             
             let start = CACurrentMediaTime()
-            let apngImage: APNGImage?
-            if path.containsString("@2x") {
-                apngImage = APNGImage(named: (path as NSString).lastPathComponent)
+            let apngImage: APNGImageProtocol?
+            
+            let async = true
+            if async {
+                if path.containsString("@2x") {
+                    apngImage = AsyncAPNGImage(named: (path as NSString).lastPathComponent)
+                } else {
+                    apngImage = AsyncAPNGImage(contentsOfFile: path)
+                }
             } else {
-                apngImage = APNGImage(contentsOfFile: path, saveToCache: true)
+                if path.containsString("@2x") {
+                    apngImage = APNGImage(named: (path as NSString).lastPathComponent)
+                } else {
+                    apngImage = APNGImage(contentsOfFile: path, saveToCache: true)
+                }
             }
             let end = CACurrentMediaTime()
+                
             
             imageView.image = apngImage
             imageView.startAnimating()

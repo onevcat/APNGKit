@@ -35,12 +35,12 @@ public class APNGImageView: UIView {
     /// The image displayed in the image view.
     /// If you change the image when the animation playing, 
     /// the animation of original image will stop, and the new one will start automatically.
-    public var image: APNGImage? { // Setter should be run on main thread
+    public var image: APNGImageProtocol? { // Setter should be run on main thread
         didSet {
             let animating = isAnimating
             stopAnimating()
-            updateContents(image?.frames.first?.image)
             
+            updateContents(image?.firstFrame)
             if animating {
                 startAnimating()
             }
@@ -87,7 +87,7 @@ public class APNGImageView: UIView {
     
     - returns: An initialized image view object.
     */
-    public init(image: APNGImage?) {
+    public init(image: APNGImageProtocol?) {
         self.image = image
         isAnimating = false
         autoStartAnimation = false
@@ -100,7 +100,7 @@ public class APNGImageView: UIView {
         
         backgroundColor = UIColor.clearColor()
         userInteractionEnabled = false
-        updateContents(image?.frames.first?.image)
+        updateContents(image?.firstFrame)
     }
     
     deinit {
@@ -187,13 +187,13 @@ public class APNGImageView: UIView {
         lastTimestamp = localTimer.timestamp
         
         currentPassedDuration += elapsedTime
-        let currentFrame = image.frames[currentFrameIndex]
+        let currentFrame = image.frameAt(currentFrameIndex)
         let currentFrameDuration = currentFrame.duration
         
         if currentPassedDuration >= currentFrameDuration {
             currentFrameIndex = currentFrameIndex + 1
             
-            if currentFrameIndex == image.frames.count {
+            if currentFrameIndex == image.frameCount {
                 currentFrameIndex = 0
                 repeated = repeated + 1
                 
@@ -210,12 +210,15 @@ public class APNGImageView: UIView {
             }
             
             currentPassedDuration = currentPassedDuration - currentFrameDuration
-            updateContents(image.frames[currentFrameIndex].image)
+            updateContents(image.frameAt(currentFrameIndex))
         }
         
     }
     
-    func updateContents(image: UIImage?) {
+    var currentFrame: SharedFrame?
+    
+    func updateContents(frame: SharedFrame?) {
+        currentFrame = frame
         let currentImage: CGImageRef?
         if layer.contents != nil {
             currentImage = (layer.contents as! CGImageRef)
@@ -223,7 +226,7 @@ public class APNGImageView: UIView {
             currentImage = nil
         }
 
-        let cgImage = image?.CGImage
+        let cgImage = frame?.image?.CGImage
 
         if cgImage !== currentImage {
             layer.contents = cgImage

@@ -59,7 +59,112 @@ public enum DisassemblerError: ErrorType {
 *  This Disassembler is using a patched libpng with supporting of apng to read APNG data.
 *  See https://github.com/onevcat/libpng for more.
 */
-public struct Disassembler {
+public class Disassembler {
+    class AsyncFrameList {
+        init(numFramesToBuffer: Int) {
+            self.numFramesToBuffer = numFramesToBuffer
+        }
+        
+        private var frames: [SharedFrame?] = []
+        private let condition: NSCondition = NSCondition.init()
+        
+        private var lastRequestedFrame: Int = 0
+        
+        private var terminated: Bool = false
+        
+        let numFramesToBuffer: Int
+        
+        func terminate() {
+            terminated = true
+        }
+        
+        func waitForIndexOfNeededFrame() -> Int {
+            condition.lock()
+            defer {
+                condition.unlock()
+            }
+            while true {
+                if terminated {
+                    return -1
+                }
+                for index in indexesOfWantedFrames() {
+                    if index >= frames.count || frames[index] == nil {
+                        return index
+                    }
+                }
+                condition.wait()
+            }
+        }
+        
+        func indexesOfWantedFrames() -> [Int] {
+            var wantedFrames: [Int] = []
+            for i in lastRequestedFrame..<min(lastRequestedFrame + numFramesToBuffer, frameCount) {
+                wantedFrames.append(i)
+            }
+            
+            let endOfNeededRange = (lastRequestedFrame + numFramesToBuffer) - frameCount
+            if endOfNeededRange > 0 {
+                for i in 0..<endOfNeededRange {
+                    wantedFrames.append(i)
+                }
+            }
+            return wantedFrames
+        }
+        
+        var frameCount: Int = 0
+        
+        func setFrame(frame: SharedFrame, index: Int) {
+            condition.lock()
+            defer {
+                condition.unlock()
+            }
+            while frames.count <= index {
+                frames.append(nil)
+            }
+            frames[index] = frame
+            condition.signal()
+        }
+        
+        func waitForFrame(index: Int) -> SharedFrame {
+            condition.lock()
+            defer {
+                condition.unlock()
+            }
+            lastRequestedFrame = index
+            removeUnneededFrames()
+            
+            condition.signal()
+            while (true) {
+                if (index < frames.count) {
+                    let frame = frames[index]
+                    if frame != nil {
+                        return frame!
+                    }
+                }
+                condition.wait()
+            }
+        }
+        
+        private func removeUnneededFrames() {
+            for i in 0..<frames.count {
+                if (indexesOfWantedFrames().contains(i)) {
+                    continue
+                }
+                frames[i] = nil
+            }
+        }
+        
+        private func numBufferedFrames() -> Int {
+            var total = 0
+            for i in 0..<frames.count {
+                if frames[i] != nil {
+                    total++
+                }
+            }
+            return total
+        }
+    }
+    
     private(set) var reader: Reader
     let originalData: NSData
     
@@ -87,7 +192,7 @@ public struct Disassembler {
     
     - returns: A decoded `APNGImage` object at given scale.
     */
-    public mutating func decode(scale: CGFloat = 1) throws -> APNGImage {
+    public func decode(scale: CGFloat = 1) throws -> APNGImage {
         let (frames, size, repeatCount, bitDepth, firstFrameHidden) = try decodeToElements(scale)
         
         // Setup apng properties
@@ -96,9 +201,65 @@ public struct Disassembler {
         return apng
     }
     
-    mutating func decodeToElements(scale: CGFloat = 1) throws
-            -> (frames: [Frame], size: CGSize, repeatCount: Int, bitDepth: Int, firstFrameHidden: Bool)
+    struct DecodeResults {
+        init(frameList: AsyncFrameList) {
+            self.frameList = frameList
+        }
+        
+        var frameList: AsyncFrameList
+        var size: CGSize = CGSizeZero
+        var repeatCount: Int = 0
+        var bitDepth: Int = 0
+        var firstFrameHidden: Bool = false
+    }
+    
+    func decodeToElements(scale: CGFloat = 1) throws
+        -> (frames: [SharedFrame], size: CGSize, repeatCount: Int, bitDepth: Int, firstFrameHidden: Bool)
     {
+        let (frameList, size, repeatCount, bitDepth, firstFrameHidden) = try decodeToElementsAsync(scale, numFramesToBuffer: 1)
+        
+        defer {
+            frameList.terminate()
+        }
+        
+        var frames: [SharedFrame] = []
+        for i in 0..<frameList.frameCount {
+            frames.append(frameList.waitForFrame(i))
+        }
+        
+        return (frames, size, repeatCount, bitDepth, firstFrameHidden)
+    }
+    
+    func decodeToElementsAsync(scale: CGFloat = 1, numFramesToBuffer: Int) throws
+        -> (frameList: AsyncFrameList, size: CGSize, repeatCount: Int, bitDepth: Int, firstFrameHidden: Bool)
+    {
+        let condition = NSCondition.init()
+        var decodeResults = DecodeResults.init(frameList: AsyncFrameList.init(numFramesToBuffer: numFramesToBuffer))
+        condition.lock()
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {  () -> Void in
+
+            try! self.repeatedDecodeToDecodeResults(scale, condition: condition, decodeResults: &decodeResults)
+        }
+        condition.wait()
+        condition.unlock()
+        decodeResults.frameList.waitForFrame(0)
+        return (decodeResults.frameList, decodeResults.size, decodeResults.repeatCount, decodeResults.bitDepth, decodeResults.firstFrameHidden)
+    }
+    
+    func repeatedDecodeToDecodeResults(scale: CGFloat = 1, condition: NSCondition, inout decodeResults: DecodeResults) throws {
+        while true {
+            try decodeToDecodeResults(condition: condition, decodeResults: &decodeResults)
+            let neededFrameIndex = decodeResults.frameList.waitForIndexOfNeededFrame()
+            if neededFrameIndex == -1 {
+                break
+            }
+        }
+    }
+    
+    func decodeToDecodeResults(scale: CGFloat = 1, condition: NSCondition, inout decodeResults: DecodeResults) throws
+    {
+        reader = Reader(data: originalData)
         reader.beginReading()
         defer {
             reader.endReading()
@@ -176,10 +337,21 @@ public struct Disassembler {
             currentFrame.duration = Double.infinity
             
             png_read_image(pngPointer, &currentFrame.byteRows)
-            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale, blend: false)
+            
+            let sharedFrame = currentFrame.createSharedFrame(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale, blend: false)
             
             png_read_end(pngPointer, infoPointer)
-            return ([currentFrame], CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth), false)
+            
+            decodeResults.frameList.setFrame(sharedFrame, index: 0)
+            decodeResults.size = CGSize(width: CGFloat(width), height: CGFloat(height))
+            decodeResults.repeatCount = Int(playCount) - 1
+            decodeResults.bitDepth = Int(bitDepth)
+            decodeResults.firstFrameHidden = false
+            
+            condition.lock()
+            condition.signal()
+            condition.unlock()
+            return
         }
         
         var bufferFrame = Frame(length: length, bytesInRow: rowBytes)
@@ -201,10 +373,24 @@ public struct Disassembler {
         let firstFrameHidden = png_get_first_frame_is_hidden(pngPointer, infoPointer) != 0
         firstImageIndex = firstFrameHidden ? 1 : 0
         
-        var frames = [Frame]()
+        
+        let frameList = decodeResults.frameList
+        frameList.frameCount = Int(frameCount)
+        
+        decodeResults.frameList = frameList
+        decodeResults.size = CGSize(width: CGFloat(width), height: CGFloat(height))
+        decodeResults.repeatCount = Int(playCount) - 1
+        decodeResults.bitDepth = Int(bitDepth)
+        decodeResults.firstFrameHidden = firstFrameHidden
+        
+        condition.lock()
+        condition.signal()
+        condition.unlock()
         
         // Decode frames
-        for i in 0 ..< frameCount {
+        var i: UInt32 = 0
+        var neededFrameIndex: Int = frameList.waitForIndexOfNeededFrame()
+        while true {
             let currentIndex = Int(i)
             // Read header
             png_read_frame_head(pngPointer, infoPointer)
@@ -231,17 +417,16 @@ public struct Disassembler {
             // Decode fdATs
             png_read_image(pngPointer, &bufferFrame.byteRows)
             blendFrameDstBytes(currentFrame.byteRows, srcBytes: bufferFrame.byteRows, blendOP: blendOP,
-                                    offsetX: offsetX, offsetY: offsetY, width: frameWidth, height: frameHeight)
+                offsetX: offsetX, offsetY: offsetY, width: frameWidth, height: frameHeight)
             // Calculating delay (duration)
             if delayDen == 0 {
                 delayDen = 100
             }
             let duration = Double(delayNum) / Double(delayDen)
             currentFrame.duration = duration
-
-            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale, blend: blendOP != UInt8(PNG_BLEND_OP_SOURCE))
             
-            frames.append(currentFrame)
+            let sharedFrame = currentFrame.createSharedFrame(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale, blend: blendOP != UInt8(PNG_BLEND_OP_SOURCE))
+            frameList.setFrame(sharedFrame, index: currentIndex)
             
             if disposeOP != UInt8(PNG_DISPOSE_OP_PREVIOUS) {
                 memcpy(nextFrame.bytes, currentFrame.bytes, Int(length))
@@ -253,17 +438,20 @@ public struct Disassembler {
                 }
             }
             
+            neededFrameIndex = frameList.waitForIndexOfNeededFrame()
+            if Int(i) > neededFrameIndex || neededFrameIndex == -1 {
+                png_read_end(pngPointer, infoPointer)
+                
+                bufferFrame.clean()
+                nextFrame.clean()
+                return
+            }
+            
             currentFrame.bytes = nextFrame.bytes
             currentFrame.byteRows = nextFrame.byteRows
+            
+            i++
         }
-        
-        // End
-        png_read_end(pngPointer, infoPointer)
-        
-        bufferFrame.clean()
-        currentFrame.clean()
-                
-        return (frames, CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth), firstFrameHidden)
     }
     
     func blendFrameDstBytes(dstBytes: Array<UnsafeMutablePointer<UInt8>>,

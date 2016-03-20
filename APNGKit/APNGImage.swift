@@ -26,13 +26,41 @@
 
 import UIKit
 
+public protocol APNGImageProtocol {
+    var size: CGSize { get }
+    var scale: CGFloat { get }
+    var repeatCount: Int { get set }
+    var firstFrameHidden: Bool { get }
+    
+    var firstFrame: SharedFrame? { get }
+    func frameAt(index: Int) -> SharedFrame
+    var frameCount: Int { get }
+}
+
+extension APNGImageProtocol {
+    public var firstFrame: SharedFrame? {
+        if frameCount < 1 {
+            return nil
+        } else {
+            return frameAt(0)
+        }
+    }
+}
+
 /// APNG animation should repeat forever.
 public let RepeatForever = -1
 
 /// Represents a decoded APNG image. 
 /// You can use instance of this class to get image information or display it on screen with `APNGImageView`.
 /// `APNGImage` can hold an APNG image or a regular PNG image. If latter, there will be only one frame in the image.
-public class APNGImage: NSObject { // For ObjC compatibility
+public class APNGImage: NSObject, APNGImageProtocol { // For ObjC compatibility
+    public func frameAt(index: Int) -> SharedFrame {
+        return frames[index]
+    }
+    
+    public var frameCount: Int {
+        return frames.count
+    }
     
     /// Total duration of the animation
     public var duration: NSTimeInterval {
@@ -54,8 +82,8 @@ public class APNGImage: NSObject { // For ObjC compatibility
     /// Set this to `RepeatForever` will make the animation loops forever.
     public var repeatCount: Int
     
-    let firstFrameHidden: Bool
-    var frames: [Frame]
+    public let firstFrameHidden: Bool
+    var frames: [SharedFrame]
     var bitDepth: Int
     
     // Strong refrence to another APNG to hold data if this image object is retrieved from cache
@@ -66,7 +94,7 @@ public class APNGImage: NSObject { // For ObjC compatibility
     
     static var searchBundle: NSBundle = NSBundle.mainBundle()
 
-    init(frames: [Frame], size: CGSize, scale: CGFloat, bitDepth: Int, repeatCount: Int, firstFrameHidden hidden: Bool) {
+    init(frames: [SharedFrame], size: CGSize, scale: CGFloat, bitDepth: Int, repeatCount: Int, firstFrameHidden hidden: Bool) {
         self.frames = frames
         self.internalSize = size
         self.scale = scale
@@ -148,7 +176,7 @@ public class APNGImage: NSObject { // For ObjC compatibility
     - returns: A new image object for the specified data, or nil if the method could not initialize the image from the specified data.
     */
     public convenience init?(data: NSData, scale: CGFloat) {
-        var disassembler = Disassembler(data: data)
+        let disassembler = Disassembler(data: data)
         do {
             let (frames, size, repeatCount, bitDepth, firstFrameHidden) = try disassembler.decodeToElements(scale)
             self.init(frames: frames, size: size, scale: scale, bitDepth: bitDepth, repeatCount: repeatCount, firstFrameHidden: firstFrameHidden)
@@ -196,14 +224,6 @@ public class APNGImage: NSObject { // For ObjC compatibility
                 }
             } else {
                 return nil
-            }
-        }
-    }
-    
-    deinit {
-        if dataOwner == nil { // Only clean when self owns the data
-            for f in frames {
-                f.clean()
             }
         }
     }
