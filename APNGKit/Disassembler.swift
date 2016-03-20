@@ -76,6 +76,9 @@ public class Disassembler {
         
         func terminate() {
             terminated = true
+            condition.lock()
+            condition.signal()
+            condition.unlock()
         }
         
         func waitForIndexOfNeededFrame() -> Int {
@@ -102,7 +105,7 @@ public class Disassembler {
                 wantedFrames.append(i)
             }
             
-            let endOfNeededRange = (lastRequestedFrame + numFramesToBuffer) - frameCount
+            let endOfNeededRange = min((lastRequestedFrame + numFramesToBuffer) - frameCount, frameCount)
             if endOfNeededRange > 0 {
                 for i in 0..<endOfNeededRange {
                     wantedFrames.append(i)
@@ -338,7 +341,7 @@ public class Disassembler {
             
             png_read_image(pngPointer, &currentFrame.byteRows)
             
-            let sharedFrame = currentFrame.createSharedFrame(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale, blend: false)
+            let sharedFrame = currentFrame.createSharedFrame(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale)
             
             png_read_end(pngPointer, infoPointer)
             
@@ -357,7 +360,7 @@ public class Disassembler {
         var bufferFrame = Frame(length: length, bytesInRow: rowBytes)
         var currentFrame = Frame(length: length, bytesInRow: rowBytes)
         var nextFrame: Frame!
-        
+
         // Setup values for reading frames
         var
         frameWidth: UInt32 = 0,
@@ -425,7 +428,7 @@ public class Disassembler {
             let duration = Double(delayNum) / Double(delayDen)
             currentFrame.duration = duration
             
-            let sharedFrame = currentFrame.createSharedFrame(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale, blend: blendOP != UInt8(PNG_BLEND_OP_SOURCE))
+            let sharedFrame = currentFrame.createSharedFrame(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale)
             frameList.setFrame(sharedFrame, index: currentIndex)
             
             if disposeOP != UInt8(PNG_DISPOSE_OP_PREVIOUS) {

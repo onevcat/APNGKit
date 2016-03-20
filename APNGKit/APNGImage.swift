@@ -26,25 +26,14 @@
 
 import UIKit
 
-public protocol APNGImageProtocol {
+@objc public protocol APNGImageProtocol: NSObjectProtocol {
     var size: CGSize { get }
     var scale: CGFloat { get }
     var repeatCount: Int { get set }
     var firstFrameHidden: Bool { get }
     
-    var firstFrame: SharedFrame? { get }
     func frameAt(index: Int) -> SharedFrame
     var frameCount: Int { get }
-}
-
-extension APNGImageProtocol {
-    public var firstFrame: SharedFrame? {
-        if frameCount < 1 {
-            return nil
-        } else {
-            return frameAt(0)
-        }
-    }
 }
 
 /// APNG animation should repeat forever.

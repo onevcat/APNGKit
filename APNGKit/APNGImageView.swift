@@ -40,7 +40,8 @@ public class APNGImageView: UIView {
             let animating = isAnimating
             stopAnimating()
             
-            updateContents(image?.firstFrame)
+            let firstFrame = image?.frameCount > 0 ? image?.frameAt(0) : nil
+            updateContents(firstFrame)
             if animating {
                 startAnimating()
             }
@@ -100,7 +101,8 @@ public class APNGImageView: UIView {
         
         backgroundColor = UIColor.clearColor()
         userInteractionEnabled = false
-        updateContents(image?.firstFrame)
+        let firstFrame = image?.frameCount > 0 ? image?.frameAt(0) : nil
+        updateContents(firstFrame)
     }
     
     deinit {
@@ -226,7 +228,7 @@ public class APNGImageView: UIView {
             currentImage = nil
         }
 
-        let cgImage = frame?.image?.CGImage
+        let cgImage = frame?.CGImage
 
         if cgImage !== currentImage {
             layer.contents = cgImage

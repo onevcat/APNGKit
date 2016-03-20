@@ -26,25 +26,42 @@
 
 import UIKit
 
-public class SharedFrame {
+public class SharedFrame: UIImage {
     static var allocatedCount: Int = 0
     static var deallocatedCount: Int = 0
     
-    init(image: UIImage?, bytes: UnsafeMutablePointer<UInt8>, length: Int, duration: NSTimeInterval) {
-        self.image = image
+    init(bytes: UnsafeMutablePointer<UInt8>, length: Int, duration: NSTimeInterval) {
         self.bytes = bytes
         self.length = length
-        self.duration = duration
+        self._duration = duration
+        super.init()
+    }
+    
+    init(CGImage: CGImageRef, scale: CGFloat, bytes: UnsafeMutablePointer<UInt8>, length: Int, duration: NSTimeInterval) {
+        self.bytes = bytes
+        self.length = length
+        self._duration = duration
+        super.init(CGImage: CGImage, scale: scale, orientation: .Up)
+    }
+
+    required convenience public init(imageLiteral name: String) {
+        fatalError("init(imageLiteral:) has not been implemented")
+    }
+
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     let length: Int
-    let image: UIImage?
-    let bytes: UnsafeMutablePointer<UInt8>
-    let duration: NSTimeInterval
+    let bytes: UnsafeMutablePointer<UInt8>?
+    let _duration: NSTimeInterval
+    public override var duration: NSTimeInterval {
+        return _duration
+    }
     
     deinit {
-        bytes.destroy(length)
-        bytes.dealloc(length)
+        bytes?.destroy(length)
+        bytes?.dealloc(length)
     }
 }
 
@@ -89,17 +106,19 @@ struct Frame {
         bytes.dealloc(length)
     }
     
-    func createSharedFrame(width: Int, height: Int, bits: Int, scale: CGFloat, blend: Bool) -> SharedFrame {
+    var sharedFrame: SharedFrame?
+    mutating func createSharedFrame(width: Int, height: Int, bits: Int, scale: CGFloat) -> SharedFrame {
         let provider = CGDataProviderCreateWithData(nil, bytes, length, nil)
         
         if let imageRef = CGImageCreate(width, height, bits, bits * 4, bytesInRow, CGColorSpaceCreateDeviceRGB(),
-            [CGBitmapInfo.ByteOrder32Big, CGBitmapInfo(rawValue: blend ? CGImageAlphaInfo.Last.rawValue : CGImageAlphaInfo.PremultipliedLast.rawValue)],
+            [CGBitmapInfo.ByteOrder32Big, CGBitmapInfo(rawValue: CGImageAlphaInfo.Last.rawValue)],
             provider, nil, false, .RenderingIntentDefault)
         {
-            let image = UIImage(CGImage: imageRef, scale: scale, orientation: .Up)
-            return SharedFrame.init(image: image, bytes: bytes, length: length, duration: duration)
+            sharedFrame = SharedFrame.init(CGImage: imageRef, scale: scale, bytes: bytes, length: length, duration: duration)
+            return sharedFrame!
         } else {
-            return SharedFrame.init(image: nil, bytes: bytes, length: length, duration: duration)
+            sharedFrame = SharedFrame.init(bytes: bytes, length: length, duration: duration)
+            return sharedFrame!
         }
     }
 }
@@ -107,25 +126,5 @@ struct Frame {
 extension Frame: CustomStringConvertible {
     var description: String {
         return "<Frame: \(self.bytes)))> duration: \(self.duration), length: \(length)"
-    }
-}
-
-extension SharedFrame: CustomStringConvertible {
-    public var description: String {
-        return "<Frame: \(self.bytes)))> duration: \(self.duration), length: \(length)"
-    }
-}
-
-extension SharedFrame: CustomDebugStringConvertible {
-
-    var data: NSData? {
-        if let image = image {
-            return UIImagePNGRepresentation(image)
-        }
-        return nil
-    }
-  public   
-    var debugDescription: String {
-        return "\(description)\ndata: \(data)"
     }
 }

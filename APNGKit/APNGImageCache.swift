@@ -104,10 +104,8 @@ extension APNGImage {
     var cost: Int {
         var s = 0
         for f in frames {
-            if let image = f.image {
-                // Totol bytes
-                s += Int(image.size.height * image.size.width * image.scale * image.scale * CGFloat(self.bitDepth))
-            }
+            // Totol bytes
+            s += Int(f.size.height * f.size.width * f.scale * f.scale * CGFloat(self.bitDepth))
         }
         return s
     }

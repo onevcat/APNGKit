@@ -49,7 +49,6 @@
 		4B7D4ED91B955CBF005C0598 /* arm_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D4ED81B955CBF005C0598 /* arm_init.c */; };
 		4BF022041B94442800F00CDE /* APNGImageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF022031B94442800F00CDE /* APNGImageViewTests.swift */; };
 		5809EB691C9DDEFF00EF426B /* AsyncAPNGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5809EB681C9DDEFF00EF426B /* AsyncAPNGImage.swift */; };
-		5809EB6D1C9E252800EF426B /* Paystub.apng in Resources */ = {isa = PBXBuildFile; fileRef = 5809EB6C1C9E252800EF426B /* Paystub.apng */; };
 		D122B9261B96CC8E00CB4F26 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D122B9251B96CC8E00CB4F26 /* libz.tbd */; };
 		D127F6301B91D9FD0095832A /* APNGImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D127F62F1B91D9FD0095832A /* APNGImageTests.swift */; };
 		D14B5B4B1B92B4A600F753E1 /* APNG-cube.apng in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B471B92B4A600F753E1 /* APNG-cube.apng */; };
@@ -178,7 +177,6 @@
 		4B7D4ED81B955CBF005C0598 /* arm_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = arm_init.c; sourceTree = "<group>"; };
 		4BF022031B94442800F00CDE /* APNGImageViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageViewTests.swift; sourceTree = "<group>"; };
 		5809EB681C9DDEFF00EF426B /* AsyncAPNGImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsyncAPNGImage.swift; sourceTree = "<group>"; };
-		5809EB6C1C9E252800EF426B /* Paystub.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = Paystub.apng; sourceTree = "<group>"; };
 		D122B9251B96CC8E00CB4F26 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		D127F62F1B91D9FD0095832A /* APNGImageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageTests.swift; sourceTree = "<group>"; };
 		D14B5B471B92B4A600F753E1 /* APNG-cube.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = "APNG-cube.apng"; path = "TestImages/APNG-cube.apng"; sourceTree = SOURCE_ROOT; };
@@ -393,7 +391,6 @@
 		D1614E271B91EDEB00050104 /* TestImages */ = {
 			isa = PBXGroup;
 			children = (
-				5809EB6C1C9E252800EF426B /* Paystub.apng */,
 				D190199D1B932A9600E16EDB /* elephant_apng@2x.apng */,
 				D14B5B471B92B4A600F753E1 /* APNG-cube.apng */,
 				D14B5B481B92B4A600F753E1 /* APNG-Icos4D.apng */,
@@ -643,7 +640,6 @@
 				D190199E1B932A9600E16EDB /* elephant_apng@2x.apng in Resources */,
 				D14B5B4C1B92B4A600F753E1 /* APNG-Icos4D.apng in Resources */,
 				D199B2021B91445100BF8358 /* Assets.xcassets in Resources */,
-				5809EB6D1C9E252800EF426B /* Paystub.apng in Resources */,
 				D1614E2D1B91EDF800050104 /* ball.apng in Resources */,
 				D199B2001B91445100BF8358 /* Main.storyboard in Resources */,
 				D1614E311B91EDF800050104 /* spinfox.apng in Resources */,
