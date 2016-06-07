@@ -283,7 +283,9 @@ public struct Disassembler {
             if blendOP == UInt8(PNG_BLEND_OP_SOURCE) {
                 memcpy(dp, sp, Int(width) * 4)
             } else { // APNG_BLEND_OP_OVER
-                for var i = 0; i < Int(width); i++, sp = sp.advancedBy(4), dp = dp.advancedBy(4) {
+                for _ in 0 ... Int(width){
+                    sp = sp.advancedBy(4)
+                    dp = dp.advancedBy(4)
                     let srcAlpha = Int(sp.advancedBy(3).memory) // Blend alpha to dst
                     if srcAlpha == 0xff {
                         memcpy(dp, sp, 4)
