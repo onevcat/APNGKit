@@ -130,7 +130,7 @@ public class APNGImageView: UIView {
         let currentRunLoop = NSRunLoop.currentRunLoop()
         
         if mainRunLoop != currentRunLoop {
-            performSelectorOnMainThread("startAnimating", withObject: nil, waitUntilDone: false)
+            performSelectorOnMainThread(#selector(APNGImageView.startAnimating), withObject: nil, waitUntilDone: false)
             return
         }
         
@@ -153,7 +153,7 @@ public class APNGImageView: UIView {
         let currentRunLoop = NSRunLoop.currentRunLoop()
         
         if mainRunLoop != currentRunLoop {
-            performSelectorOnMainThread("stopAnimating", withObject: nil, waitUntilDone: false)
+            performSelectorOnMainThread(#selector(APNGImageView.stopAnimating), withObject: nil, waitUntilDone: false)
             return
         }
         
@@ -256,7 +256,7 @@ extension CADisplayLink {
     
     static func apng_displayLink(block: (CADisplayLink) -> ()) -> CADisplayLink
     {
-        let displayLink = CADisplayLink(target: self, selector: "apng_blockInvoke:")
+        let displayLink = CADisplayLink(target: self, selector: #selector(CADisplayLink.apng_blockInvoke(_:)))
         
         let block = Block(block)
         displayLink.apng_setUserInfo(block)

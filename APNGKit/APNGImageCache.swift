@@ -50,9 +50,9 @@ public class APNGCache {
         
         cacheObject.name = "com.onevcat.APNGKit.cache"
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "clearMemoryCache",
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(APNGCache.clearMemoryCache),
                                                                    name: UIApplicationDidReceiveMemoryWarningNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "clearMemoryCache",
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(APNGCache.clearMemoryCache),
                                                                    name: UIApplicationDidEnterBackgroundNotification, object: nil)
     }
     
