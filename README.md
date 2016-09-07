@@ -209,10 +209,6 @@ Currently APNGKit can only load and display APNG files or data. There is a plan 
 
 And maybe some callbacks of APNG animation playing or even more controlling of playing will be added later as well. IBDesignable support is also in plan.
 
-## FAQ & Contact
-
-Please see this [wiki page](https://github.com/onevcat/Kingfisher/wiki/FAQ) for more. If you find a problem when using this framework, do not hesitate to open an issue or send a pull-request. You can also contact me @onevcat.
-
 ## Acknowledgement
 
 APNGKit is built on top of a [modified version of libpng](https://github.com/onevcat/libpng). The original libpng could be found [here](http://www.libpng.org/pub/png/libpng.html). I patched it for APNG supporting based on code in [this project](http://sourceforge.net/p/libpng-apng/code/ci/master/tree/).
