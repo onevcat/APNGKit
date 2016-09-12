@@ -32,27 +32,27 @@ public let RepeatForever = -1
 /// Represents a decoded APNG image. 
 /// You can use instance of this class to get image information or display it on screen with `APNGImageView`.
 /// `APNGImage` can hold an APNG image or a regular PNG image. If latter, there will be only one frame in the image.
-public class APNGImage: NSObject { // For ObjC compatibility
+open class APNGImage: NSObject { // For ObjC compatibility
     
     /// Total duration of the animation
-    public var duration: NSTimeInterval {
+    open var duration: TimeInterval {
         return frames.reduce(0.0) {
             $0 + $1.duration
         }
     }
     
     /// Size of the image in point. The scale factor is considered.
-    public var size: CGSize {
-        return CGSizeMake(internalSize.width / scale, internalSize.height / scale)
+    open var size: CGSize {
+        return CGSize(width: internalSize.width / scale, height: internalSize.height / scale)
     }
     
     /// Scale of the image.
-    public let scale: CGFloat
+    open let scale: CGFloat
     
     /// Repeat count of animation of the APNG image.
     /// It is read from APNG data. However, you can change it to modify the loop behaviors.
     /// Set this to `RepeatForever` will make the animation loops forever.
-    public var repeatCount: Int
+    open var repeatCount: Int
     
     let firstFrameHidden: Bool
     var frames: [Frame]
@@ -61,10 +61,10 @@ public class APNGImage: NSObject { // For ObjC compatibility
     // Strong refrence to another APNG to hold data if this image object is retrieved from cache
     // The frames data will not be changed once a frame is setup.
     // So we could share the bytes in it between two "same" APNG image objects.
-    private let dataOwner: APNGImage?
-    private let internalSize: CGSize // size in pixel
+    fileprivate let dataOwner: APNGImage?
+    fileprivate let internalSize: CGSize // size in pixel
     
-    static var searchBundle: NSBundle = NSBundle.mainBundle()
+    static var searchBundle: Bundle = Bundle.main
 
     init(frames: [Frame], size: CGSize, scale: CGFloat, bitDepth: Int, repeatCount: Int, firstFrameHidden hidden: Bool) {
         self.frames = frames
@@ -131,7 +131,7 @@ public class APNGImage: NSObject { // For ObjC compatibility
     - returns: A new image object for the specified data, or nil if the method could not initialize the image from the specified data.
     
     */
-    public convenience init?(data: NSData) {
+    public convenience init?(data: Data) {
         self.init(data: data, scale: 1)
     }
     
@@ -147,7 +147,7 @@ public class APNGImage: NSObject { // For ObjC compatibility
     
     - returns: A new image object for the specified data, or nil if the method could not initialize the image from the specified data.
     */
-    public convenience init?(data: NSData, scale: CGFloat) {
+    public convenience init?(data: Data, scale: CGFloat) {
         var disassembler = Disassembler(data: data)
         do {
             let (frames, size, repeatCount, bitDepth, firstFrameHidden) = try disassembler.decodeToElements(scale)
@@ -178,8 +178,8 @@ public class APNGImage: NSObject { // For ObjC compatibility
         if let apng = APNGCache.defaultCache.imageForKey(path) { // Found in the cache
             self.init(apng: apng)
         } else {
-            if let data = NSData(contentsOfFile: path) {
-                let fileName = (path as NSString).stringByDeletingPathExtension
+            if let data = try? Data(contentsOf: URL(fileURLWithPath: path)) {
+                let fileName = (path as NSString).deletingPathExtension
                 
                 var scale: CGFloat = 1
                 if fileName.hasSuffix("@2x") {
@@ -210,8 +210,8 @@ public class APNGImage: NSObject { // For ObjC compatibility
 }
 
 extension APNGImage {
-    override public var description: String {
-        var s = "<APNGImage: \(unsafeAddressOf(self))> size: \(size), frameCount: \(frames.count), repeatCount: \(repeatCount)\n"
+    override open var description: String {
+        var s = "<APNGImage: \(Unmanaged.passUnretained(self).toOpaque())> size: \(size), frameCount: \(frames.count), repeatCount: \(repeatCount)\n"
         s += "["
         for f in frames {
             s += "\(f)\n"
@@ -222,36 +222,36 @@ extension APNGImage {
 }
 
 extension String {
-    func apng_filePathByCheckingNameExistingInBundle(bundle: NSBundle) -> String? {
+    func apng_filePathByCheckingNameExistingInBundle(_ bundle: Bundle) -> String? {
         let name = self as NSString
         let fileExtension = name.pathExtension
-        let fileName = name.stringByDeletingPathExtension
+        let fileName = name.deletingPathExtension
         
         // If the name is suffixed by 2x or 3x, we think users want to the specified version
         if fileName.hasSuffix("@2x") || fileName.hasSuffix("@3x") {
             var path: String?
-            path = bundle.pathForResource(fileName, ofType: fileExtension) ??
-                   bundle.pathForResource(fileName, ofType: "apng") ??
-                   bundle.pathForResource(fileName, ofType: "png")
+            path = bundle.path(forResource: fileName, ofType: fileExtension) ??
+                   bundle.path(forResource: fileName, ofType: "apng") ??
+                   bundle.path(forResource: fileName, ofType: "png")
             return path
         }
         
         // Else, user is passing a common name without known suffix.
         // We will try to find the version match current scale first, then the one with 1 less scale factor.
         var path: String?
-        let scales = 1 ... Int(UIScreen.mainScreen().scale)
+        let scales = 1 ... Int(UIScreen.main.scale)
         
-        path = scales.reverse().reduce(nil) { (result, scale) -> String? in
+        path = scales.reversed().reduce(nil) { (result, scale) -> String? in
             return result ??
-                   bundle.pathForResource("\(fileName)@\(scale)x", ofType: fileExtension) ??
-                   bundle.pathForResource("\(fileName)@\(scale)x", ofType: "apng") ??
-                   bundle.pathForResource("\(fileName)@\(scale)x", ofType: "png")
+                   bundle.path(forResource: "\(fileName)@\(scale)x", ofType: fileExtension) ??
+                   bundle.path(forResource: "\(fileName)@\(scale)x", ofType: "apng") ??
+                   bundle.path(forResource: "\(fileName)@\(scale)x", ofType: "png")
         }
         
         path = path ??
-               bundle.pathForResource(fileName, ofType: fileExtension) ?? // Matched scaled version not found, use the 1x version
-               bundle.pathForResource(fileName, ofType: "apng") ??
-               bundle.pathForResource(fileName, ofType: "png")
+               bundle.path(forResource: fileName, ofType: fileExtension) ?? // Matched scaled version not found, use the 1x version
+               bundle.path(forResource: fileName, ofType: "apng") ??
+               bundle.path(forResource: fileName, ofType: "png")
         
         return path
     }

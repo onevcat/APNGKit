@@ -46,11 +46,11 @@ unexpected error.
 - PNGInternalError:    Internal error when decoding a PNG image.
 - FileSizeExceeded:    The file is too large. There is a limitation of APNGKit that the max width and height is 1M pixel.
 */
-public enum DisassemblerError: ErrorType {
-    case InvalidFormat
-    case PNGStructureFailure
-    case PNGInternalError
-    case FileSizeExceeded
+public enum DisassemblerError: Error {
+    case invalidFormat
+    case pngStructureFailure
+    case pngInternalError
+    case fileSizeExceeded
 }
 
 /**
@@ -60,8 +60,8 @@ public enum DisassemblerError: ErrorType {
 *  See https://github.com/onevcat/libpng for more.
 */
 public struct Disassembler {
-    private(set) var reader: Reader
-    let originalData: NSData
+    fileprivate(set) var reader: Reader
+    let originalData: Data
     
     /**
     Init a disassembler with APNG data.
@@ -70,7 +70,7 @@ public struct Disassembler {
     
     - returns: The disassembler ready to use.
     */
-    public init(data: NSData) {
+    public init(data: Data) {
         reader = Reader(data: data)
         originalData = data
     }
@@ -87,7 +87,7 @@ public struct Disassembler {
     
     - returns: A decoded `APNGImage` object at given scale.
     */
-    public mutating func decode(scale: CGFloat = 1) throws -> APNGImage {
+    public mutating func decode(_ scale: CGFloat = 1) throws -> APNGImage {
         let (frames, size, repeatCount, bitDepth, firstFrameHidden) = try decodeToElements(scale)
         
         // Setup apng properties
@@ -96,7 +96,7 @@ public struct Disassembler {
         return apng
     }
     
-    mutating func decodeToElements(scale: CGFloat = 1) throws
+    mutating func decodeToElements(_ scale: CGFloat = 1) throws
             -> (frames: [Frame], size: CGSize, repeatCount: Int, bitDepth: Int, firstFrameHidden: Bool)
     {
         reader.beginReading()
@@ -109,7 +109,7 @@ public struct Disassembler {
         var pngPointer = png_create_read_struct(PNG_LIBPNG_VER_STRING, nil, nil, nil)
         
         if pngPointer == nil {
-            throw DisassemblerError.PNGStructureFailure
+            throw DisassemblerError.pngStructureFailure
         }
         
         var infoPointer = png_create_info_struct(pngPointer)
@@ -119,11 +119,11 @@ public struct Disassembler {
         }
         
         if infoPointer == nil {
-            throw DisassemblerError.PNGStructureFailure
+            throw DisassemblerError.pngStructureFailure
         }
         
         if setjmp(png_jmpbuf(pngPointer)) != 0 {
-            throw DisassemblerError.PNGInternalError
+            throw DisassemblerError.pngInternalError
         }
         
         png_set_read_fn(pngPointer, &reader, readData)
@@ -139,7 +139,7 @@ public struct Disassembler {
         png_get_IHDR(pngPointer, infoPointer, &width, &height, &bitDepth, &colorType, nil, nil, nil)
         
         if width > kMaxPNGSize || height > kMaxPNGSize {
-            throw DisassemblerError.FileSizeExceeded
+            throw DisassemblerError.fileSizeExceeded
         }
                 
         // Transforms. We only handle 8-bit RGBA images.
@@ -247,7 +247,7 @@ public struct Disassembler {
                 memcpy(nextFrame.bytes, currentFrame.bytes, Int(length))
                 if disposeOP == UInt8(PNG_DISPOSE_OP_BACKGROUND) {
                     for j in 0 ..< frameHeight {
-                        let tarPointer = nextFrame.byteRows[Int(offsetY + j)].advancedBy(Int(offsetX) * 4)
+                        let tarPointer = nextFrame.byteRows[Int(offsetY + j)].advanced(by: Int(offsetX) * 4)
                         memset(tarPointer, 0, Int(frameWidth) * 4)
                     }
                 }
@@ -266,7 +266,7 @@ public struct Disassembler {
         return (frames, CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth), firstFrameHidden)
     }
     
-    func blendFrameDstBytes(dstBytes: Array<UnsafeMutablePointer<UInt8>>,
+    func blendFrameDstBytes(_ dstBytes: Array<UnsafeMutablePointer<UInt8>>,
                             srcBytes: Array<UnsafeMutablePointer<UInt8>>,
                              blendOP: UInt8,
                              offsetX: UInt32,
@@ -278,31 +278,31 @@ public struct Disassembler {
         
         for j in 0 ..< Int(height) {
             var sp = srcBytes[j]
-            var dp = (dstBytes[j + Int(offsetY)]).advancedBy(Int(offsetX) * 4) //We will always handle 4 channels and 8-bits
+            var dp = (dstBytes[j + Int(offsetY)]).advanced(by: Int(offsetX) * 4) //We will always handle 4 channels and 8-bits
             
             if blendOP == UInt8(PNG_BLEND_OP_SOURCE) {
                 memcpy(dp, sp, Int(width) * 4)
             } else { // APNG_BLEND_OP_OVER
                 for _ in 0 ... Int(width){
-                    sp = sp.advancedBy(4)
-                    dp = dp.advancedBy(4)
-                    let srcAlpha = Int(sp.advancedBy(3).memory) // Blend alpha to dst
+                    sp = sp.advanced(by: 4)
+                    dp = dp.advanced(by: 4)
+                    let srcAlpha = Int(sp.advanced(by: 3).pointee) // Blend alpha to dst
                     if srcAlpha == 0xff {
                         memcpy(dp, sp, 4)
                     } else if srcAlpha != 0 {
-                        let dstAlpha = Int(dp.advancedBy(3).memory)
+                        let dstAlpha = Int(dp.advanced(by: 3).pointee)
                         if dstAlpha != 0 {
                             u = srcAlpha * 255
                             v = (255 - srcAlpha) * dstAlpha
                             al = u + v
                             
                             for bit in 0 ..< 3 {
-                                dp.advancedBy(bit).memory = UInt8(
-                                    (Int(sp.advancedBy(bit).memory) * u + Int(dp.advancedBy(bit).memory) * v) / al
+                                dp.advanced(by: bit).pointee = UInt8(
+                                    (Int(sp.advanced(by: bit).pointee) * u + Int(dp.advanced(by: bit).pointee) * v) / al
                                 )
                             }
                             
-                            dp.advancedBy(4).memory = UInt8(al / 255)
+                            dp.advanced(by: 4).pointee = UInt8(al / 255)
                         } else {
                             memcpy(dp, sp, 4)
                         }
@@ -313,15 +313,15 @@ public struct Disassembler {
     }
     
     func checkFormat() throws {
-        guard originalData.length > 8 else {
-            throw DisassemblerError.InvalidFormat
+        guard originalData.count > 8 else {
+            throw DisassemblerError.invalidFormat
         }
         
-        var sig = [UInt8](count: signatureOfPNGLength, repeatedValue: 0)
-        originalData.getBytes(&sig, length: signatureOfPNGLength)
+        var sig = [UInt8](repeating: 0, count: signatureOfPNGLength)
+        (originalData as NSData).getBytes(&sig, length: signatureOfPNGLength)
         
         guard png_sig_cmp(&sig, 0, signatureOfPNGLength) == 0 else {
-            throw DisassemblerError.InvalidFormat
+            throw DisassemblerError.invalidFormat
         }
     }
 }

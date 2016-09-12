@@ -32,25 +32,25 @@ import UIKit
 */
 struct Reader {
     
-    private let stream: NSInputStream
-    private var totalBytesRead = 0
-    private let dataLength: Int
+    fileprivate let stream: InputStream
+    fileprivate var totalBytesRead = 0
+    fileprivate let dataLength: Int
     
     /// Built-in buffers. It will not be initiated until used.
     lazy var buffers: [Int: Array<UInt8>] = {
         var buffers = [Int: Array<UInt8>]()
         for i in 0...self.maxBufferCount {
-            buffers[i] = Array<UInt8>(count: i, repeatedValue: 0)
+            buffers[i] = Array<UInt8>(repeating: 0, count: i)
         }
         return buffers
     }()
     
     let maxBufferCount: Int
     
-    init(data: NSData, maxBuffer: Int = 0) {
-        stream = NSInputStream(data: data)
+    init(data: Data, maxBuffer: Int = 0) {
+        stream = InputStream(data: data)
         maxBufferCount = maxBuffer
-        dataLength = data.length
+        dataLength = data.count
     }
     
     func beginReading() {
@@ -69,12 +69,12 @@ struct Reader {
     
     - returns: The count of bytes read.
     */
-    mutating func read(buffer: UnsafeMutablePointer<UInt8>, bytesCount: Int) -> Int {
-        if stream.streamStatus == NSStreamStatus.AtEnd {
+    mutating func read(_ buffer: UnsafeMutablePointer<UInt8>, bytesCount: Int) -> Int {
+        if stream.streamStatus == Stream.Status.atEnd {
             return 0
         }
         
-        if stream.streamStatus != NSStreamStatus.Open {
+        if stream.streamStatus != Stream.Status.open {
             fatalError("The stream is not in Open status. This may occur when you try " +
                        "to read before calling beginReading() or after endReading(). " +
                        "It could also be caused by you are trying to read from multiple threads. " +
@@ -103,13 +103,13 @@ struct Reader {
     
     - returns: Raw data and the count of bytes read.
     */
-    mutating func read(bytesCount: Int) -> (data: [UInt8], bytesCount: Int) {
+    mutating func read(_ bytesCount: Int) -> (data: [UInt8], bytesCount: Int) {
         
-        if stream.streamStatus == NSStreamStatus.AtEnd {
+        if stream.streamStatus == Stream.Status.atEnd {
             return ([], 0)
         }
         
-        if stream.streamStatus != NSStreamStatus.Open {
+        if stream.streamStatus != Stream.Status.open {
             fatalError("The stream is not in Open status. This may occur when you try to read before " +
                        "calling beginReading() or after endReading(). It could also be caused by you are " +
                        "trying to read from multiple threads. Reader is not support multithreads reading! " +

@@ -30,12 +30,12 @@ import UIKit
 /// You can control the starting and stopping of the animation, as well as the repeat count.
 /// All images associated with an APNGImageView object should use the same scale. 
 /// If your application uses images with different scales, they may render incorrectly.
-public class APNGImageView: UIView {
+open class APNGImageView: UIView {
     
     /// The image displayed in the image view.
     /// If you change the image when the animation playing, 
     /// the animation of original image will stop, and the new one will start automatically.
-    public var image: APNGImage? { // Setter should be run on main thread
+    open var image: APNGImage? { // Setter should be run on main thread
         didSet {
             let animating = isAnimating
             stopAnimating()
@@ -52,11 +52,11 @@ public class APNGImageView: UIView {
     }
     
     /// A Bool value indicating whether the animation is running.
-    public private(set) var isAnimating: Bool
+    open fileprivate(set) var isAnimating: Bool
     
     /// A Bool value indicating whether the animation should be 
     /// started automatically after an image is set. Default is false.
-    public var autoStartAnimation: Bool {
+    open var autoStartAnimation: Bool {
         didSet {
             if autoStartAnimation {
                 startAnimating()
@@ -67,11 +67,11 @@ public class APNGImageView: UIView {
     /// If true runs animation timer with option `NSRunLoopCommonModes`.
     /// ScrollView(CollectionView, TableView) items with Animated APNGImageView will not freeze during scrolling
     /// - Note: This may decrease scrolling smoothness with lot's of animations
-    public var allowAnimationInScrollView = false
+    open var allowAnimationInScrollView = false
     
     var timer: CADisplayLink?
-    var lastTimestamp: NSTimeInterval = 0
-    var currentPassedDuration: NSTimeInterval = 0
+    var lastTimestamp: TimeInterval = 0
+    var currentPassedDuration: TimeInterval = 0
     var currentFrameIndex: Int = 0
     var repeated: Int = 0
     
@@ -95,11 +95,11 @@ public class APNGImageView: UIView {
         if let image = image {
             super.init(frame: CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height))
         } else {
-            super.init(frame: CGRectZero)
+            super.init(frame: CGRect.zero)
         }
         
-        backgroundColor = UIColor.clearColor()
-        userInteractionEnabled = false
+        backgroundColor = UIColor.clear
+        isUserInteractionEnabled = false
         updateContents(image?.frames.first?.image)
     }
     
@@ -125,12 +125,12 @@ public class APNGImageView: UIView {
     /**
     Starts animation contained in the image.
     */
-    public func startAnimating() {
-        let mainRunLoop = NSRunLoop.mainRunLoop()
-        let currentRunLoop = NSRunLoop.currentRunLoop()
+    open func startAnimating() {
+        let mainRunLoop = RunLoop.main
+        let currentRunLoop = RunLoop.current
         
         if mainRunLoop != currentRunLoop {
-            performSelectorOnMainThread(#selector(APNGImageView.startAnimating), withObject: nil, waitUntilDone: false)
+            performSelector(onMainThread: #selector(APNGImageView.startAnimating), with: nil, waitUntilDone: false)
             return
         }
         
@@ -142,18 +142,18 @@ public class APNGImageView: UIView {
         timer = CADisplayLink.apng_displayLink({ [weak self] (displayLink) -> () in
             self?.tick(displayLink)
         })
-        timer?.addToRunLoop(mainRunLoop, forMode: (self.allowAnimationInScrollView ? NSRunLoopCommonModes : NSDefaultRunLoopMode))
+        timer?.add(to: mainRunLoop, forMode: (self.allowAnimationInScrollView ? RunLoopMode.commonModes : RunLoopMode.defaultRunLoopMode))
     }
     
     /**
     Starts animation contained in the image.
     */
-    public func stopAnimating() {
-        let mainRunLoop = NSRunLoop.mainRunLoop()
-        let currentRunLoop = NSRunLoop.currentRunLoop()
+    open func stopAnimating() {
+        let mainRunLoop = RunLoop.main
+        let currentRunLoop = RunLoop.current
         
         if mainRunLoop != currentRunLoop {
-            performSelectorOnMainThread(#selector(APNGImageView.stopAnimating), withObject: nil, waitUntilDone: false)
+            performSelector(onMainThread: #selector(APNGImageView.stopAnimating), with: nil, waitUntilDone: false)
             return
         }
         
@@ -171,7 +171,7 @@ public class APNGImageView: UIView {
         timer = nil
     }
     
-    func tick(sender: CADisplayLink?) {
+    func tick(_ sender: CADisplayLink?) {
         
         guard let localTimer = sender,
               let image = image else {
@@ -215,15 +215,15 @@ public class APNGImageView: UIView {
         
     }
     
-    func updateContents(image: UIImage?) {
-        let currentImage: CGImageRef?
+    func updateContents(_ image: UIImage?) {
+        let currentImage: CGImage?
         if layer.contents != nil {
-            currentImage = (layer.contents as! CGImageRef)
+            currentImage = (layer.contents as! CGImage)
         } else {
             currentImage = nil
         }
 
-        let cgImage = image?.CGImage
+        let cgImage = image?.cgImage
 
         if cgImage !== currentImage {
             layer.contents = cgImage
@@ -246,15 +246,15 @@ extension CADisplayLink {
     
     var apng_userInfo: AnyObject? {
         get {
-            return objc_getAssociatedObject(self, &apng_userInfoKey)
+            return objc_getAssociatedObject(self, &apng_userInfoKey) as AnyObject?
         }
     }
     
-    func apng_setUserInfo(userInfo: AnyObject?) {
+    func apng_setUserInfo(_ userInfo: AnyObject?) {
         objc_setAssociatedObject(self, &apng_userInfoKey, userInfo, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    static func apng_displayLink(block: (CADisplayLink) -> ()) -> CADisplayLink
+    static func apng_displayLink(_ block: (CADisplayLink) -> ()) -> CADisplayLink
     {
         let displayLink = CADisplayLink(target: self, selector: #selector(CADisplayLink.apng_blockInvoke(_:)))
         
@@ -263,7 +263,7 @@ extension CADisplayLink {
         return displayLink
     }
     
-    static func apng_blockInvoke(sender: CADisplayLink) {
+    static func apng_blockInvoke(_ sender: CADisplayLink) {
         if let block = sender.apng_userInfo as? Block<(CADisplayLink)->()> {
             block.f(sender)
         }
