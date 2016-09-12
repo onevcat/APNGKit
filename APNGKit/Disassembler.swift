@@ -179,12 +179,14 @@ public struct Disassembler {
             var currentFrame = Frame(length: length, bytesInRow: rowBytes)
             currentFrame.duration = Double.infinity
             
-            _ = withUnsafeMutablePointer(to: &currentFrame.byteRows) { (bound) in
-                bound.withMemoryRebound(to: UInt8.self, capacity: currentFrame.byteRows.count) { (rows) in
-                    var mappedRows: UnsafeMutablePointer<UInt8>? = rows
-                    png_read_image(pngPointer, &mappedRows)
+            currentFrame.byteRows.withUnsafeMutableBufferPointer({ (buffer) in
+                _ = withUnsafeMutablePointer(to: &buffer) { (bound) in
+                    bound.withMemoryRebound(to: (UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>).self, capacity: MemoryLayout<(UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>)>.size) { (rows) in
+                        let mappedRows: UnsafeMutablePointer<UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>> = rows
+                        png_read_image(pngPointer, mappedRows.pointee)
+                    }
                 }
-            }
+            })
             
             currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale, blend: false)
             
