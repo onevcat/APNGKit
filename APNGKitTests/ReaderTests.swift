@@ -55,7 +55,7 @@ class ReaderTests: XCTestCase {
     }
     
     func testReaderWithBuffer() {
-        var ptr = [UInt8](count: 8, repeatedValue: 0)
+        var ptr = [UInt8](repeating: 0, count: 8)
         var reader = Reader(data: redDotPNGData, maxBuffer: 0)
         var count = 0
         
