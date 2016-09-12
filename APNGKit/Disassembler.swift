@@ -30,11 +30,15 @@ let signatureOfPNGLength = 8
 let kMaxPNGSize: UInt32 = 1000000;
 
 // Reading callback for libpng
-func readData(pngPointer: png_structp, outBytes: png_bytep, byteCountToRead: png_size_t) {
-    let ioPointer = png_get_io_ptr(pngPointer)
-    var reader = UnsafePointer<Reader>(ioPointer).memory
+func readData(_ pngPointer: png_structp?, outBytes: png_bytep?, byteCountToRead: png_size_t) {
+    if pngPointer == nil || outBytes == nil {
+        return
+    }
     
-    reader.read(outBytes, bytesCount: byteCountToRead)
+    let ioPointer = png_get_io_ptr(pngPointer)
+    var reader = UnsafeRawPointer(ioPointer)!.load(as: Reader.self)
+    
+    _ = reader.read(outBytes!, bytesCount: byteCountToRead)
 }
 
 /**
@@ -175,7 +179,13 @@ public struct Disassembler {
             var currentFrame = Frame(length: length, bytesInRow: rowBytes)
             currentFrame.duration = Double.infinity
             
-            png_read_image(pngPointer, &currentFrame.byteRows)
+            _ = withUnsafeMutablePointer(to: &currentFrame.byteRows) { (bound) in
+                bound.withMemoryRebound(to: UInt8.self, capacity: currentFrame.byteRows.count) { (rows) in
+                    var mappedRows: UnsafeMutablePointer<UInt8>? = rows
+                    png_read_image(pngPointer, &mappedRows)
+                }
+            }
+            
             currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale, blend: false)
             
             png_read_end(pngPointer, infoPointer)
@@ -229,9 +239,31 @@ public struct Disassembler {
             }
             
             // Decode fdATs
-            png_read_image(pngPointer, &bufferFrame.byteRows)
-            blendFrameDstBytes(currentFrame.byteRows, srcBytes: bufferFrame.byteRows, blendOP: blendOP,
-                                    offsetX: offsetX, offsetY: offsetY, width: frameWidth, height: frameHeight)
+            bufferFrame.byteRows.withUnsafeMutableBufferPointer({ (buffer) in
+                _ = withUnsafeMutablePointer(to: &buffer) { (bound) in
+                    bound.withMemoryRebound(to: (UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>).self, capacity: MemoryLayout<(UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>)>.size) { (rows) in
+                        let mappedRows: UnsafeMutablePointer<UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>> = rows
+                        png_read_image(pngPointer, mappedRows.pointee)
+                    }
+                }
+            })
+            
+            
+            _ = withUnsafeMutablePointer(to: &currentFrame.byteRows) { (currentBind) in
+                currentBind.withMemoryRebound(to: Array<UnsafeMutablePointer<UInt8>>.self, capacity: currentFrame.byteRows.count) { (currentRows) in
+                    let destRows: UnsafeMutablePointer<Array<UnsafeMutablePointer<UInt8>>> = currentRows
+                    
+                    _ = withUnsafeMutablePointer(to: &bufferFrame.byteRows) { (bufferBind) in
+                        bufferBind.withMemoryRebound(to: Array<UnsafeMutablePointer<UInt8>>.self, capacity: bufferFrame.byteRows.count) { (bufferRows) in
+                            let srcRows: UnsafeMutablePointer<Array<UnsafeMutablePointer<UInt8>>> = bufferRows
+                            
+                            blendFrameDstBytes(destRows.pointee, srcBytes: srcRows.pointee, blendOP: blendOP, offsetX: offsetX, offsetY: offsetY, width: frameWidth, height: frameHeight)
+                        }
+                    }
+                }
+            }
+            
+            
             // Calculating delay (duration)
             if delayDen == 0 {
                 delayDen = 100

@@ -38,12 +38,12 @@ struct Frame {
     var bytes: UnsafeMutablePointer<UInt8>
     
     /// An array of raw data row pointer. A decoder should fill this area with image raw data.
-    lazy var byteRows: Array<UnsafeMutablePointer<UInt8>> = {
-        var array = Array<UnsafeMutablePointer<UInt8>>()
+    lazy var byteRows: Array<UnsafeMutableRawPointer> = {
+        var array = Array<UnsafeMutableRawPointer>()
         
         let height = self.length / self.bytesInRow
         for i in 0 ..< height {
-            let pointer = self.bytes.advancedBy(i * self.bytesInRow)
+            let pointer = self.bytes.advanced(by: i * self.bytesInRow)
             array.append(pointer)
         }
         return array
