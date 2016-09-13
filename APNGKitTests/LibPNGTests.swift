@@ -29,11 +29,11 @@ import XCTest
 @testable import APNGKit.png
 
 // Reading callback for libpng
-func readData(png_ptr: png_structp, outBytes: png_bytep, byteCountToRead: png_size_t) {
+func readData(_ png_ptr: png_structp, outBytes: png_bytep, byteCountToRead: png_size_t) {
     let io_ptr = png_get_io_ptr(png_ptr)
-    var reader = UnsafePointer<Reader>(io_ptr).memory
+    var reader = UnsafeRawPointer(io_ptr)!.load(as: Reader.self)
     
-    reader.read(outBytes, bytesCount: byteCountToRead)
+    _ = reader.read(outBytes, bytesCount: byteCountToRead)
 }
 
 class LibPNGTests: XCTestCase {

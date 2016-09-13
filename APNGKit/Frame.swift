@@ -38,12 +38,12 @@ struct Frame {
     var bytes: UnsafeMutablePointer<UInt8>
     
     /// An array of raw data row pointer. A decoder should fill this area with image raw data.
-    lazy var byteRows: Array<UnsafeMutablePointer<UInt8>> = {
-        var array = Array<UnsafeMutablePointer<UInt8>>()
+    lazy var byteRows: Array<UnsafeMutableRawPointer> = {
+        var array = Array<UnsafeMutableRawPointer>()
         
         let height = self.length / self.bytesInRow
         for i in 0 ..< height {
-            let pointer = self.bytes.advancedBy(i * self.bytesInRow)
+            let pointer = self.bytes.advanced(by: i * self.bytesInRow)
             array.append(pointer)
         }
         return array
@@ -54,31 +54,34 @@ struct Frame {
     /// How many bytes in a row. Regularly it is width * (bitDepth / 2)
     let bytesInRow: Int
     
-    var duration: NSTimeInterval = 0
+    var duration: TimeInterval = 0
     
     init(length: UInt32, bytesInRow: UInt32) {
         self.length = Int(length)
         self.bytesInRow = Int(bytesInRow)
         
-        self.bytes = UnsafeMutablePointer<UInt8>.alloc(self.length)
-        self.bytes.initialize(0)
+        self.bytes = UnsafeMutablePointer<UInt8>.allocate(capacity: self.length)
+        self.bytes.initialize(to: 0)
         memset(self.bytes, 0, self.length)
     }
     
     func clean() {
-        bytes.destroy(length)
-        bytes.dealloc(length)
+        bytes.deinitialize(count: length)
+        bytes.deallocate(capacity: length)
     }
     
-    mutating func updateCGImageRef(width: Int, height: Int, bits: Int, scale: CGFloat, blend: Bool) {
+    mutating func updateCGImageRef(_ width: Int, height: Int, bits: Int, scale: CGFloat, blend: Bool) {
         
-        let provider = CGDataProviderCreateWithData(nil, bytes, length, nil)
+        let unusedCallback: CGDataProviderReleaseDataCallback = { optionalPointer, pointer, valueInt in }
+        guard let provider = CGDataProvider(dataInfo: nil, data: bytes, size: length, releaseData: unusedCallback) else {
+            return
+        }
         
-        if let imageRef = CGImageCreate(width, height, bits, bits * 4, bytesInRow, CGColorSpaceCreateDeviceRGB(),
-            [CGBitmapInfo.ByteOrder32Big, CGBitmapInfo(rawValue: blend ? CGImageAlphaInfo.Last.rawValue : CGImageAlphaInfo.PremultipliedLast.rawValue)],
-                        provider, nil, false, .RenderingIntentDefault)
+        if let imageRef = CGImage(width: width, height: height, bitsPerComponent: bits, bitsPerPixel: bits * 4, bytesPerRow: bytesInRow, space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: [CGBitmapInfo.byteOrder32Big, CGBitmapInfo(rawValue: blend ? CGImageAlphaInfo.last.rawValue : CGImageAlphaInfo.premultipliedLast.rawValue)],
+                        provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
         {
-            image = UIImage(CGImage: imageRef, scale: scale, orientation: .Up)
+            image = UIImage(cgImage: imageRef, scale: scale, orientation: .up)
         }
     }
 }
@@ -91,7 +94,7 @@ extension Frame: CustomStringConvertible {
 
 extension Frame: CustomDebugStringConvertible {
 
-    var data: NSData? {
+    var data: Data? {
         if let image = image {
            return UIImagePNGRepresentation(image)
         }

@@ -26,8 +26,8 @@
 
 import Foundation
 
-extension NSBundle {
-    static var testBundle: NSBundle {
-        return NSBundle(forClass: APNGKitTests.self)
+extension Bundle {
+    static var testBundle: Bundle {
+        return Bundle(for: APNGKitTests.self)
     }
 }

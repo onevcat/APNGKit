@@ -49,15 +49,15 @@ class DisassemblerTests: XCTestCase {
             try self.disassembler.checkFormat()
         }
         
-        let data = NSData()
+        let data = Data()
         let dis1 = Disassembler(data: data)
-        XCTempAssertThrowsSpecificError(DisassemblerError.InvalidFormat, "Empty data should throw invalid format") { () -> () in
+        XCTempAssertThrowsSpecificError(DisassemblerError.invalidFormat, "Empty data should throw invalid format") { () -> () in
             try dis1.checkFormat()
         }
         
-        let infoPlistData = NSData(contentsOfFile: NSBundle.testBundle.pathForResource("Info", ofType: ".plist")!)!
+        let infoPlistData = try! Data(contentsOf: URL(fileURLWithPath: Bundle.testBundle.path(forResource: "Info", ofType: ".plist")!))
         let dis2 = Disassembler(data: infoPlistData)
-        XCTempAssertThrowsSpecificError(DisassemblerError.InvalidFormat, "Empty data should throw invalid format") { () -> () in
+        XCTempAssertThrowsSpecificError(DisassemblerError.invalidFormat, "Empty data should throw invalid format") { () -> () in
             try dis2.checkFormat()
         }
         
@@ -78,7 +78,7 @@ class DisassemblerTests: XCTestCase {
     }
     
     func testOverBlendDecode() {
-        let data = NSData(contentsOfFile: NSBundle.testBundle.pathForResource("over_previous", ofType: "apng")!)!
+        let data = try! Data(contentsOf: URL(fileURLWithPath: Bundle.testBundle.path(forResource: "over_previous", ofType: "apng")!))
         disassembler = Disassembler(data: data)
         
         var apng: APNGImage! = nil
@@ -97,6 +97,6 @@ class DisassemblerTests: XCTestCase {
         }
         XCTAssertNotNil(apng, "APNG Image should be created.")
         XCTAssertEqual(apng.frames.count, 1, "There should be only 1 frame.")
-        XCTAssertEqual(apng.frames.first!.image?.size, CGSizeMake(1, 1), "The frame is 1x1 dot.")
+        XCTAssertEqual(apng.frames.first!.image?.size, CGSize(width: 1, height: 1), "The frame is 1x1 dot.")
     }
 }

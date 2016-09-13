@@ -28,17 +28,17 @@ import UIKit
 
 /// Cache for APNGKit. It will hold apng images initialized from specified init methods.
 /// If the same file is requested later, APNGKit will look it up in this cache first to improve performance.
-public class APNGCache {
+open class APNGCache {
     
-    private static let defaultCacheInstance = APNGCache()
+    fileprivate static let defaultCacheInstance = APNGCache()
     
     /// The default cache object. It is used internal in APNGKit.
     /// You should always use this object to interact with APNG cache as well.
-    public class var defaultCache: APNGCache {
+    open class var defaultCache: APNGCache {
         return defaultCacheInstance
     }
     
-    let cacheObject = NSCache()
+    let cacheObject = NSCache<NSString, APNGImage>()
     
     init() {
         // Limit the cache to prevent memory warning as possible.
@@ -50,14 +50,14 @@ public class APNGCache {
         
         cacheObject.name = "com.onevcat.APNGKit.cache"
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(APNGCache.clearMemoryCache),
-                                                                   name: UIApplicationDidReceiveMemoryWarningNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(APNGCache.clearMemoryCache),
-                                                                   name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(APNGCache.clearMemoryCache),
+                                                                   name: NSNotification.Name.UIApplicationDidReceiveMemoryWarning, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(APNGCache.clearMemoryCache),
+                                                                   name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     /**
@@ -66,8 +66,8 @@ public class APNGCache {
     - parameter image: The image should be cached.
     - parameter key:   The key of that image
     */
-    public func setImage(image: APNGImage, forKey key: String) {
-        cacheObject.setObject(image, forKey: key, cost: image.cost)
+    open func setImage(_ image: APNGImage, forKey key: String) {
+        cacheObject.setObject(image, forKey: key as NSString, cost: image.cost)
     }
     
     /**
@@ -75,12 +75,12 @@ public class APNGCache {
     
     - parameter key: The key of that image
     */
-    public func removeImageForKey(key: String) {
-        cacheObject.removeObjectForKey(key)
+    open func removeImageForKey(_ key: String) {
+        cacheObject.removeObject(forKey: key as NSString)
     }
     
-    func imageForKey(key: String) -> APNGImage? {
-        return cacheObject.objectForKey(key) as? APNGImage
+    func imageForKey(_ key: String) -> APNGImage? {
+        return cacheObject.object(forKey: key as NSString)
     }
     
     /**
@@ -91,7 +91,7 @@ public class APNGCache {
             your app OOM directly without receiving a memory warning. In this situation, you could call this method first 
             to release the APNG cache for your memory costing operation.
     */
-    @objc public func clearMemoryCache() {
+    @objc open func clearMemoryCache() {
         // The cache will not work once it receives a memory warning from iOS 8.
         // It seems an intended behaviours to reduce memory pressure.
         // See http://stackoverflow.com/questions/27289360/nscache-objectforkey-always-return-nil-after-memory-warning-on-ios-8
