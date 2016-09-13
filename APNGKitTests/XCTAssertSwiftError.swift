@@ -7,7 +7,7 @@
 
 import XCTest
 
-func XCTempAssertThrowsError(message: String = "", file: StaticString = #file, line: UInt = #line, _ block: () throws -> ())
+func XCTempAssertThrowsError(_ message: String = "", file: StaticString = #file, line: UInt = #line, _ block: () throws -> ())
 {
     do
     {
@@ -20,7 +20,7 @@ func XCTempAssertThrowsError(message: String = "", file: StaticString = #file, l
 }
 
 
-func XCTempAssertThrowsSpecificError(kind: ErrorType, _ message: String = "", file: StaticString = #file, line: UInt = #line, _ block: () throws -> ())
+func XCTempAssertThrowsSpecificError(_ kind: Error, _ message: String = "", file: StaticString = #file, line: UInt = #line, _ block: () throws -> ())
 {
     do
     {
@@ -41,7 +41,7 @@ func XCTempAssertThrowsSpecificError(kind: ErrorType, _ message: String = "", fi
 }
 
 
-func XCTempAssertNoThrowError(message: String = "", file: StaticString = #file, line: UInt = #line, _ block: () throws -> ())
+func XCTempAssertNoThrowError(_ message: String = "", file: StaticString = #file, line: UInt = #line, _ block: () throws -> ())
 {
     do {try block()}
     catch
@@ -52,7 +52,7 @@ func XCTempAssertNoThrowError(message: String = "", file: StaticString = #file, 
 }
 
 
-func XCTempAssertNoThrowSpecificError(kind: ErrorType, _ message: String = "", file: StaticString = #file, line: UInt = #line, _ block: () throws -> ())
+func XCTempAssertNoThrowSpecificError(_ kind: Error, _ message: String = "", file: StaticString = #file, line: UInt = #line, _ block: () throws -> ())
 {
     do {try block()}
     catch let error as NSError

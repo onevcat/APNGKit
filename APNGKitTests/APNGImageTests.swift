@@ -32,19 +32,19 @@ class APNGImageTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        APNGImage.searchBundle = NSBundle.testBundle
+        APNGImage.searchBundle = Bundle.testBundle
 
     }
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        APNGImage.searchBundle = NSBundle.mainBundle()
-        super.tearDown()
+        APNGImage.searchBundle = Bundle.main
+      super.tearDown()
     }
     
     func testMinimalAPNG() {
-        let imageString = NSBundle(forClass: APNGImageTests.self).pathForResource("minimalAPNG", ofType: "apng")!
-        let data = NSData(contentsOfFile: imageString)
+        let imageString = Bundle(for: APNGImageTests.self).path(forResource: "minimalAPNG", ofType: "apng")!
+        let data = try? Data(contentsOf: URL(fileURLWithPath: imageString))
         
         let image = APNGImage(data: data!)
         
@@ -53,17 +53,17 @@ class APNGImageTests: XCTestCase {
         XCTAssertEqual(image!.size, CGSize(width: 1, height: 1), "The size of image is 1x1")
         
         // Red pixel
-        let frame0Pixel = [image!.frames[0].bytes.memory,
-                           image!.frames[0].bytes.advancedBy(1).memory,
-                           image!.frames[0].bytes.advancedBy(2).memory,
-                           image!.frames[0].bytes.advancedBy(3).memory]
+        let frame0Pixel = [image!.frames[0].bytes.pointee,
+                           image!.frames[0].bytes.advanced(by: 1).pointee,
+                           image!.frames[0].bytes.advanced(by: 2).pointee,
+                           image!.frames[0].bytes.advanced(by: 3).pointee]
         XCTAssertEqual(frame0Pixel, [0xff, 0x00, 0x00, 0xff])
         
         // Green pixel
-        let frame1Pixel = [image!.frames[1].bytes.memory,
-                           image!.frames[1].bytes.advancedBy(1).memory,
-                           image!.frames[1].bytes.advancedBy(2).memory,
-                           image!.frames[1].bytes.advancedBy(3).memory]
+        let frame1Pixel = [image!.frames[1].bytes.pointee,
+                           image!.frames[1].bytes.advanced(by: 1).pointee,
+                           image!.frames[1].bytes.advanced(by: 2).pointee,
+                           image!.frames[1].bytes.advanced(by: 3).pointee]
         XCTAssertEqual(frame1Pixel, [0x00, 0xff, 0x00, 0xff])
         
         XCTAssertEqual(image?.repeatCount, RepeatForever, "The repeat count should be forever.")
@@ -73,10 +73,10 @@ class APNGImageTests: XCTestCase {
     }
     
     func testAPNGCreatingPerformance() {
-        let ballString = NSBundle.testBundle.pathForResource("ball", ofType: "apng")!
-        let data = NSData(contentsOfFile: ballString)
+        let ballString = Bundle.testBundle.path(forResource: "ball", ofType: "apng")!
+        let data = try? Data(contentsOf: URL(fileURLWithPath: ballString))
         
-        self.measureBlock {
+        self.measure {
             for _ in 0 ..< 50 {
                 _ = APNGImage(data: data!)
             }
@@ -84,18 +84,18 @@ class APNGImageTests: XCTestCase {
     }
     
     func testABitLargerAPNG() {
-        let firefoxString = NSBundle.testBundle.pathForResource("spinfox", ofType: "apng")!
-        let data = NSData(contentsOfFile: firefoxString)
+        let firefoxString = Bundle.testBundle.path(forResource: "spinfox", ofType: "apng")!
+        let data = try? Data(contentsOf: URL(fileURLWithPath: firefoxString))
         let image = APNGImage(data: data!)
         XCTAssertEqual(image?.frames.count, 25, "")
     }
     
     func testInitContentsOfFile() {
-        let path = NSBundle.testBundle.pathForResource("ball", ofType: "apng")!
+        let path = Bundle.testBundle.path(forResource: "ball", ofType: "apng")!
         let apng1 = APNGImage(contentsOfFile: path)
         XCTAssertNotNil(apng1, "ball.png should be able to init")
         
-        let wrongPath = NSBundle.testBundle.pathForResource("ball", ofType: "apng")!.stringByReplacingOccurrencesOfString("ball", withString: "vall")
+        let wrongPath = Bundle.testBundle.path(forResource: "ball", ofType: "apng")!.replacingOccurrences(of: "ball", with: "vall")
         let apng2 = APNGImage(contentsOfFile: wrongPath)
         XCTAssertNil(apng2, "ball.png should be able to init")
     }
@@ -120,17 +120,20 @@ class APNGImageTests: XCTestCase {
         let retinaAPNG = APNGImage(named: "elephant_apng")
         XCTAssertNotNil(retinaAPNG, "elephant_apng should be able to init at 2x.")
         XCTAssertEqual(retinaAPNG?.scale, 2, "Retina version should be loaded")
-        XCTAssertEqual(retinaAPNG?.size, CGSizeMake(240, 200), "Size should be in point, not pixel.")
+        XCTAssertEqual(retinaAPNG?.size, CGSize(width: 240, height: 200), "Size should be in point, not pixel.")
 
         let anotherRetinaAPNG = APNGImage(named: "elephant_apng@2x")
         XCTAssertNotNil(anotherRetinaAPNG, "elephant_apng should be able to init at 2x.")
         XCTAssertEqual(anotherRetinaAPNG?.scale, 2, "Retina version should be loaded")
-        XCTAssertEqual(anotherRetinaAPNG?.size, CGSizeMake(240, 200), "Size should be in point, not pixel.")
+        XCTAssertEqual(anotherRetinaAPNG?.size, CGSize(width: 240, height: 200), "Size should be in point, not pixel.")
         
-        let normalAPNG = APNGImage(data: NSData(contentsOfFile: NSBundle.testBundle.pathForResource("elephant_apng", ofType: "apng")!)!)
+        
+        let fileURL = URL(fileURLWithPath:
+            Bundle.testBundle.path(forResource: "elephant_apng", ofType: "apng")!)
+        let normalAPNG = try! APNGImage(data: Data(contentsOf: fileURL))
         XCTAssertNotNil(normalAPNG, "elephant_apng should be able to init at 1x.")
         XCTAssertEqual(normalAPNG?.scale, 1, "Retina version should be loaded")
-        XCTAssertEqual(normalAPNG?.size, CGSizeMake(480, 400), "Size should be in point, not pixel.")
+        XCTAssertEqual(normalAPNG?.size, CGSize(width: 480, height: 400), "Size should be in point, not pixel.")
         
         let wrongAPNG = APNGImage(named: "elephant_apng@3x")
         XCTAssertNil(wrongAPNG, "elephant_apng should be able to init at 3x.")
@@ -151,29 +154,29 @@ class APNGImageTests: XCTestCase {
         XCTAssertNotNil(image, "Normal image should be created.")
         XCTAssertEqual(image?.frames.count, 1, "There should be only one frame")
         XCTAssertNotNil(image?.frames.first?.image,"The image of frame should not be nil")
-        XCTAssertEqual(image?.frames.first?.duration, NSTimeInterval.infinity, "And this frame lasts forever.")
+        XCTAssertEqual(image?.frames.first?.duration, TimeInterval.infinity, "And this frame lasts forever.")
         XCTAssertFalse(image!.frames.first!.image!.isEmpty(), "This frame should not be an empty frame.")
     }
 }
 
 extension UIImage {
     func isEmpty() -> Bool {
-        let cgImage = self.CGImage
+        let cgImage = self.cgImage
         
-        let w = CGImageGetWidth(cgImage)
-        let h = CGImageGetHeight(cgImage)
+        let w = cgImage?.width
+        let h = cgImage?.height
         
-        let data = UnsafeMutablePointer<UInt8>.alloc(w * h * 4)
-        let aaa = CGImageGetBitsPerComponent(cgImage)
-        let color = CGImageGetColorSpace(cgImage)
+        let data = UnsafeMutablePointer<UInt8>.allocate(capacity: w! * h! * 4)
+        let aaa = cgImage?.bitsPerComponent
+        let color = cgImage?.colorSpace
         
-        let context = CGBitmapContextCreate(data, w, h, aaa, w * 4, color, CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue).rawValue)
-        CGContextSetBlendMode(context, CGBlendMode.Copy);
-        CGContextDrawImage(context, CGRectMake(0, 0, CGFloat(w), CGFloat(h)), cgImage);
+        let context = CGContext(data: data, width: w!, height: h!, bitsPerComponent: aaa!, bytesPerRow: w! * 4, space: color!, bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue).rawValue)
+        context?.setBlendMode(CGBlendMode.copy);
+        context?.draw(cgImage!, in: CGRect(x: 0, y: 0, width: CGFloat(w!), height: CGFloat(h!)));
 
-        for i in 0 ..< w * h {
-            if data.advancedBy(i).memory != 0 {
-                print("\(i):\(data.advancedBy(i).memory)")
+        for i in 0 ..< w! * h! {
+            if data.advanced(by: i).pointee != 0 {
+                print("\(i):\(data.advanced(by: i).pointee)")
                 return false
             }
         }
