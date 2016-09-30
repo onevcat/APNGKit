@@ -160,16 +160,16 @@ extension UIImage {
     func isEmpty() -> Bool {
         let cgImage = self.CGImage
         
-        let w = CGImageGetWidth(cgImage)
-        let h = CGImageGetHeight(cgImage)
+        let w = CGImageGetWidth(cgImage!)
+        let h = CGImageGetHeight(cgImage!)
         
         let data = UnsafeMutablePointer<UInt8>.alloc(w * h * 4)
-        let aaa = CGImageGetBitsPerComponent(cgImage)
-        let color = CGImageGetColorSpace(cgImage)
+        let aaa = CGImageGetBitsPerComponent(cgImage!)
+        let color = CGImageGetColorSpace(cgImage!)
         
-        let context = CGBitmapContextCreate(data, w, h, aaa, w * 4, color, CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue).rawValue)
-        CGContextSetBlendMode(context, CGBlendMode.Copy);
-        CGContextDrawImage(context, CGRectMake(0, 0, CGFloat(w), CGFloat(h)), cgImage);
+        let context = CGBitmapContextCreate(data, w, h, aaa, w * 4, color!, CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue).rawValue)
+        CGContextSetBlendMode(context!, CGBlendMode.Copy);
+        CGContextDrawImage(context!, CGRectMake(0, 0, CGFloat(w), CGFloat(h)), cgImage!);
 
         for i in 0 ..< w * h {
             if data.advancedBy(i).memory != 0 {
