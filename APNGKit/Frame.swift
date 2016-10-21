@@ -78,7 +78,7 @@ struct Frame {
         }
         
         if let imageRef = CGImage(width: width, height: height, bitsPerComponent: bits, bitsPerPixel: bits * 4, bytesPerRow: bytesInRow, space: CGColorSpaceCreateDeviceRGB(),
-            bitmapInfo: [CGBitmapInfo.byteOrder32Big, CGBitmapInfo(rawValue: blend ? CGImageAlphaInfo.last.rawValue : CGImageAlphaInfo.premultipliedLast.rawValue)],
+            bitmapInfo: [CGBitmapInfo.byteOrder32Big, CGBitmapInfo(rawValue: blend ? CGImageAlphaInfo.premultipliedLast.rawValue : CGImageAlphaInfo.last.rawValue)],
                         provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
         {
             image = UIImage(cgImage: imageRef, scale: scale, orientation: .up)
