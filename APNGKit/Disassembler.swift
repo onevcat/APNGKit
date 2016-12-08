@@ -176,7 +176,7 @@ public struct Disassembler {
         
         if frameCount == 0 {
             // Fallback to regular PNG
-            var currentFrame = Frame(length: length, bytesInRow: rowBytes)
+            let currentFrame = Frame(length: length, bytesInRow: rowBytes)
             currentFrame.duration = Double.infinity
             
             currentFrame.byteRows.withUnsafeMutableBufferPointer({ (buffer) in
@@ -194,7 +194,7 @@ public struct Disassembler {
             return ([currentFrame], CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth), false)
         }
         
-        var bufferFrame = Frame(length: length, bytesInRow: rowBytes)
+        let bufferFrame = Frame(length: length, bytesInRow: rowBytes)
         var currentFrame = Frame(length: length, bytesInRow: rowBytes)
         var nextFrame: Frame!
         
@@ -287,8 +287,8 @@ public struct Disassembler {
                 }
             }
             
-            currentFrame.bytes = nextFrame.bytes
-            currentFrame.byteRows = nextFrame.byteRows
+            currentFrame = nextFrame
+            
         }
         
         // End
@@ -296,7 +296,7 @@ public struct Disassembler {
         
         bufferFrame.clean()
         currentFrame.clean()
-                
+        
         return (frames, CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth), firstFrameHidden)
     }
     

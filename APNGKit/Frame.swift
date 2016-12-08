@@ -30,9 +30,31 @@ import UIKit
 *  Represents a frame in an APNG file. 
 *  It contains a whole IDAT chunk data for a PNG image.
 */
-struct Frame {
+class Frame {
     
-    var image: UIImage?
+    static var allocCount = 0
+    static var deallocCount = 0
+    
+    private var width: Int = 0
+    private var height: Int = 0
+    private var bits: Int = 0
+    private var scale: CGFloat = 1.0
+    private var blend = false
+    
+    var image: UIImage? {
+        let unusedCallback: CGDataProviderReleaseDataCallback = { optionalPointer, pointer, valueInt in }
+        guard let provider = CGDataProvider(dataInfo: nil, data: bytes, size: length, releaseData: unusedCallback) else {
+            return nil
+        }
+        
+        if let imageRef = CGImage(width: width, height: height, bitsPerComponent: bits, bitsPerPixel: bits * 4, bytesPerRow: bytesInRow, space: CGColorSpaceCreateDeviceRGB(),
+                                  bitmapInfo: [CGBitmapInfo.byteOrder32Big, CGBitmapInfo(rawValue: CGImageAlphaInfo.last.rawValue)],
+                                  provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
+        {
+            return UIImage(cgImage: imageRef, scale: scale, orientation: .up)
+        }
+        return nil
+    }
     
     /// Data chunk.
     var bytes: UnsafeMutablePointer<UInt8>
@@ -70,19 +92,12 @@ struct Frame {
         bytes.deallocate(capacity: length)
     }
     
-    mutating func updateCGImageRef(_ width: Int, height: Int, bits: Int, scale: CGFloat, blend: Bool) {
-        
-        let unusedCallback: CGDataProviderReleaseDataCallback = { optionalPointer, pointer, valueInt in }
-        guard let provider = CGDataProvider(dataInfo: nil, data: bytes, size: length, releaseData: unusedCallback) else {
-            return
-        }
-        
-        if let imageRef = CGImage(width: width, height: height, bitsPerComponent: bits, bitsPerPixel: bits * 4, bytesPerRow: bytesInRow, space: CGColorSpaceCreateDeviceRGB(),
-            bitmapInfo: [CGBitmapInfo.byteOrder32Big, CGBitmapInfo(rawValue: blend ? CGImageAlphaInfo.premultipliedLast.rawValue : CGImageAlphaInfo.last.rawValue)],
-                        provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
-        {
-            image = UIImage(cgImage: imageRef, scale: scale, orientation: .up)
-        }
+    func updateCGImageRef(_ width: Int, height: Int, bits: Int, scale: CGFloat, blend: Bool) {
+        self.width = width
+        self.height = height
+        self.bits = bits
+        self.scale = scale
+        self.blend = blend
     }
 }
 
