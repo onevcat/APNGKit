@@ -41,8 +41,28 @@ func readData(_ pngPointer: png_structp?, outBytes: png_bytep?, byteCountToRead:
     _ = reader.read(outBytes!, bytesCount: byteCountToRead)
 }
 
+struct APNGMeta {
+    let width: UInt32
+    let height: UInt32
+    let bitDepth: UInt32
+    let colorType: UInt32
+    let rowBytes: UInt32
+    let frameCount: UInt32
+    let playCount: UInt32
+    
+    let firstFrameHidden: Bool
+    
+    var length: UInt32 {
+        return height * rowBytes
+    }
+    
+    var firstImageIndex: Int {
+        return firstFrameHidden ? 1 : 0
+    }
+}
+
 /**
-Disassembler Errors. An error will be thrown if the disassembler encounters 
+Disassembler Errors. An error will be thrown if the disassembler encounters
 unexpected error.
 
 - InvalidFormat:       The file is not a PNG format.
@@ -63,28 +83,7 @@ public enum DisassemblerError: Error {
 *  This Disassembler is using a patched libpng with supporting of apng to read APNG data.
 *  See https://github.com/onevcat/libpng for more.
 */
-public class Disassembler {
-    
-    struct APNGMeta {
-        let width: UInt32
-        let height: UInt32
-        let bitDepth: UInt32
-        let colorType: UInt32
-        let rowBytes: UInt32
-        let frameCount: UInt32
-        let playCount: UInt32
-        
-        let firstFrameHidden: Bool
-        
-        var length: UInt32 {
-            return height * rowBytes
-        }
-        
-        var firstImageIndex: Int {
-            return firstFrameHidden ? 1 : 0
-        }
-    }
-    
+class Disassembler {
     fileprivate(set) var reader: Reader
     let originalData: Data
     
@@ -113,31 +112,7 @@ public class Disassembler {
         self.scale = scale
     }
     
-    fileprivate func __next() -> Frame? {
-        if !processing {
-            processing = true
-            do {
-                try prepare()
-            } catch {
-                clean()
-                return nil
-            }
-        }
-        
-        let result: Frame?
-        
-        guard let apngMeta = apngMeta else { return nil }
-        
-        // Regular
-        if apngMeta.frameCount == 0 {
-            result = readRegularPNGFrame()
-        } else {
-            result = readNextFrame()
-        }
-        
-        if result == nil { clean() }
-        return result
-    }
+    
 
     func readRegularPNGFrame() -> Frame? {
         guard let apngMeta = apngMeta else { return nil }
@@ -159,6 +134,7 @@ public class Disassembler {
         })
         
         currentFrame.updateCGImageRef(Int(apngMeta.width), height: Int(apngMeta.height), bits: Int(apngMeta.bitDepth), scale: scale, blend: false)
+        png_read_end(pngPointer, infoPointer)
         
         return currentFrame
     }
@@ -166,7 +142,10 @@ public class Disassembler {
     func readNextFrame() -> Frame? {
         
         guard let apngMeta = apngMeta else { return nil }
-        guard currentFrameIndex < Int(apngMeta.frameCount) else { return nil }
+        guard currentFrameIndex < Int(apngMeta.frameCount) else {
+            png_read_end(pngPointer, infoPointer)
+            return nil
+        }
         
         defer { currentFrameIndex += 1 }
         
@@ -335,8 +314,8 @@ public class Disassembler {
         // Do not clean apng meta here. We will need it to return some meta to outside.
         
         processing = false
+        currentFrameIndex = 0
         
-        png_read_end(pngPointer, infoPointer)
         png_destroy_read_struct(&pngPointer, &infoPointer, nil)
         
         reader.endReading()
@@ -364,33 +343,32 @@ public class Disassembler {
     - returns: A decoded `APNGImage` object at given scale.
     */
     public func decode(_ scale: CGFloat = 1) throws -> APNGImage {
-        let (frames, size, repeatCount, bitDepth, firstFrameHidden) = try decodeToElements(scale)
+        let (frames, meta) = try decodeToElements(scale)
         
         // Setup apng properties
-        let apng = APNGImage(frames: frames, size: size, scale: scale,
-            bitDepth: bitDepth, repeatCount: repeatCount, firstFrameHidden: firstFrameHidden)
+        let apng = APNGImage(frames: frames, scale: scale, meta: meta)
         return apng
     }
     
     func decodeToElements(_ scale: CGFloat = 1) throws
-            -> (frames: [Frame], size: CGSize, repeatCount: Int, bitDepth: Int, firstFrameHidden: Bool)
+            -> (frames: [Frame], APNGMeta)
     {
         var frames = [Frame]()
-        while let frame = __next() {
+        while let frame = next() {
             frames.append(frame)
         }
         guard let apngMeta = apngMeta else {
             fatalError("The APNG meta should exists.")
         }
-        return (frames, CGSize(width: CGFloat(apngMeta.width), height: CGFloat(apngMeta.height)), Int(apngMeta.playCount) - 1, Int(apngMeta.bitDepth), apngMeta.firstFrameHidden)
+        return (frames, apngMeta)
     }
     
-    func decodeMeta() throws -> (size: CGSize, repeatCount: Int, bitDepth: Int, firstFrameHidden: Bool) {
+    func decodeMeta() throws -> APNGMeta {
         try prepare()
         clean()
         
         guard let apngMeta = apngMeta else { fatalError("The apng meta should exists") }
-        return (CGSize(width: CGFloat(apngMeta.width), height: CGFloat(apngMeta.height)), Int(apngMeta.playCount) - 1, Int(apngMeta.bitDepth), apngMeta.firstFrameHidden)
+        return apngMeta
     }
     
     func blendFrameDstBytes(_ dstBytes: Array<UnsafeMutablePointer<UInt8>>,
@@ -454,7 +432,29 @@ public class Disassembler {
 }
 
 extension Disassembler: IteratorProtocol {
-    public func next() -> UIImage? {
-        return __next()?.image
+    func next() -> Frame? {
+        if !processing {
+            processing = true
+            do {
+                try prepare()
+            } catch {
+                clean()
+                return nil
+            }
+        }
+        
+        let result: Frame?
+        
+        guard let apngMeta = apngMeta else { return nil }
+        
+        // Regular
+        if apngMeta.frameCount == 0 {
+            result = readRegularPNGFrame()
+        } else {
+            result = readNextFrame()
+        }
+        
+        if result == nil { clean() }
+        return result
     }
 }

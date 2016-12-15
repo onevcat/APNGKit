@@ -32,11 +32,13 @@ import UIKit
 */
 struct Reader {
     
-    fileprivate let stream: InputStream
+    fileprivate var stream: InputStream
     fileprivate var totalBytesRead = 0
-    fileprivate let dataLength: Int
-    
-    
+    fileprivate var dataLength: Int {
+        return data.count
+    }
+
+    fileprivate let data: Data
     
     /// Built-in buffers. It will not be initiated until used.
     lazy var buffers: [Int: Array<UInt8>] = {
@@ -52,7 +54,7 @@ struct Reader {
     init(data: Data, maxBuffer: Int = 0) {
         stream = InputStream(data: data)
         maxBufferCount = maxBuffer
-        dataLength = data.count
+        self.data = data
     }
     
     func beginReading() {
@@ -61,10 +63,11 @@ struct Reader {
         }
     }
     
-    func endReading() {
+    mutating func endReading() {
         if stream.streamStatus == .open {
             stream.close()
         }
+        stream = InputStream(data: data)
     }
     
     /**

@@ -55,10 +55,50 @@ open class APNGImage: NSObject { // For ObjC compatibility
     open var repeatCount: Int
     
     let firstFrameHidden: Bool
-    var frames: [Frame]?
-    var bitDepth: Int
+    let bitDepth: Int
+    let frameCount: Int
     
-    var disassembler: Disassembler?
+    fileprivate(set) var frames: [Frame]?
+    
+    // Keep a frame strong reference so it will not get released when using Disassembler
+    var currentFrame: Frame?
+    fileprivate(set) var disassembler: Disassembler?
+    
+    func reset() {
+        if let disassembler = disassembler {
+            disassembler.clean()
+        }
+    }
+    
+    func next(currentIndex: Int) -> Frame {
+
+        if let frames = frames {
+            
+            guard !frames.isEmpty else {
+                fatalError("Empty frames.")
+            }
+            
+            if currentIndex >= frames.count {
+                return frames[0]
+            } else {
+                return frames[currentIndex]
+            }
+        } else if let disassembler = disassembler {
+            var frame = disassembler.next()
+            // If the last frame encountered, the first `next` call will return `nil`
+            // We should restart the iterator to get the first frame.
+            if frame == nil {
+                frame = disassembler.next()
+            }
+            
+            currentFrame?.clean()
+            currentFrame = frame
+            
+            return frame!
+        } else {
+            fatalError("Neither frames or disassembler exist.")
+        }
+    }
     
     // Strong refrence to another APNG to hold data if this image object is retrieved from cache
     // The frames data will not be changed once a frame is setup.
@@ -68,37 +108,51 @@ open class APNGImage: NSObject { // For ObjC compatibility
     
     static var searchBundle: Bundle = Bundle.main
 
-    init(frames: [Frame], size: CGSize, scale: CGFloat, bitDepth: Int, repeatCount: Int, firstFrameHidden hidden: Bool) {
-        self.frames = frames
+    init(scale: CGFloat, meta: APNGMeta) {
+        let size = CGSize(width: Int(meta.width), height: Int(meta.height))
         self.internalSize = size
         self.scale = scale
-        self.bitDepth = bitDepth
-        self.repeatCount = repeatCount
-        self.firstFrameHidden = hidden
+        self.bitDepth = Int(meta.bitDepth)
+        self.repeatCount = Int(meta.playCount) - 1
+        self.firstFrameHidden = meta.firstFrameHidden
+        self.frameCount = Int(meta.frameCount)
         dataOwner = nil
     }
     
-    init(disassembler: Disassembler, size: CGSize, scale: CGFloat, bitDepth: Int, repeatCount: Int, firstFrameHidden hidden: Bool) {
+    convenience init(frames: [Frame], scale: CGFloat, meta: APNGMeta) {
+        self.init(scale: scale, meta: meta)
+        self.frames = frames
+        self.disassembler = nil
+    }
+    
+    convenience init(disassembler: Disassembler, scale: CGFloat, meta: APNGMeta) {
+        self.init(scale: scale, meta: meta)
         self.disassembler = disassembler
-        self.internalSize = size
-        self.scale = scale
-        self.bitDepth = bitDepth
-        self.repeatCount = repeatCount
-        self.firstFrameHidden = hidden
-        dataOwner = nil
+        self.frames = nil
     }
     
     init(apng: APNGImage) {
         // The image init from this method will share the same data trunk with the other apng obj
-        dataOwner = apng
+        if apng.frames != nil {
+            dataOwner = apng
+            frames = apng.frames
+        } else {
+            dataOwner = nil
+            frames = nil
+        }
+        
+        if apng.disassembler != nil {
+            disassembler = Disassembler(data: apng.disassembler!.originalData, scale: apng.scale)
+        } else {
+            disassembler = nil
+        }
         
         self.bitDepth = apng.bitDepth
         self.internalSize = apng.internalSize
         self.scale = apng.scale
         self.repeatCount = apng.repeatCount
         self.firstFrameHidden = apng.firstFrameHidden
-
-        self.frames = apng.frames
+        self.frameCount = apng.frameCount
     }
     
     /**
@@ -216,15 +270,15 @@ open class APNGImage: NSObject { // For ObjC compatibility
         
         if loadAll {
             do {
-                let (frames, size, repeatCount, bitDepth, firstFrameHidden) = try disassembler.decodeToElements(scale)
-                self.init(frames: frames, size: size, scale: scale, bitDepth: bitDepth, repeatCount: repeatCount, firstFrameHidden: firstFrameHidden)
+                let (frames, meta) = try disassembler.decodeToElements(scale)
+                self.init(frames: frames, scale: scale, meta: meta)
             } catch {
                 return nil
             }
         } else {
             do {
-                let (size, repeatCount, bitDepth, firstFrameHidden) = try disassembler.decodeMeta()
-                self.init(disassembler: disassembler, size: size, scale: scale, bitDepth: bitDepth, repeatCount: repeatCount, firstFrameHidden: firstFrameHidden)
+                let meta = try disassembler.decodeMeta()
+                self.init(disassembler: disassembler, scale: scale, meta: meta)
             } catch {
                 return nil
             }
