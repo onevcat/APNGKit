@@ -72,6 +72,33 @@ class APNGImageTests: XCTestCase {
         XCTAssertEqual(image?.frames![0].duration, 0.5, "The duration of a frame should be 0.5")
     }
     
+    func testProgressiveLoad() {
+        let imageString = Bundle(for: APNGImageTests.self).path(forResource: "minimalAPNG", ofType: "apng")!
+        let data = try? Data(contentsOf: URL(fileURLWithPath: imageString))
+        
+        let image = APNGImage(data: data!, progressive: true)!
+        XCTAssertNil(image.frames)
+        XCTAssertNotNil(image.disassembler)
+        
+        let frame0 = image.next(currentIndex: 0)
+        let frame0Pixel = [frame0.bytes.pointee,
+                           frame0.bytes.advanced(by: 1).pointee,
+                           frame0.bytes.advanced(by: 2).pointee,
+                           frame0.bytes.advanced(by: 3).pointee]
+        XCTAssertEqual(frame0Pixel, [0xff, 0x00, 0x00, 0xff])
+        
+        let frame1 = image.next(currentIndex: 0)
+        let frame1Pixel = [frame1.bytes.pointee,
+                           frame1.bytes.advanced(by: 1).pointee,
+                           frame1.bytes.advanced(by: 2).pointee,
+                           frame1.bytes.advanced(by: 3).pointee]
+        XCTAssertEqual(frame1Pixel, [0x00, 0xff, 0x00, 0xff])
+        
+        XCTAssertEqual(image.repeatCount, RepeatForever, "The repeat count should be forever.")
+        
+        XCTAssertEqual(frame1.duration, 0.5, "The duration of a frame should be 0.5")
+    }
+    
     func testAPNGCreatingPerformance() {
         let ballString = Bundle.testBundle.path(forResource: "ball", ofType: "apng")!
         let data = try? Data(contentsOf: URL(fileURLWithPath: ballString))

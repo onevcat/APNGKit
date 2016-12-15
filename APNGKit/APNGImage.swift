@@ -70,19 +70,13 @@ open class APNGImage: NSObject { // For ObjC compatibility
         }
     }
     
+    // The index is only for fully loaded images.
+    // Progressive loading will just ignore that.
     func next(currentIndex: Int) -> Frame {
 
         if let frames = frames {
-            
-            guard !frames.isEmpty else {
-                fatalError("Empty frames.")
-            }
-            
-            if currentIndex >= frames.count {
-                return frames[0]
-            } else {
-                return frames[currentIndex]
-            }
+            precondition(currentIndex < frames.count, "Trying to access index out of bound.")
+            return frames[currentIndex]
         } else if let disassembler = disassembler {
             var frame = disassembler.next()
             // If the last frame encountered, the first `next` call will return `nil`

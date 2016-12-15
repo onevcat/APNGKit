@@ -99,4 +99,24 @@ class DisassemblerTests: XCTestCase {
         XCTAssertEqual(apng.frames!.count, 1, "There should be only 1 frame.")
         XCTAssertEqual(apng.frames!.first!.image?.size, CGSize(width: 1, height: 1), "The frame is 1x1 dot.")
     }
+
+    func testDecodeMeta() {
+        var meta: APNGMeta!
+        XCTempAssertNoThrowError("Should be able to decode apng meta") {
+            meta = try self.disassembler.decodeMeta()
+        }
+        XCTAssertEqual(meta.height, 100, "Height in meta should be correct.")
+    }
+    
+    func testDisassemblerLoadNext() {
+        var frames = [Frame]()
+        while let frame = self.disassembler.next() {
+            frames.append(frame)
+        }
+        
+        XCTAssertEqual(frames.count, 20, "There should be 20 frames in this png file.")
+        for f in frames {
+            XCTAssertNotNil(f.image, "The image should not be nil in frame.")
+        }
+    }
 }
