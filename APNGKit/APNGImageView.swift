@@ -184,7 +184,6 @@ open class APNGImageView: UIView {
     }
     
     func tick(_ sender: CADisplayLink?) {
-        
         guard let localTimer = sender,
               let image = image else {
             return
@@ -215,12 +214,15 @@ open class APNGImageView: UIView {
                 
                 // Only the first frame could be hidden.
                 if image.firstFrameHidden {
+                    // Skip the first frame
+                    _ = image.next(currentIndex: 0)
                     currentFrameIndex = 1
                 }
             }
             
             currentPassedDuration = currentPassedDuration - currentFrameDuration
             let frame = image.next(currentIndex: currentFrameIndex)
+            currentFrameDuration = frame.duration
             updateContents(frame.image)
         }
         
