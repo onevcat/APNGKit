@@ -63,7 +63,7 @@ public enum DisassemblerError: Error {
 *  This Disassembler is using a patched libpng with supporting of apng to read APNG data.
 *  See https://github.com/onevcat/libpng for more.
 */
-public struct Disassembler {
+public class Disassembler {
     fileprivate(set) var reader: Reader
     let originalData: Data
     
@@ -91,7 +91,7 @@ public struct Disassembler {
     
     - returns: A decoded `APNGImage` object at given scale.
     */
-    public mutating func decode(_ scale: CGFloat = 1) throws -> APNGImage {
+    public func decode(_ scale: CGFloat = 1) throws -> APNGImage {
         let (frames, size, repeatCount, bitDepth, firstFrameHidden) = try decodeToElements(scale)
         
         // Setup apng properties
@@ -100,7 +100,7 @@ public struct Disassembler {
         return apng
     }
     
-    mutating func decodeToElements(_ scale: CGFloat = 1) throws
+    func decodeToElements(_ scale: CGFloat = 1) throws
             -> (frames: [Frame], size: CGSize, repeatCount: Int, bitDepth: Int, firstFrameHidden: Bool)
     {
         reader.beginReading()
