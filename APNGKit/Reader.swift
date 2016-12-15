@@ -36,6 +36,8 @@ struct Reader {
     fileprivate var totalBytesRead = 0
     fileprivate let dataLength: Int
     
+    
+    
     /// Built-in buffers. It will not be initiated until used.
     lazy var buffers: [Int: Array<UInt8>] = {
         var buffers = [Int: Array<UInt8>]()
@@ -54,11 +56,15 @@ struct Reader {
     }
     
     func beginReading() {
-        stream.open()
+        if stream.streamStatus == .notOpen {
+            stream.open()
+        }
     }
     
     func endReading() {
-        stream.close()
+        if stream.streamStatus == .open {
+            stream.close()
+        }
     }
     
     /**
