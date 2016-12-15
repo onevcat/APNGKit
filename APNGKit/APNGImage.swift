@@ -171,18 +171,18 @@ open class APNGImage: NSObject { // For ObjC compatibility
              version, which will opt-out all frames data except the first frame from the APNG image. You should change your APNG file extension to "apng"
              (or anything besides "png") or just turn off the PNG compression in Xcode build settings to avoid this.
     
-     - parameter imageName: The name of the file. If this is the first time the image is being loaded,
-                            the method looks for an image with the specified name in the application’s main bundle.
-     - parameter loadAll:   When set to false, only `framePreloadCount` frames will be loaded. This could free up memory
-                            that are not current displayed, but take more performance to load the needed frames when they
-                            are to be displayed. Otherwise, all frames will be loaded. Default is `true`.
+     - parameter imageName:   The name of the file. If this is the first time the image is being loaded,
+                              the method looks for an image with the specified name in the application’s main bundle.
+     - parameter progressive: When set to true, only the current frame will be loaded. This could free up memory
+                              that are not current displayed, but will take more performance to load the needed frame
+                              when it is about to be displayed. Otherwise, all frames will be loaded once. Default is `false`.
 
      - returns: The image object for the specified file, or nil if the method could not find the specified image.
     
     */
-    public convenience init?(named imageName: String, loadAll: Bool = true) {
+    public convenience init?(named imageName: String, progressive: Bool = false) {
         if let path = imageName.apng_filePathByCheckingNameExistingInBundle(APNGImage.searchBundle) {
-            self.init(contentsOfFile:path, saveToCache: true, loadAll: loadAll)
+            self.init(contentsOfFile:path, saveToCache: true, progressive: progressive)
         } else {
             return nil
         }
@@ -200,14 +200,14 @@ open class APNGImage: NSObject { // For ObjC compatibility
      (or anything besides "png") or just turn off the PNG compression in Xcode build settings to avoid this.
      
      - parameter path:        The path to the file.
-     - parameter saveToCache: Should the result image saved to APNGKit memory caches. Default is false. Only works when `loadAll` is `true`.
-     - parameter loadAll:     When set to false, only `framePreloadCount` frames will be loaded. This could free up memory
-     that are not current displayed, but take more performance to load the needed frames when they
-     are to be displayed. Otherwise, all frames will be loaded. Default is `true`.
+     - parameter saveToCache: Should the result image saved to APNGKit memory caches. Default is false. Only works when `progressive` is `false`.
+     - parameter progressive: When set to true, only the current frame will be loaded. This could free up memory 
+                              that are not current displayed, but will take more performance to load the needed frame 
+                              when it is about to be displayed. Otherwise, all frames will be loaded once. Default is `false`.
      
      - returns: A new image object for the specified file, or nil if the method could not initialize the image from the specified file.
      */
-    public convenience init?(contentsOfFile path: String, saveToCache: Bool = false, loadAll: Bool = true) {
+    public convenience init?(contentsOfFile path: String, saveToCache: Bool = false, progressive: Bool = false) {
         
         if let apng = APNGCache.defaultCache.imageForKey(path) { // Found in the cache
             self.init(apng: apng)
@@ -223,9 +223,9 @@ open class APNGImage: NSObject { // For ObjC compatibility
                     scale = 3
                 }
                 
-                self.init(data: data, scale: scale, loadAll: loadAll)
+                self.init(data: data, scale: scale, progressive: progressive)
                 
-                if saveToCache && loadAll {
+                if saveToCache && !progressive {
                     APNGCache.defaultCache.setImage(self, forKey: path)
                 }
             } else {
@@ -246,8 +246,8 @@ open class APNGImage: NSObject { // For ObjC compatibility
      - returns: A new image object for the specified data, or nil if the method could not initialize the image from the specified data.
      
      */
-    public convenience init?(data: Data, loadAll: Bool = true) {
-        self.init(data: data, scale: 1, loadAll: loadAll)
+    public convenience init?(data: Data, progressive: Bool = false) {
+        self.init(data: data, scale: 1, progressive: progressive)
     }
     
     /**
@@ -255,33 +255,29 @@ open class APNGImage: NSObject { // For ObjC compatibility
     
      - note: This method does not cache the image object.
 
-     - parameter data:    The image data of APNG. This can be data from a file or data you get from network.
-     - parameter scale:   The scale factor to use when interpreting the image data. Specifying a scale factor of 1.0 results in
-                          an image whose size matches the pixel-based dimensions of the image. Applying a different scale factor
-                          changes the size of the image as reported by the size property.
-     - parameter loadAll: When set to false, only `framePreloadCount` frames will be loaded. This could free up memory
-                          that are not current displayed, but take more performance to load the needed frames when they
-                          are to be displayed. Otherwise, all frames will be loaded. Default is `true`.
+     - parameter data:        The image data of APNG. This can be data from a file or data you get from network.
+     - parameter scale:       The scale factor to use when interpreting the image data. Specifying a scale factor of 1.0 results in
+                              an image whose size matches the pixel-based dimensions of the image. Applying a different scale factor
+                              changes the size of the image as reported by the size property.
+     - parameter progressive: When set to true, only the current frame will be loaded. This could free up memory
+                              that are not current displayed, but will take more performance to load the needed frame
+                              when it is about to be displayed. Otherwise, all frames will be loaded once. Default is `false`.
     
      - returns: A new image object for the specified data, or nil if the method could not initialize the image from the specified data.
     */
-    public convenience init?(data: Data, scale: CGFloat, loadAll: Bool = true) {
+    public convenience init?(data: Data, scale: CGFloat, progressive: Bool = false) {
         let disassembler = Disassembler(data: data)
         
-        if loadAll {
-            do {
-                let (frames, meta) = try disassembler.decodeToElements(scale)
-                self.init(frames: frames, scale: scale, meta: meta)
-            } catch {
-                return nil
-            }
-        } else {
-            do {
+        do {
+            if progressive {
                 let meta = try disassembler.decodeMeta()
                 self.init(disassembler: disassembler, scale: scale, meta: meta)
-            } catch {
-                return nil
+            } else {
+                let (frames, meta) = try disassembler.decodeToElements(scale)
+                self.init(frames: frames, scale: scale, meta: meta)
             }
+        } catch {
+            return nil
         }
     }
     
@@ -293,6 +289,8 @@ open class APNGImage: NSObject { // For ObjC compatibility
                 }
             }
         }
+        disassembler?.clean()
+        currentFrame?.clean()
     }
 }
 
