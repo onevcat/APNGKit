@@ -63,7 +63,7 @@ public enum DisassemblerError: Error {
 *  This Disassembler is using a patched libpng with supporting of apng to read APNG data.
 *  See https://github.com/onevcat/libpng for more.
 */
-public class Disassembler: IteratorProtocol {
+public class Disassembler {
     
     struct APNGMeta {
         let width: UInt32
@@ -82,16 +82,16 @@ public class Disassembler: IteratorProtocol {
     fileprivate(set) var reader: Reader
     let originalData: Data
     
-    var processing = false
-    var pngPointer: png_structp?
-    var infoPointer: png_infop?
+    fileprivate var processing = false
+    fileprivate var pngPointer: png_structp?
+    fileprivate var infoPointer: png_infop?
     
-    var apngMeta: APNGMeta?
-    let scale: CGFloat
-    var currentFrameIndex: Int = 0
+    fileprivate var apngMeta: APNGMeta?
+    fileprivate let scale: CGFloat
+    fileprivate var currentFrameIndex: Int = 0
 
-    var bufferFrame: Frame!
-    var currentFrame: Frame!
+    fileprivate var bufferFrame: Frame!
+    fileprivate var currentFrame: Frame!
     
     
     /**
@@ -107,7 +107,7 @@ public class Disassembler: IteratorProtocol {
         self.scale = scale
     }
     
-    func __next() -> Frame? {
+    fileprivate func __next() -> Frame? {
         if !processing {
             processing = true
             do {
@@ -132,11 +132,7 @@ public class Disassembler: IteratorProtocol {
         if result == nil { clean() }
         return result
     }
-    
-    public func next() -> UIImage? {
-        return __next()?.image
-    }
-    
+
     func readRegularPNGFrame() -> Frame? {
         guard let apngMeta = apngMeta else { return nil }
         guard currentFrameIndex == 0 else { return nil }
@@ -436,5 +432,11 @@ public class Disassembler: IteratorProtocol {
         guard png_sig_cmp(&sig, 0, signatureOfPNGLength) == 0 else {
             throw DisassemblerError.invalidFormat
         }
+    }
+}
+
+extension Disassembler: IteratorProtocol {
+    public func next() -> UIImage? {
+        return __next()?.image
     }
 }
