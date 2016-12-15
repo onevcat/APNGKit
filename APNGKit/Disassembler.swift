@@ -74,8 +74,14 @@ public class Disassembler {
         let frameCount: UInt32
         let playCount: UInt32
         
+        let firstFrameHidden: Bool
+        
         var length: UInt32 {
             return height * rowBytes
+        }
+        
+        var firstImageIndex: Int {
+            return firstFrameHidden ? 1 : 0
         }
     }
     
@@ -86,7 +92,7 @@ public class Disassembler {
     fileprivate var pngPointer: png_structp?
     fileprivate var infoPointer: png_infop?
     
-    fileprivate var apngMeta: APNGMeta?
+    fileprivate(set) var apngMeta: APNGMeta?
     fileprivate let scale: CGFloat
     fileprivate var currentFrameIndex: Int = 0
 
@@ -153,18 +159,10 @@ public class Disassembler {
         })
         
         currentFrame.updateCGImageRef(Int(apngMeta.width), height: Int(apngMeta.height), bits: Int(apngMeta.bitDepth), scale: scale, blend: false)
-        firstFrameHidden = false
+        
         return currentFrame
     }
-    
-    lazy var firstFrameHidden: Bool = {
-        return png_get_first_frame_is_hidden(self.pngPointer, self.infoPointer) != 0
-    }()
-    
-    var firstImageIndex: Int {
-        return firstFrameHidden ? 1 : 0
-    }
-    
+
     func readNextFrame() -> Frame? {
         
         guard let apngMeta = apngMeta else { return nil }
@@ -187,7 +185,7 @@ public class Disassembler {
         // Decode fcTL
         png_get_next_frame_fcTL(pngPointer, infoPointer, &frameWidth, &frameHeight,
                                 &offsetX, &offsetY, &delayNum, &delayDen, &disposeOP, &blendOP)
-        if currentFrameIndex == firstImageIndex {
+        if currentFrameIndex == apngMeta.firstImageIndex {
             blendOP = UInt8(PNG_BLEND_OP_SOURCE)
             if disposeOP == UInt8(PNG_DISPOSE_OP_PREVIOUS) {
                 disposeOP = UInt8(PNG_DISPOSE_OP_BACKGROUND)
@@ -309,6 +307,13 @@ public class Disassembler {
         var frameCount: UInt32 = 0, playCount: UInt32 = 0
         png_get_acTL(pngPointer, infoPointer, &frameCount, &playCount)
         
+        let firstFrameHidden: Bool
+        if frameCount == 0 {
+            firstFrameHidden = false
+        } else {
+            firstFrameHidden = png_get_first_frame_is_hidden(self.pngPointer, self.infoPointer) != 0
+        }
+
         // Setup apng meta
         let meta = APNGMeta(
             width: width,
@@ -317,13 +322,18 @@ public class Disassembler {
             colorType: UInt32(colorType),
             rowBytes: rowBytes,
             frameCount: frameCount,
-            playCount: playCount)
+            playCount: playCount,
+            firstFrameHidden: firstFrameHidden)
+        
         bufferFrame = Frame(length: meta.length, bytesInRow: meta.rowBytes)
         currentFrame = Frame(length: meta.length, bytesInRow: meta.rowBytes)
         apngMeta = meta
     }
     
     func clean() {
+        
+        // Do not clean apng meta here. We will need it to return some meta to outside.
+        
         processing = false
         
         png_read_end(pngPointer, infoPointer)
@@ -372,7 +382,15 @@ public class Disassembler {
         guard let apngMeta = apngMeta else {
             fatalError("The APNG meta should exists.")
         }
-        return (frames, CGSize(width: CGFloat(apngMeta.width), height: CGFloat(apngMeta.height)), Int(apngMeta.playCount) - 1, Int(apngMeta.bitDepth), firstFrameHidden)
+        return (frames, CGSize(width: CGFloat(apngMeta.width), height: CGFloat(apngMeta.height)), Int(apngMeta.playCount) - 1, Int(apngMeta.bitDepth), apngMeta.firstFrameHidden)
+    }
+    
+    func decodeMeta() throws -> (size: CGSize, repeatCount: Int, bitDepth: Int, firstFrameHidden: Bool) {
+        try prepare()
+        clean()
+        
+        guard let apngMeta = apngMeta else { fatalError("The apng meta should exists") }
+        return (CGSize(width: CGFloat(apngMeta.width), height: CGFloat(apngMeta.height)), Int(apngMeta.playCount) - 1, Int(apngMeta.bitDepth), apngMeta.firstFrameHidden)
     }
     
     func blendFrameDstBytes(_ dstBytes: Array<UnsafeMutablePointer<UInt8>>,

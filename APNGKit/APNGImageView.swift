@@ -39,7 +39,12 @@ open class APNGImageView: UIView {
         didSet {
             let animating = isAnimating
             stopAnimating()
-            updateContents(image?.frames.first?.image)
+            
+            guard let frames = image?.frames else {
+                return
+            }
+            
+            updateContents(frames.first?.image)
             
             if animating {
                 startAnimating()
@@ -100,7 +105,10 @@ open class APNGImageView: UIView {
         
         backgroundColor = UIColor.clear
         isUserInteractionEnabled = false
-        updateContents(image?.frames.first?.image)
+        
+        if let frames = image?.frames {
+            updateContents(frames.first?.image)
+        }
     }
     
     deinit {
@@ -173,6 +181,10 @@ open class APNGImageView: UIView {
     
     func tick(_ sender: CADisplayLink?) {
         
+        guard let frames = image?.frames else {
+            return
+        }
+        
         guard let localTimer = sender,
               let image = image else {
             return
@@ -187,13 +199,13 @@ open class APNGImageView: UIView {
         lastTimestamp = localTimer.timestamp
         
         currentPassedDuration += elapsedTime
-        let currentFrame = image.frames[currentFrameIndex]
+        let currentFrame = frames[currentFrameIndex]
         let currentFrameDuration = currentFrame.duration
         
         if currentPassedDuration >= currentFrameDuration {
             currentFrameIndex = currentFrameIndex + 1
             
-            if currentFrameIndex == image.frames.count {
+            if currentFrameIndex == frames.count {
                 currentFrameIndex = 0
                 repeated = repeated + 1
                 
@@ -210,7 +222,7 @@ open class APNGImageView: UIView {
             }
             
             currentPassedDuration = currentPassedDuration - currentFrameDuration
-            updateContents(image.frames[currentFrameIndex].image)
+            updateContents(frames[currentFrameIndex].image)
         }
         
     }
