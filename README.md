@@ -176,6 +176,12 @@ let data: NSData = ... // From disk or network or anywhere else.
 image = APNGImage(data: data)
 ```
 
+APNGKit will try to load all data in the image by one time, so you could play the animation smoothly later. However, if you are trying to load a large APNG file, you may want to keep the memory footprint as small as possible. For this case, you could use a progressive way to load the image. It will only load the frame needed to be display currently. This would save a lot of memory, but take more performance as a trade-off. To enable the progressive way, just pass in an option to the initializer:
+
+```swift
+let image = APNGImage(data: data, progressive: true)
+```
+
 #### Display an APNG Image
 
 When you have an `APNGImage` object, you can use it to initialize an image view and display it on screen with `APNGImageView`, which is a subclass of `UIView`:
