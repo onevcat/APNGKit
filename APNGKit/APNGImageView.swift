@@ -26,6 +26,10 @@
 
 import UIKit
 
+@objc public protocol APNGImageViewDelegate {
+    @objc optional func apngImageView(_ imageView: APNGImageView, didFinishPlaybackForRepeatedCount count: Int)
+}
+
 /// An APNG image view object provides a view-based container for displaying an APNG image.
 /// You can control the starting and stopping of the animation, as well as the repeat count.
 /// All images associated with an APNGImageView object should use the same scale. 
@@ -74,6 +78,8 @@ open class APNGImageView: UIView {
     /// ScrollView(CollectionView, TableView) items with Animated APNGImageView will not freeze during scrolling
     /// - Note: This may decrease scrolling smoothness with lot's of animations
     open var allowAnimationInScrollView = false
+    
+    open weak var delegate: APNGImageViewDelegate?
     
     var timer: CADisplayLink?
     var lastTimestamp: TimeInterval = 0
@@ -203,6 +209,9 @@ open class APNGImageView: UIView {
             currentFrameIndex = currentFrameIndex + 1
             
             if currentFrameIndex == image.frameCount {
+                
+                delegate?.apngImageView?(self, didFinishPlaybackForRepeatedCount: repeated)
+                
                 currentFrameIndex = 0
                 repeated = repeated + 1
                 
