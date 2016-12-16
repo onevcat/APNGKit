@@ -102,6 +102,9 @@ open class APNGCache {
 
 extension APNGImage {
     var cost: Int {
+        guard let frames = frames else {
+            return 0
+        }
         var s = 0
         for f in frames {
             if let image = f.image {

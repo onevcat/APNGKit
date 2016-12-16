@@ -39,14 +39,20 @@ open class APNGImageView: UIView {
         didSet {
             let animating = isAnimating
             stopAnimating()
-            updateContents(image?.frames.first?.image)
             
-            if animating {
-                startAnimating()
-            }
+            image?.reset()
             
-            if autoStartAnimation {
-                startAnimating()
+            if let frame = image?.next(currentIndex: currentFrameIndex) {
+                currentFrameDuration = frame.duration
+                updateContents(frame.image)
+                
+                if animating {
+                    startAnimating()
+                }
+                
+                if autoStartAnimation {
+                    startAnimating()
+                }
             }
         }
     }
@@ -72,7 +78,10 @@ open class APNGImageView: UIView {
     var timer: CADisplayLink?
     var lastTimestamp: TimeInterval = 0
     var currentPassedDuration: TimeInterval = 0
+    var currentFrameDuration: TimeInterval = 0
+    
     var currentFrameIndex: Int = 0
+    
     var repeated: Int = 0
     
     /**
@@ -100,7 +109,10 @@ open class APNGImageView: UIView {
         
         backgroundColor = UIColor.clear
         isUserInteractionEnabled = false
-        updateContents(image?.frames.first?.image)
+        
+        if let frame = image?.next(currentIndex: 0) {
+            updateContents(frame.image)
+        }
     }
     
     deinit {
@@ -172,7 +184,6 @@ open class APNGImageView: UIView {
     }
     
     func tick(_ sender: CADisplayLink?) {
-        
         guard let localTimer = sender,
               let image = image else {
             return
@@ -187,13 +198,11 @@ open class APNGImageView: UIView {
         lastTimestamp = localTimer.timestamp
         
         currentPassedDuration += elapsedTime
-        let currentFrame = image.frames[currentFrameIndex]
-        let currentFrameDuration = currentFrame.duration
         
         if currentPassedDuration >= currentFrameDuration {
             currentFrameIndex = currentFrameIndex + 1
             
-            if currentFrameIndex == image.frames.count {
+            if currentFrameIndex == image.frameCount {
                 currentFrameIndex = 0
                 repeated = repeated + 1
                 
@@ -205,12 +214,16 @@ open class APNGImageView: UIView {
                 
                 // Only the first frame could be hidden.
                 if image.firstFrameHidden {
+                    // Skip the first frame
+                    _ = image.next(currentIndex: 0)
                     currentFrameIndex = 1
                 }
             }
             
             currentPassedDuration = currentPassedDuration - currentFrameDuration
-            updateContents(image.frames[currentFrameIndex].image)
+            let frame = image.next(currentIndex: currentFrameIndex)
+            currentFrameDuration = frame.duration
+            updateContents(frame.image)
         }
         
     }

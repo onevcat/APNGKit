@@ -49,27 +49,54 @@ class APNGImageTests: XCTestCase {
         let image = APNGImage(data: data!)
         
         XCTAssertNotNil(image, "The minimal APNG file should be able to setup.")
-        XCTAssertEqual(image!.frames.count, 2, "There should be 2 frames.")
+        XCTAssertEqual(image!.frames!.count, 2, "There should be 2 frames.")
         XCTAssertEqual(image!.size, CGSize(width: 1, height: 1), "The size of image is 1x1")
         
         // Red pixel
-        let frame0Pixel = [image!.frames[0].bytes.pointee,
-                           image!.frames[0].bytes.advanced(by: 1).pointee,
-                           image!.frames[0].bytes.advanced(by: 2).pointee,
-                           image!.frames[0].bytes.advanced(by: 3).pointee]
+        let frame0Pixel = [image!.frames![0].bytes.pointee,
+                           image!.frames![0].bytes.advanced(by: 1).pointee,
+                           image!.frames![0].bytes.advanced(by: 2).pointee,
+                           image!.frames![0].bytes.advanced(by: 3).pointee]
         XCTAssertEqual(frame0Pixel, [0xff, 0x00, 0x00, 0xff])
         
         // Green pixel
-        let frame1Pixel = [image!.frames[1].bytes.pointee,
-                           image!.frames[1].bytes.advanced(by: 1).pointee,
-                           image!.frames[1].bytes.advanced(by: 2).pointee,
-                           image!.frames[1].bytes.advanced(by: 3).pointee]
+        let frame1Pixel = [image!.frames![1].bytes.pointee,
+                           image!.frames![1].bytes.advanced(by: 1).pointee,
+                           image!.frames![1].bytes.advanced(by: 2).pointee,
+                           image!.frames![1].bytes.advanced(by: 3).pointee]
         XCTAssertEqual(frame1Pixel, [0x00, 0xff, 0x00, 0xff])
         
         XCTAssertEqual(image?.repeatCount, RepeatForever, "The repeat count should be forever.")
         XCTAssertEqual(image?.duration, 1.0, "Total duration is 1.0 sec")
         
-        XCTAssertEqual(image?.frames[0].duration, 0.5, "The duration of a frame should be 0.5")
+        XCTAssertEqual(image?.frames![0].duration, 0.5, "The duration of a frame should be 0.5")
+    }
+    
+    func testProgressiveLoad() {
+        let imageString = Bundle(for: APNGImageTests.self).path(forResource: "minimalAPNG", ofType: "apng")!
+        let data = try? Data(contentsOf: URL(fileURLWithPath: imageString))
+        
+        let image = APNGImage(data: data!, progressive: true)!
+        XCTAssertNil(image.frames)
+        XCTAssertNotNil(image.disassembler)
+        
+        let frame0 = image.next(currentIndex: 0)
+        let frame0Pixel = [frame0.bytes.pointee,
+                           frame0.bytes.advanced(by: 1).pointee,
+                           frame0.bytes.advanced(by: 2).pointee,
+                           frame0.bytes.advanced(by: 3).pointee]
+        XCTAssertEqual(frame0Pixel, [0xff, 0x00, 0x00, 0xff])
+        
+        let frame1 = image.next(currentIndex: 0)
+        let frame1Pixel = [frame1.bytes.pointee,
+                           frame1.bytes.advanced(by: 1).pointee,
+                           frame1.bytes.advanced(by: 2).pointee,
+                           frame1.bytes.advanced(by: 3).pointee]
+        XCTAssertEqual(frame1Pixel, [0x00, 0xff, 0x00, 0xff])
+        
+        XCTAssertEqual(image.repeatCount, RepeatForever, "The repeat count should be forever.")
+        
+        XCTAssertEqual(frame1.duration, 0.5, "The duration of a frame should be 0.5")
     }
     
     func testAPNGCreatingPerformance() {
@@ -87,7 +114,7 @@ class APNGImageTests: XCTestCase {
         let firefoxString = Bundle.testBundle.path(forResource: "spinfox", ofType: "apng")!
         let data = try? Data(contentsOf: URL(fileURLWithPath: firefoxString))
         let image = APNGImage(data: data!)
-        XCTAssertEqual(image?.frames.count, 25, "")
+        XCTAssertEqual(image?.frames!.count, 25, "")
     }
     
     func testInitContentsOfFile() {
@@ -152,10 +179,10 @@ class APNGImageTests: XCTestCase {
     func testNormalPNG() {
         let image = APNGImage(named: "demo")
         XCTAssertNotNil(image, "Normal image should be created.")
-        XCTAssertEqual(image?.frames.count, 1, "There should be only one frame")
-        XCTAssertNotNil(image?.frames.first?.image,"The image of frame should not be nil")
-        XCTAssertEqual(image?.frames.first?.duration, TimeInterval.infinity, "And this frame lasts forever.")
-        XCTAssertFalse(image!.frames.first!.image!.isEmpty(), "This frame should not be an empty frame.")
+        XCTAssertEqual(image?.frames!.count, 1, "There should be only one frame")
+        XCTAssertNotNil(image?.frames!.first?.image,"The image of frame should not be nil")
+        XCTAssertEqual(image?.frames!.first?.duration, TimeInterval.infinity, "And this frame lasts forever.")
+        XCTAssertFalse(image!.frames!.first!.image!.isEmpty(), "This frame should not be an empty frame.")
     }
 }
 

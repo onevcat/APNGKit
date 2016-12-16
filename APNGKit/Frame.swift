@@ -41,6 +41,8 @@ class Frame {
     private var scale: CGFloat = 1.0
     private var blend = false
     
+    private var cleaned = false
+    
     var image: UIImage? {
         let unusedCallback: CGDataProviderReleaseDataCallback = { optionalPointer, pointer, valueInt in }
         guard let provider = CGDataProvider(dataInfo: nil, data: bytes, size: length, releaseData: unusedCallback) else {
@@ -88,6 +90,7 @@ class Frame {
     }
     
     func clean() {
+        cleaned = true
         bytes.deinitialize(count: length)
         bytes.deallocate(capacity: length)
     }

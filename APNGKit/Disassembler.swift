@@ -41,8 +41,28 @@ func readData(_ pngPointer: png_structp?, outBytes: png_bytep?, byteCountToRead:
     _ = reader.read(outBytes!, bytesCount: byteCountToRead)
 }
 
+struct APNGMeta {
+    let width: UInt32
+    let height: UInt32
+    let bitDepth: UInt32
+    let colorType: UInt32
+    let rowBytes: UInt32
+    let frameCount: UInt32
+    let playCount: UInt32
+    
+    let firstFrameHidden: Bool
+    
+    var length: UInt32 {
+        return height * rowBytes
+    }
+    
+    var firstImageIndex: Int {
+        return firstFrameHidden ? 1 : 0
+    }
+}
+
 /**
-Disassembler Errors. An error will be thrown if the disassembler encounters 
+Disassembler Errors. An error will be thrown if the disassembler encounters
 unexpected error.
 
 - InvalidFormat:       The file is not a PNG format.
@@ -63,9 +83,21 @@ public enum DisassemblerError: Error {
 *  This Disassembler is using a patched libpng with supporting of apng to read APNG data.
 *  See https://github.com/onevcat/libpng for more.
 */
-public struct Disassembler {
+class Disassembler {
     fileprivate(set) var reader: Reader
     let originalData: Data
+    
+    fileprivate var processing = false
+    fileprivate var pngPointer: png_structp?
+    fileprivate var infoPointer: png_infop?
+    
+    fileprivate(set) var apngMeta: APNGMeta?
+    fileprivate let scale: CGFloat
+    fileprivate var currentFrameIndex: Int = 0
+
+    fileprivate var bufferFrame: Frame!
+    fileprivate var currentFrame: Frame!
+    
     
     /**
     Init a disassembler with APNG data.
@@ -74,54 +106,135 @@ public struct Disassembler {
     
     - returns: The disassembler ready to use.
     */
-    public init(data: Data) {
+    public init(data: Data, scale: CGFloat = 1) {
         reader = Reader(data: data)
         originalData = data
+        self.scale = scale
     }
     
-    /**
-    Decode the data to a high level `APNGImage` object.
     
-    - parameter scale: The screen scale should be used when decoding. 
-    You should pass 1 if you want to use the dosassembler separately.
-    If you need to display the image on the screen later, use `UIScreen.mainScreen().scale`.
-    Default is 1.0.
-    
-    - throws: A `DisassemblerError` when error happens.
-    
-    - returns: A decoded `APNGImage` object at given scale.
-    */
-    public mutating func decode(_ scale: CGFloat = 1) throws -> APNGImage {
-        let (frames, size, repeatCount, bitDepth, firstFrameHidden) = try decodeToElements(scale)
+
+    func readRegularPNGFrame() -> Frame? {
+        guard let apngMeta = apngMeta else { return nil }
+        guard currentFrameIndex == 0 else { return nil }
         
-        // Setup apng properties
-        let apng = APNGImage(frames: frames, size: size, scale: scale,
-            bitDepth: bitDepth, repeatCount: repeatCount, firstFrameHidden: firstFrameHidden)
-        return apng
+        defer { currentFrameIndex += 1 }
+        
+        // Fallback to regular PNG
+        let currentFrame = Frame(length: apngMeta.length, bytesInRow: apngMeta.rowBytes)
+        currentFrame.duration = Double.infinity
+        
+        currentFrame.byteRows.withUnsafeMutableBufferPointer({ (buffer) in
+            _ = withUnsafeMutablePointer(to: &buffer) { (bound) in
+                bound.withMemoryRebound(to: (UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>).self, capacity: MemoryLayout<(UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>)>.size) { (rows) in
+                    let mappedRows: UnsafeMutablePointer<UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>> = rows
+                    png_read_image(pngPointer, mappedRows.pointee)
+                }
+            }
+        })
+        
+        currentFrame.updateCGImageRef(Int(apngMeta.width), height: Int(apngMeta.height), bits: Int(apngMeta.bitDepth), scale: scale, blend: false)
+        png_read_end(pngPointer, infoPointer)
+        
+        return currentFrame
     }
-    
-    mutating func decodeToElements(_ scale: CGFloat = 1) throws
-            -> (frames: [Frame], size: CGSize, repeatCount: Int, bitDepth: Int, firstFrameHidden: Bool)
-    {
-        reader.beginReading()
-        defer {
-            reader.endReading()
+
+    func readNextFrame() -> Frame? {
+        
+        guard let apngMeta = apngMeta else { return nil }
+        guard currentFrameIndex < Int(apngMeta.frameCount) else {
+            png_read_end(pngPointer, infoPointer)
+            return nil
         }
         
+        defer { currentFrameIndex += 1 }
+        
+        var
+        frameWidth: UInt32 = 0,
+        frameHeight: UInt32 = 0,
+        offsetX: UInt32 = 0,
+        offsetY: UInt32 = 0,
+        delayNum: UInt16 = 0,
+        delayDen: UInt16 = 0,
+        disposeOP: UInt8 = 0,
+        blendOP: UInt8 = 0
+        
+        // Read header
+        png_read_frame_head(pngPointer, infoPointer)
+        // Decode fcTL
+        png_get_next_frame_fcTL(pngPointer, infoPointer, &frameWidth, &frameHeight,
+                                &offsetX, &offsetY, &delayNum, &delayDen, &disposeOP, &blendOP)
+        if currentFrameIndex == apngMeta.firstImageIndex {
+            blendOP = UInt8(PNG_BLEND_OP_SOURCE)
+            if disposeOP == UInt8(PNG_DISPOSE_OP_PREVIOUS) {
+                disposeOP = UInt8(PNG_DISPOSE_OP_BACKGROUND)
+            }
+        }
+        
+        let nextFrame = Frame(length: apngMeta.length, bytesInRow: apngMeta.rowBytes)
+        if (disposeOP == UInt8(PNG_DISPOSE_OP_PREVIOUS)) {
+            // For the first frame, currentFrame is not inited yet.
+            // But we can ensure the disposeOP is not PNG_DISPOSE_OP_PREVIOUS for the 1st frame
+            memcpy(nextFrame.bytes, currentFrame.bytes, Int(apngMeta.length));
+        }
+        
+        // Decode fdATs
+        bufferFrame.byteRows.withUnsafeMutableBufferPointer({ (buffer) in
+            _ = withUnsafeMutablePointer(to: &buffer) { (bound) in
+                bound.withMemoryRebound(to: (UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>).self, capacity: MemoryLayout<(UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>)>.size) { (rows) in
+                    let mappedRows: UnsafeMutablePointer<UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>> = rows
+                    png_read_image(pngPointer, mappedRows.pointee)
+                }
+            }
+        })
+        
+        _ = withUnsafeMutablePointer(to: &currentFrame.byteRows) { (currentBind) in
+            currentBind.withMemoryRebound(to: Array<UnsafeMutablePointer<UInt8>>.self, capacity: currentFrame.byteRows.count) { (currentRows) in
+                let destRows: UnsafeMutablePointer<Array<UnsafeMutablePointer<UInt8>>> = currentRows
+                
+                _ = withUnsafeMutablePointer(to: &bufferFrame.byteRows) { (bufferBind) in
+                    bufferBind.withMemoryRebound(to: Array<UnsafeMutablePointer<UInt8>>.self, capacity: bufferFrame.byteRows.count) { (bufferRows) in
+                        let srcRows: UnsafeMutablePointer<Array<UnsafeMutablePointer<UInt8>>> = bufferRows
+                        
+                        blendFrameDstBytes(destRows.pointee, srcBytes: srcRows.pointee, blendOP: blendOP, offsetX: offsetX, offsetY: offsetY, width: frameWidth, height: frameHeight)
+                    }
+                }
+            }
+        }
+        
+        // Calculating delay (duration)
+        if delayDen == 0 {
+            delayDen = 100
+        }
+        let duration = Double(delayNum) / Double(delayDen)
+        currentFrame.duration = duration
+        
+        currentFrame.updateCGImageRef(Int(apngMeta.width), height: Int(apngMeta.height), bits: Int(apngMeta.bitDepth), scale: scale, blend: blendOP != UInt8(PNG_BLEND_OP_SOURCE))
+        
+        if disposeOP != UInt8(PNG_DISPOSE_OP_PREVIOUS) {
+            memcpy(nextFrame.bytes, currentFrame.bytes, Int(apngMeta.length))
+            if disposeOP == UInt8(PNG_DISPOSE_OP_BACKGROUND) {
+                for j in 0 ..< frameHeight {
+                    let tarPointer = nextFrame.byteRows[Int(offsetY + j)].advanced(by: Int(offsetX) * 4)
+                    memset(tarPointer, 0, Int(frameWidth) * 4)
+                }
+            }
+        }
+        
+        defer { currentFrame = nextFrame }
+        return currentFrame
+    }
+    
+    func prepare() throws {
+        reader.beginReading()
         try checkFormat()
         
-        var pngPointer = png_create_read_struct(PNG_LIBPNG_VER_STRING, nil, nil, nil)
-        
+        pngPointer = png_create_read_struct(PNG_LIBPNG_VER_STRING, nil, nil, nil)
         if pngPointer == nil {
             throw DisassemblerError.pngStructureFailure
         }
         
-        var infoPointer = png_create_info_struct(pngPointer)
-        
-        defer {
-            png_destroy_read_struct(&pngPointer, &infoPointer, nil)
-        }
-        
+        infoPointer = png_create_info_struct(pngPointer)
         if infoPointer == nil {
             throw DisassemblerError.pngStructureFailure
         }
@@ -134,18 +247,18 @@ public struct Disassembler {
         png_read_info(pngPointer, infoPointer)
         
         var
-        width: UInt32 = 0,
-        height: UInt32 = 0,
+        w: UInt32 = 0,
+        h: UInt32 = 0,
         bitDepth: Int32 = 0,
         colorType: Int32 = 0
         
         // Decode IHDR
-        png_get_IHDR(pngPointer, infoPointer, &width, &height, &bitDepth, &colorType, nil, nil, nil)
+        png_get_IHDR(pngPointer, infoPointer, &w, &h, &bitDepth, &colorType, nil, nil, nil)
         
-        if width > kMaxPNGSize || height > kMaxPNGSize {
+        if w > kMaxPNGSize || h > kMaxPNGSize {
             throw DisassemblerError.fileSizeExceeded
         }
-                
+        
         // Transforms. We only handle 8-bit RGBA images.
         png_set_expand(pngPointer)
         
@@ -163,141 +276,99 @@ public struct Disassembler {
         
         png_set_interlace_handling(pngPointer);
         png_read_update_info(pngPointer, infoPointer);
-        
+
         // Update information from updated info pointer
-        width = png_get_image_width(pngPointer, infoPointer)
-        height = png_get_image_height(pngPointer, infoPointer)
+        let width = png_get_image_width(pngPointer, infoPointer)
+        let height = png_get_image_height(pngPointer, infoPointer)
         let rowBytes = UInt32(png_get_rowbytes(pngPointer, infoPointer))
-        let length = height * rowBytes
-        
+
         // Decode acTL
         var frameCount: UInt32 = 0, playCount: UInt32 = 0
         png_get_acTL(pngPointer, infoPointer, &frameCount, &playCount)
         
+        let firstFrameHidden: Bool
         if frameCount == 0 {
-            // Fallback to regular PNG
-            let currentFrame = Frame(length: length, bytesInRow: rowBytes)
-            currentFrame.duration = Double.infinity
-            
-            currentFrame.byteRows.withUnsafeMutableBufferPointer({ (buffer) in
-                _ = withUnsafeMutablePointer(to: &buffer) { (bound) in
-                    bound.withMemoryRebound(to: (UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>).self, capacity: MemoryLayout<(UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>)>.size) { (rows) in
-                        let mappedRows: UnsafeMutablePointer<UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>> = rows
-                        png_read_image(pngPointer, mappedRows.pointee)
-                    }
-                }
-            })
-            
-            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale, blend: false)
-            
-            png_read_end(pngPointer, infoPointer)
-            return ([currentFrame], CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth), false)
+            firstFrameHidden = false
+        } else {
+            firstFrameHidden = png_get_first_frame_is_hidden(self.pngPointer, self.infoPointer) != 0
         }
-        
-        let bufferFrame = Frame(length: length, bytesInRow: rowBytes)
-        var currentFrame = Frame(length: length, bytesInRow: rowBytes)
-        var nextFrame: Frame!
-        
-        // Setup values for reading frames
-        var
-        frameWidth: UInt32 = 0,
-        frameHeight: UInt32 = 0,
-        offsetX: UInt32 = 0,
-        offsetY: UInt32 = 0,
-        delayNum: UInt16 = 0,
-        delayDen: UInt16 = 0,
-        disposeOP: UInt8 = 0,
-        blendOP: UInt8 = 0
-        
-        let firstImageIndex: Int
-        let firstFrameHidden = png_get_first_frame_is_hidden(pngPointer, infoPointer) != 0
-        firstImageIndex = firstFrameHidden ? 1 : 0
-        
-        var frames = [Frame]()
-        
-        // Decode frames
-        for i in 0 ..< frameCount {
-            let currentIndex = Int(i)
-            // Read header
-            png_read_frame_head(pngPointer, infoPointer)
-            // Decode fcTL
-            png_get_next_frame_fcTL(pngPointer, infoPointer, &frameWidth, &frameHeight,
-                &offsetX, &offsetY, &delayNum, &delayDen, &disposeOP, &blendOP)
-            
-            // Update disposeOP for first visable frame
-            if currentIndex == firstImageIndex {
-                blendOP = UInt8(PNG_BLEND_OP_SOURCE)
-                if disposeOP == UInt8(PNG_DISPOSE_OP_PREVIOUS) {
-                    disposeOP = UInt8(PNG_DISPOSE_OP_BACKGROUND)
-                }
-            }
-            
-            nextFrame = Frame(length: length, bytesInRow: rowBytes)
-            
-            if (disposeOP == UInt8(PNG_DISPOSE_OP_PREVIOUS)) {
-                // For the first frame, currentFrame is not inited yet.
-                // But we can ensure the disposeOP is not PNG_DISPOSE_OP_PREVIOUS for the 1st frame
-                memcpy(nextFrame.bytes, currentFrame.bytes, Int(length));
-            }
-            
-            // Decode fdATs
-            bufferFrame.byteRows.withUnsafeMutableBufferPointer({ (buffer) in
-                _ = withUnsafeMutablePointer(to: &buffer) { (bound) in
-                    bound.withMemoryRebound(to: (UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>).self, capacity: MemoryLayout<(UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>)>.size) { (rows) in
-                        let mappedRows: UnsafeMutablePointer<UnsafeMutablePointer<UnsafeMutablePointer<UInt8>?>> = rows
-                        png_read_image(pngPointer, mappedRows.pointee)
-                    }
-                }
-            })
-            
-            
-            _ = withUnsafeMutablePointer(to: &currentFrame.byteRows) { (currentBind) in
-                currentBind.withMemoryRebound(to: Array<UnsafeMutablePointer<UInt8>>.self, capacity: currentFrame.byteRows.count) { (currentRows) in
-                    let destRows: UnsafeMutablePointer<Array<UnsafeMutablePointer<UInt8>>> = currentRows
-                    
-                    _ = withUnsafeMutablePointer(to: &bufferFrame.byteRows) { (bufferBind) in
-                        bufferBind.withMemoryRebound(to: Array<UnsafeMutablePointer<UInt8>>.self, capacity: bufferFrame.byteRows.count) { (bufferRows) in
-                            let srcRows: UnsafeMutablePointer<Array<UnsafeMutablePointer<UInt8>>> = bufferRows
-                            
-                            blendFrameDstBytes(destRows.pointee, srcBytes: srcRows.pointee, blendOP: blendOP, offsetX: offsetX, offsetY: offsetY, width: frameWidth, height: frameHeight)
-                        }
-                    }
-                }
-            }
-            
-            
-            // Calculating delay (duration)
-            if delayDen == 0 {
-                delayDen = 100
-            }
-            let duration = Double(delayNum) / Double(delayDen)
-            currentFrame.duration = duration
 
-            currentFrame.updateCGImageRef(Int(width), height: Int(height), bits: Int(bitDepth), scale: scale, blend: blendOP != UInt8(PNG_BLEND_OP_SOURCE))
-            
-            frames.append(currentFrame)
-            
-            if disposeOP != UInt8(PNG_DISPOSE_OP_PREVIOUS) {
-                memcpy(nextFrame.bytes, currentFrame.bytes, Int(length))
-                if disposeOP == UInt8(PNG_DISPOSE_OP_BACKGROUND) {
-                    for j in 0 ..< frameHeight {
-                        let tarPointer = nextFrame.byteRows[Int(offsetY + j)].advanced(by: Int(offsetX) * 4)
-                        memset(tarPointer, 0, Int(frameWidth) * 4)
-                    }
-                }
-            }
-            
-            currentFrame = nextFrame
-            
+        // Setup apng meta
+        let meta = APNGMeta(
+            width: width,
+            height: height,
+            bitDepth: UInt32(bitDepth),
+            colorType: UInt32(colorType),
+            rowBytes: rowBytes,
+            frameCount: frameCount,
+            playCount: playCount,
+            firstFrameHidden: firstFrameHidden)
+        
+        bufferFrame = Frame(length: meta.length, bytesInRow: meta.rowBytes)
+        currentFrame = Frame(length: meta.length, bytesInRow: meta.rowBytes)
+        apngMeta = meta
+    }
+    
+    func clean() {
+        
+        // Do not clean apng meta here. We will need it to return some meta to outside.
+        
+        processing = false
+        currentFrameIndex = 0
+        
+        png_destroy_read_struct(&pngPointer, &infoPointer, nil)
+        
+        reader.endReading()
+
+        if bufferFrame != nil {
+            bufferFrame.clean()
+            bufferFrame = nil
         }
+        if currentFrame != nil {
+            currentFrame.clean()
+            currentFrame = nil
+        }
+    }
+    
+    /**
+    Decode the data to a high level `APNGImage` object.
+    
+    - parameter scale: The screen scale should be used when decoding. 
+    You should pass 1 if you want to use the dosassembler separately.
+    If you need to display the image on the screen later, use `UIScreen.mainScreen().scale`.
+    Default is 1.0.
+    
+    - throws: A `DisassemblerError` when error happens.
+    
+    - returns: A decoded `APNGImage` object at given scale.
+    */
+    public func decode(_ scale: CGFloat = 1) throws -> APNGImage {
+        let (frames, meta) = try decodeToElements(scale)
         
-        // End
-        png_read_end(pngPointer, infoPointer)
+        // Setup apng properties
+        let apng = APNGImage(frames: frames, scale: scale, meta: meta)
+        return apng
+    }
+    
+    func decodeToElements(_ scale: CGFloat = 1) throws
+            -> (frames: [Frame], APNGMeta)
+    {
+        var frames = [Frame]()
+        while let frame = next() {
+            frames.append(frame)
+        }
+        guard let apngMeta = apngMeta else {
+            fatalError("The APNG meta should exists.")
+        }
+        return (frames, apngMeta)
+    }
+    
+    func decodeMeta() throws -> APNGMeta {
+        try prepare()
+        clean()
         
-        bufferFrame.clean()
-        currentFrame.clean()
-        
-        return (frames, CGSize(width: CGFloat(width), height: CGFloat(height)), Int(playCount) - 1, Int(bitDepth), firstFrameHidden)
+        guard let apngMeta = apngMeta else { fatalError("The apng meta should exists") }
+        return apngMeta
     }
     
     func blendFrameDstBytes(_ dstBytes: Array<UnsafeMutablePointer<UInt8>>,
@@ -357,5 +428,33 @@ public struct Disassembler {
         guard png_sig_cmp(&sig, 0, signatureOfPNGLength) == 0 else {
             throw DisassemblerError.invalidFormat
         }
+    }
+}
+
+extension Disassembler: IteratorProtocol {
+    func next() -> Frame? {
+        if !processing {
+            processing = true
+            do {
+                try prepare()
+            } catch {
+                clean()
+                return nil
+            }
+        }
+        
+        let result: Frame?
+        
+        guard let apngMeta = apngMeta else { return nil }
+        
+        // Regular
+        if apngMeta.frameCount == 0 {
+            result = readRegularPNGFrame()
+        } else {
+            result = readNextFrame()
+        }
+        
+        if result == nil { clean() }
+        return result
     }
 }
