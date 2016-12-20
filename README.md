@@ -61,7 +61,7 @@ platform :ios, '8.0'
 use_frameworks!
 
 target 'your_app' do
-  pod 'APNGKit', '~> 0.3'
+  pod 'APNGKit', '~> 0.4'
 end
 ```
 
@@ -87,7 +87,7 @@ $ brew install carthage
 To integrate APNGKit into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "onevcat/APNGKit" ~> 0.3
+github "onevcat/APNGKit" ~> 0.4
 ```
 
 Then, run the following command to build the APNGKit framework:
