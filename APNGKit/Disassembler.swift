@@ -75,6 +75,7 @@ public enum DisassemblerError: Error {
     case pngStructureFailure
     case pngInternalError
     case fileSizeExceeded
+    case invalidAPNGMeta
 }
 
 /**
@@ -358,7 +359,7 @@ class Disassembler {
             frames.append(frame)
         }
         guard let apngMeta = apngMeta else {
-            fatalError("The APNG meta should exists.")
+            throw DisassemblerError.invalidAPNGMeta
         }
         return (frames, apngMeta)
     }
@@ -367,7 +368,9 @@ class Disassembler {
         try prepare()
         clean()
         
-        guard let apngMeta = apngMeta else { fatalError("The apng meta should exists") }
+        guard let apngMeta = apngMeta else {
+            throw DisassemblerError.invalidAPNGMeta
+        }
         return apngMeta
     }
     
