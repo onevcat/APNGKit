@@ -44,19 +44,23 @@ open class APNGImageView: UIView {
             let animating = isAnimating
             stopAnimating()
             
-            image?.reset()
+            guard let image = image else {
+                updateContents(nil)
+                return
+            }
             
-            if let frame = image?.next(currentIndex: currentFrameIndex) {
-                currentFrameDuration = frame.duration
-                updateContents(frame.image)
-                
-                if animating {
-                    startAnimating()
-                }
-                
-                if autoStartAnimation {
-                    startAnimating()
-                }
+            image.reset()
+
+            let frame = image.next(currentIndex: currentFrameIndex)
+            currentFrameDuration = frame.duration
+            updateContents(frame.image)
+            
+            if animating {
+                startAnimating()
+            }
+            
+            if autoStartAnimation {
+                startAnimating()
             }
         }
     }
@@ -212,6 +216,9 @@ open class APNGImageView: UIView {
                 
                 delegate?.apngImageView?(self, didFinishPlaybackForRepeatedCount: repeated)
                 
+                // If user set image to `nil`, do not render anymore.
+                guard let _ = self.image else { return }
+                
                 currentFrameIndex = 0
                 repeated = repeated + 1
                 
@@ -230,6 +237,7 @@ open class APNGImageView: UIView {
             }
             
             currentPassedDuration = currentPassedDuration - currentFrameDuration
+            
             let frame = image.next(currentIndex: currentFrameIndex)
             currentFrameDuration = frame.duration
             updateContents(frame.image)
