@@ -56,7 +56,10 @@ open class APNGImage: NSObject { // For ObjC compatibility
     
     let firstFrameHidden: Bool
     let bitDepth: Int
-    let frameCount: Int
+    
+    /// The count of frames in this APNG image.
+    /// The value of it for a single plain PNG file would be 1.
+    public let frameCount: Int
     
     fileprivate(set) var frames: [Frame]?
     
@@ -109,7 +112,11 @@ open class APNGImage: NSObject { // For ObjC compatibility
         self.bitDepth = Int(meta.bitDepth)
         self.repeatCount = Int(meta.playCount) - 1
         self.firstFrameHidden = meta.firstFrameHidden
-        self.frameCount = Int(meta.frameCount)
+        
+        let metaFrameCount = Int(meta.frameCount)
+        // Meta frameCount = 0 means we are falling back to normal PNG. 
+        // The real frame count should be 1.
+        self.frameCount = (metaFrameCount == 0) ? 1 : metaFrameCount
         dataOwner = nil
     }
     

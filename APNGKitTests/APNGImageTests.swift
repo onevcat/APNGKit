@@ -180,6 +180,7 @@ class APNGImageTests: XCTestCase {
         let image = APNGImage(named: "demo")
         XCTAssertNotNil(image, "Normal image should be created.")
         XCTAssertEqual(image?.frames!.count, 1, "There should be only one frame")
+        XCTAssertEqual(image?.frameCount, 1, "The frame count should be 1 for normal PNG")
         XCTAssertNotNil(image?.frames!.first?.image,"The image of frame should not be nil")
         XCTAssertEqual(image?.frames!.first?.duration, TimeInterval.infinity, "And this frame lasts forever.")
         XCTAssertFalse(image!.frames!.first!.image!.isEmpty(), "This frame should not be an empty frame.")
