@@ -34,11 +34,11 @@ public let RepeatForever = -1
 /// `APNGImage` can hold an APNG image or a regular PNG image. If latter, there will be only one frame in the image.
 open class APNGImage: NSObject { // For ObjC compatibility
     
-    /// Total duration of the animation. If progressive loading is used, this property returns 0.0.
-    open var duration: TimeInterval {
+    /// Total duration of the animation. If progressive loading is used, this property returns `nil`.
+    open var duration: TimeInterval? {
         return frames?.reduce(0.0) {
             $0 + $1.duration
-        } ?? 0.0
+        } ?? nil
     }
     
     /// Size of the image in point. The scale factor is considered.
@@ -120,12 +120,14 @@ open class APNGImage: NSObject { // For ObjC compatibility
         dataOwner = nil
     }
     
+    // Init from a frame array. This happens when all frame data get decoded.
     convenience init(frames: [Frame], scale: CGFloat, meta: APNGMeta) {
         self.init(scale: scale, meta: meta)
         self.frames = frames
         self.disassembler = nil
     }
     
+    // Init from a disaabler. This happens when loading progressivly.
     convenience init(disassembler: Disassembler, scale: CGFloat, meta: APNGMeta) {
         self.init(scale: scale, meta: meta)
         self.disassembler = disassembler

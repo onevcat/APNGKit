@@ -79,6 +79,7 @@ class APNGImageTests: XCTestCase {
         let image = APNGImage(data: data!, progressive: true)!
         XCTAssertNil(image.frames)
         XCTAssertNotNil(image.disassembler)
+        XCTAssertEqual(image.duration, nil, "The duration for progressive loading will be nil since we cannot get it.")
         
         let frame0 = image.next(currentIndex: 0)
         let frame0Pixel = [frame0.bytes.pointee,
