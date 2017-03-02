@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-require 'FileUtils'
+require 'fileutils'
 
 exit unless File.directory?("./libpng-apng/") && Dir.entries('./libpng-apng/').include?("png.c")
 

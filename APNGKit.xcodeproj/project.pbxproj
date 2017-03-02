@@ -678,7 +678,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./sync-libpng-apng";
+			shellScript = "ruby ./sync-libpng-apng";
 		};
 /* End PBXShellScriptBuildPhase section */
 
