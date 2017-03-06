@@ -110,7 +110,7 @@ open class APNGImageView: UIView {
     
     open weak var delegate: APNGImageViewDelegate?
     
-    var timer: CADisplayLink?
+    var timer: GCDTimer?
     var lastTimestamp: TimeInterval = 0
     var currentPassedDuration: TimeInterval = 0
     var currentFrameDuration: TimeInterval = 0
@@ -186,11 +186,11 @@ open class APNGImageView: UIView {
         }
         
         isAnimating = true
-        timer = CADisplayLink.apng_displayLink({ [weak self] (displayLink) -> () in
-            self?.tick(displayLink)
-        })
-        timer?.frameInterval = 5
-        timer?.add(to: mainRunLoop, forMode: timerRunloopMode)
+        timer = GCDTimer(intervalInSecs: 0.016)
+        timer!.Event = { [weak self] _ in
+            DispatchQueue.main.sync { self?.tick() }
+        }
+        timer!.start()
     }
     
     /**
@@ -215,23 +215,23 @@ open class APNGImageView: UIView {
         currentPassedDuration = 0
         currentFrameIndex = 0
         
-        timer?.invalidate()
         timer = nil
     }
     
-    func tick(_ sender: CADisplayLink?) {
-        guard let localTimer = sender,
-              let image = image else {
+    func tick() {
+        print("tick: \(self)")
+        guard let image = image else {
             return
         }
         
+        let timestamp = CACurrentMediaTime()
         if lastTimestamp == 0 {
-            lastTimestamp = localTimer.timestamp
+            lastTimestamp = timestamp
             return
         }
         
-        let elapsedTime = localTimer.timestamp - lastTimestamp
-        lastTimestamp = localTimer.timestamp
+        let elapsedTime = timestamp - lastTimestamp
+        lastTimestamp = timestamp
         
         currentPassedDuration += elapsedTime
         
@@ -292,37 +292,3 @@ open class APNGImageView: UIView {
     }
 }
 
-private class Block<T> {
-    let f : T
-    init (_ f: T) { self.f = f }
-}
-
-private var apng_userInfoKey: Void?
-extension CADisplayLink {
-    
-    var apng_userInfo: AnyObject? {
-        get {
-            return objc_getAssociatedObject(self, &apng_userInfoKey) as AnyObject?
-        }
-    }
-    
-    func apng_setUserInfo(_ userInfo: AnyObject?) {
-        objc_setAssociatedObject(self, &apng_userInfoKey, userInfo, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-    }
-    
-    static func apng_displayLink(_ block: (CADisplayLink) -> ()) -> CADisplayLink
-    {
-        let displayLink = CADisplayLink(target: self, selector: #selector(CADisplayLink.apng_blockInvoke(_:)))
-        
-        let block = Block(block)
-        displayLink.apng_setUserInfo(block)
-        return displayLink
-    }
-    
-    static func apng_blockInvoke(_ sender: CADisplayLink) {
-        if let block = sender.apng_userInfo as? Block<(CADisplayLink)->()> {
-            block.f(sender)
-        }
-    }
-    
-}
