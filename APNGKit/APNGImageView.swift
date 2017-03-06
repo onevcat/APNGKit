@@ -195,7 +195,6 @@ open class APNGImageView: UIView {
     }
     
     func tick() {
-        print("tick: \(self)")
         guard let image = image else {
             return
         }
