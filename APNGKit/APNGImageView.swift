@@ -81,32 +81,8 @@ open class APNGImageView: UIView {
     /// If true runs animation timer with option `NSRunLoopCommonModes`.
     /// ScrollView(CollectionView, TableView) items with Animated APNGImageView will not freeze during scrolling
     /// - Note: This may decrease scrolling smoothness with lot's of animations
-    @available(*, deprecated, message: "Use `timerRunloopMode` instead.")
-    open var allowAnimationInScrollView = false {
-        didSet {
-            if allowAnimationInScrollView {
-                timerRunloopMode = .commonModes
-            } else {
-                timerRunloopMode = .defaultRunLoopMode
-            }
-        }
-    }
-    
-    /// The runloop mode in which animating timer will run.
-    /// It is `RunLoopMode.commonModes` by default, which means the animation will 
-    /// continue while a scroll view is being scrolled. If you do not need to 
-    /// display the animation with a scroll view, you could set it to 
-    /// `.defaultRunLoopMode` for better performance. If you need the highest 
-    /// priority for your animation, set it to `.UITrackingRunLoopMode`.
-    /// - Note: Setting this property for an image in animating will take no effect
-    ///         until you start the animation again.
-    open var timerRunloopMode: RunLoopMode = .commonModes {
-        didSet {
-            if isAnimating {
-                print("Setting timer runloop while the image is animating will take no effect until next startAnimating.")
-            }
-        }
-    }
+    @available(*, deprecated, message: "This is not necessary anymore. Now APNGKit runs in a GCD-based timer.")
+    open var allowAnimationInScrollView = false
     
     open weak var delegate: APNGImageViewDelegate?
     
