@@ -189,6 +189,7 @@ open class APNGImageView: UIView {
         timer = CADisplayLink.apng_displayLink({ [weak self] (displayLink) -> () in
             self?.tick(displayLink)
         })
+        timer?.frameInterval = 5
         timer?.add(to: mainRunLoop, forMode: timerRunloopMode)
     }
     
