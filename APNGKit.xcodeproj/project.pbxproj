@@ -10,6 +10,7 @@
 		4B0D673D1B8E9DBF00876BDF /* APNGKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B0D673C1B8E9DBF00876BDF /* APNGKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4B0D67441B8E9DC000876BDF /* APNGKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B0D67391B8E9DBF00876BDF /* APNGKit.framework */; };
 		4B0D67491B8E9DC000876BDF /* APNGKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0D67481B8E9DC000876BDF /* APNGKitTests.swift */; };
+		4B1950501E6D21670047B7DE /* GCDTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B19504F1E6D21670047B7DE /* GCDTimer.swift */; };
 		4B2132061B8EF20500A39502 /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2132051B8EF20500A39502 /* Frame.swift */; };
 		4B21320A1B8EF39000A39502 /* LibAPNGTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2132091B8EF39000A39502 /* LibAPNGTests.swift */; };
 		4B21320C1B8EF44800A39502 /* Disassembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B21320B1B8EF44800A39502 /* Disassembler.swift */; };
@@ -137,6 +138,7 @@
 		4B0D67431B8E9DC000876BDF /* APNGKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = APNGKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B0D67481B8E9DC000876BDF /* APNGKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNGKitTests.swift; sourceTree = "<group>"; };
 		4B0D674A1B8E9DC000876BDF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B19504F1E6D21670047B7DE /* GCDTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCDTimer.swift; sourceTree = "<group>"; };
 		4B2132051B8EF20500A39502 /* Frame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
 		4B2132091B8EF39000A39502 /* LibAPNGTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibAPNGTests.swift; sourceTree = "<group>"; };
 		4B21320B1B8EF44800A39502 /* Disassembler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Disassembler.swift; sourceTree = "<group>"; };
@@ -294,6 +296,7 @@
 				4B21320F1B8EF4D500A39502 /* APNGImage.swift */,
 				D14B5B4F1B92DE4300F753E1 /* APNGImageCache.swift */,
 				D17398451B90A9B200913AEA /* APNGImageView.swift */,
+				4B19504F1E6D21670047B7DE /* GCDTimer.swift */,
 			);
 			path = APNGKit;
 			sourceTree = "<group>";
@@ -705,6 +708,7 @@
 				4B2132061B8EF20500A39502 /* Frame.swift in Sources */,
 				4B6B68FF1B8EB33100C4868A /* pngpread.c in Sources */,
 				4B21320C1B8EF44800A39502 /* Disassembler.swift in Sources */,
+				4B1950501E6D21670047B7DE /* GCDTimer.swift in Sources */,
 				4B6B69151B8EB98300C4868A /* Reader.swift in Sources */,
 				4B6B68FB1B8EB33100C4868A /* pngget.c in Sources */,
 				4B6B69011B8EB33100C4868A /* pngread.c in Sources */,
