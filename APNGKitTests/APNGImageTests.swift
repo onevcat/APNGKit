@@ -32,13 +32,11 @@ class APNGImageTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        APNGImage.searchBundle = Bundle.testBundle
 
     }
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        APNGImage.searchBundle = Bundle.main
       super.tearDown()
     }
     
@@ -129,15 +127,15 @@ class APNGImageTests: XCTestCase {
     }
     
     func testInitFromName() {
-        let apng1 = APNGImage(named: "ball.png")
+        let apng1 = APNGImage(named: "ball.png", in: .testBundle)
         XCTAssertNotNil(apng1, "ball.png should be able to init")
         
-        let apng2 = APNGImage(named: "no-such-file.png")
+        let apng2 = APNGImage(named: "no-such-file.png", in: .testBundle)
         XCTAssertNil(apng2, "There is no such file.")
     }
     
     func testInitFromNameWithoutPng() {
-        let apng1 = APNGImage(named: "ball")
+        let apng1 = APNGImage(named: "ball", in: .testBundle)
         XCTAssertNotNil(apng1, "ball.png should be able to init")
         
         let apng2 = APNGImage(named: "no-such-file")
@@ -145,12 +143,12 @@ class APNGImageTests: XCTestCase {
     }
     
     func testInitRetinaImage() {
-        let retinaAPNG = APNGImage(named: "elephant_apng")
+        let retinaAPNG = APNGImage(named: "elephant_apng", in: .testBundle)
         XCTAssertNotNil(retinaAPNG, "elephant_apng should be able to init at 2x.")
         XCTAssertEqual(retinaAPNG?.scale, 2, "Retina version should be loaded")
         XCTAssertEqual(retinaAPNG?.size, CGSize(width: 240, height: 200), "Size should be in point, not pixel.")
 
-        let anotherRetinaAPNG = APNGImage(named: "elephant_apng@2x")
+        let anotherRetinaAPNG = APNGImage(named: "elephant_apng@2x", in: .testBundle)
         XCTAssertNotNil(anotherRetinaAPNG, "elephant_apng should be able to init at 2x.")
         XCTAssertEqual(anotherRetinaAPNG?.scale, 2, "Retina version should be loaded")
         XCTAssertEqual(anotherRetinaAPNG?.size, CGSize(width: 240, height: 200), "Size should be in point, not pixel.")
@@ -163,22 +161,22 @@ class APNGImageTests: XCTestCase {
         XCTAssertEqual(normalAPNG?.scale, 1, "Retina version should be loaded")
         XCTAssertEqual(normalAPNG?.size, CGSize(width: 480, height: 400), "Size should be in point, not pixel.")
         
-        let wrongAPNG = APNGImage(named: "elephant_apng@3x")
+        let wrongAPNG = APNGImage(named: "elephant_apng@3x", in: .testBundle)
         XCTAssertNil(wrongAPNG, "elephant_apng should be able to init at 3x.")
     }
     
     func testFirstFrameHidden() {
-        let firstFrameHiddenImage = APNGImage(named: "pyani")
+        let firstFrameHiddenImage = APNGImage(named: "pyani", in: .testBundle)
         XCTAssertNotNil(firstFrameHiddenImage, "image should be able to init")
         XCTAssertTrue(firstFrameHiddenImage!.firstFrameHidden, "The first frame should be hidden.")
         
-        let notHiddenImage = APNGImage(named: "ball")
+        let notHiddenImage = APNGImage(named: "ball", in: .testBundle)
         XCTAssertNotNil(notHiddenImage, "image should be able to init")
         XCTAssertFalse(notHiddenImage!.firstFrameHidden, "The first frame should not be hidden.")
     }
     
     func testNormalPNG() {
-        let image = APNGImage(named: "demo")
+        let image = APNGImage(named: "demo", in: .testBundle)
         XCTAssertNotNil(image, "Normal image should be created.")
         XCTAssertEqual(image?.frames!.count, 1, "There should be only one frame")
         XCTAssertEqual(image?.frameCount, 1, "The frame count should be 1 for normal PNG")

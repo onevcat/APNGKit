@@ -32,12 +32,10 @@ class APNGImageViewTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        APNGImage.searchBundle = Bundle.testBundle
     }
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        APNGImage.searchBundle = Bundle.main
         super.tearDown()
     }
     
@@ -46,7 +44,7 @@ class APNGImageViewTests: XCTestCase {
     }
     
     func testInitFromImage() {
-        let image = APNGImage(named: "ball")
+        let image = APNGImage(named: "ball", in: .testBundle)
         XCTAssertNotNil(image, "Image should be loaded.")
         let imageView = APNGImageView(image: image)
         XCTAssertNotNil(imageView, "Image view should be loaded.")

@@ -32,13 +32,11 @@ class APNGImageCacheTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        APNGImage.searchBundle = Bundle.testBundle
         APNGCache.defaultCache.clearMemoryCache()
     }
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        APNGImage.searchBundle = Bundle.main
         super.tearDown()
     }
     
@@ -46,7 +44,7 @@ class APNGImageCacheTests: XCTestCase {
         let key = Bundle.testBundle.path(forResource: "ball", ofType: "apng")
         XCTAssertNil(APNGCache.defaultCache.imageForKey(key!), "The ball image should not be cached in memory.")
         
-        let image = APNGImage(named: "ball")
+        let image = APNGImage(named: "ball", in: .testBundle)
         XCTAssertNotNil(image, "ball image should be loaded.")
         XCTAssertNotNil(APNGCache.defaultCache.imageForKey(key!), "The ball image should be cached in memory.")
     }
