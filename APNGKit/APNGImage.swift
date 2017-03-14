@@ -102,8 +102,6 @@ open class APNGImage: NSObject { // For ObjC compatibility
     // So we could share the bytes in it between two "same" APNG image objects.
     fileprivate let dataOwner: APNGImage?
     fileprivate let internalSize: CGSize // size in pixel
-    
-    static var searchBundle: Bundle = Bundle.main
 
     init(scale: CGFloat, meta: APNGMeta) {
         let size = CGSize(width: Int(meta.width), height: Int(meta.height))
@@ -179,12 +177,13 @@ open class APNGImage: NSObject { // For ObjC compatibility
      - parameter progressive: When set to true, only the current frame will be loaded. This could free up memory
                               that are not current displayed, but will take more performance to load the needed frame
                               when it is about to be displayed. Otherwise, all frames will be loaded once. Default is `false`.
+     - parameter bundle:      The bundle in which APNGKit should search for the image name.
 
      - returns: The image object for the specified file, or nil if the method could not find the specified image.
     
     */
-    public convenience init?(named imageName: String, progressive: Bool = false) {
-        if let path = imageName.apng_filePathByCheckingNameExistingInBundle(APNGImage.searchBundle) {
+    public convenience init?(named imageName: String, progressive: Bool = false, in bundle: Bundle = .main) {
+        if let path = imageName.apng_filePathByCheckingNameExistingInBundle(bundle) {
             self.init(contentsOfFile:path, saveToCache: true, progressive: progressive)
         } else {
             return nil
