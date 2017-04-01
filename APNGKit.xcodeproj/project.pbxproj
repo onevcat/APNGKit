@@ -49,6 +49,40 @@
 		4B7D4ED71B9559BF005C0598 /* filter_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D4ED51B9559BF005C0598 /* filter_neon.S */; };
 		4B7D4ED91B955CBF005C0598 /* arm_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D4ED81B955CBF005C0598 /* arm_init.c */; };
 		4BF022041B94442800F00CDE /* APNGImageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF022031B94442800F00CDE /* APNGImageViewTests.swift */; };
+		B25269641E8FD9840096A0A7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B25269631E8FD9840096A0A7 /* libz.tbd */; };
+		B25269661E8FDA090096A0A7 /* GCDTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B19504F1E6D21670047B7DE /* GCDTimer.swift */; };
+		B25269671E8FDA0E0096A0A7 /* APNGImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17398451B90A9B200913AEA /* APNGImageView.swift */; };
+		B25269681E8FDA120096A0A7 /* APNGImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14B5B4F1B92DE4300F753E1 /* APNGImageCache.swift */; };
+		B25269691E8FDA400096A0A7 /* APNGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B21320F1B8EF4D500A39502 /* APNGImage.swift */; };
+		B252696A1E8FDA430096A0A7 /* Disassembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B21320B1B8EF44800A39502 /* Disassembler.swift */; };
+		B252696B1E8FDA470096A0A7 /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2132051B8EF20500A39502 /* Frame.swift */; };
+		B252696C1E8FDA4A0096A0A7 /* Reader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69141B8EB98300C4868A /* Reader.swift */; };
+		B252696D1E8FDA7F0096A0A7 /* APNGKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B0D673C1B8E9DBF00876BDF /* APNGKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B252696E1E8FDA8F0096A0A7 /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68F51B8EB33100C4868A /* pngwutil.c */; };
+		B252696F1E8FDA970096A0A7 /* filter_neon_intrinsics.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D4ED41B9559BF005C0598 /* filter_neon_intrinsics.c */; };
+		B25269701E8FDA970096A0A7 /* filter_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D4ED51B9559BF005C0598 /* filter_neon.S */; };
+		B25269711E8FDA970096A0A7 /* arm_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D4ED81B955CBF005C0598 /* arm_init.c */; };
+		B25269721E8FDA970096A0A7 /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68E01B8EB33100C4868A /* png.c */; };
+		B25269731E8FDA970096A0A7 /* png.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B68E11B8EB33100C4868A /* png.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B25269741E8FDA970096A0A7 /* pngconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B68E21B8EB33100C4868A /* pngconf.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B25269751E8FDA970096A0A7 /* pngdebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B68E31B8EB33100C4868A /* pngdebug.h */; };
+		B25269761E8FDA970096A0A7 /* pngerror.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68E41B8EB33100C4868A /* pngerror.c */; };
+		B25269771E8FDA970096A0A7 /* pngget.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68E51B8EB33100C4868A /* pngget.c */; };
+		B25269781E8FDA970096A0A7 /* pnginfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B68E61B8EB33100C4868A /* pnginfo.h */; };
+		B25269791E8FDA970096A0A7 /* pnglibconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B68E71B8EB33100C4868A /* pnglibconf.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B252697A1E8FDA970096A0A7 /* pngmem.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68E81B8EB33100C4868A /* pngmem.c */; };
+		B252697B1E8FDA970096A0A7 /* pngpread.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68E91B8EB33100C4868A /* pngpread.c */; };
+		B252697C1E8FDA970096A0A7 /* pngpriv.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B68EA1B8EB33100C4868A /* pngpriv.h */; };
+		B252697D1E8FDA970096A0A7 /* pngread.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68EB1B8EB33100C4868A /* pngread.c */; };
+		B252697E1E8FDA970096A0A7 /* pngrio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68EC1B8EB33100C4868A /* pngrio.c */; };
+		B252697F1E8FDA970096A0A7 /* pngrtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68ED1B8EB33100C4868A /* pngrtran.c */; };
+		B25269801E8FDA970096A0A7 /* pngrutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68EE1B8EB33100C4868A /* pngrutil.c */; };
+		B25269811E8FDA970096A0A7 /* pngset.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68EF1B8EB33100C4868A /* pngset.c */; };
+		B25269821E8FDA970096A0A7 /* pngstruct.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B68F01B8EB33100C4868A /* pngstruct.h */; };
+		B25269831E8FDA970096A0A7 /* pngtrans.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68F11B8EB33100C4868A /* pngtrans.c */; };
+		B25269841E8FDA970096A0A7 /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68F21B8EB33100C4868A /* pngwio.c */; };
+		B25269851E8FDA970096A0A7 /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68F31B8EB33100C4868A /* pngwrite.c */; };
+		B25269861E8FDA970096A0A7 /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68F41B8EB33100C4868A /* pngwtran.c */; };
 		D122B9261B96CC8E00CB4F26 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D122B9251B96CC8E00CB4F26 /* libz.tbd */; };
 		D127F6301B91D9FD0095832A /* APNGImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D127F62F1B91D9FD0095832A /* APNGImageTests.swift */; };
 		D14B5B4B1B92B4A600F753E1 /* APNG-cube.apng in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B471B92B4A600F753E1 /* APNG-cube.apng */; };
@@ -177,6 +211,8 @@
 		4B7D4ED51B9559BF005C0598 /* filter_neon.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = filter_neon.S; sourceTree = "<group>"; };
 		4B7D4ED81B955CBF005C0598 /* arm_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = arm_init.c; sourceTree = "<group>"; };
 		4BF022031B94442800F00CDE /* APNGImageViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageViewTests.swift; sourceTree = "<group>"; };
+		B252695A1E8FD8EA0096A0A7 /* APNGKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = APNGKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B25269631E8FD9840096A0A7 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		D122B9251B96CC8E00CB4F26 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		D127F62F1B91D9FD0095832A /* APNGImageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageTests.swift; sourceTree = "<group>"; };
 		D14B5B471B92B4A600F753E1 /* APNG-cube.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = "APNG-cube.apng"; path = "TestImages/APNG-cube.apng"; sourceTree = SOURCE_ROOT; };
@@ -235,6 +271,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B25269561E8FD8EA0096A0A7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B25269641E8FD9840096A0A7 /* libz.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D199B1F51B91445100BF8358 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -280,6 +324,7 @@
 				D199B1F81B91445100BF8358 /* APNGKitDemo.app */,
 				D199B20B1B91445100BF8358 /* APNGKitDemoTests.xctest */,
 				D199B2161B91445100BF8358 /* APNGKitDemoUITests.xctest */,
+				B252695A1E8FD8EA0096A0A7 /* APNGKit.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -357,6 +402,7 @@
 			isa = PBXGroup;
 			children = (
 				D122B9251B96CC8E00CB4F26 /* libz.tbd */,
+				B25269631E8FD9840096A0A7 /* libz.tbd */,
 			);
 			name = lib;
 			sourceTree = "<group>";
@@ -456,6 +502,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B25269571E8FD8EA0096A0A7 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B25269731E8FDA970096A0A7 /* png.h in Headers */,
+				B25269791E8FDA970096A0A7 /* pnglibconf.h in Headers */,
+				B25269741E8FDA970096A0A7 /* pngconf.h in Headers */,
+				B25269781E8FDA970096A0A7 /* pnginfo.h in Headers */,
+				B25269751E8FDA970096A0A7 /* pngdebug.h in Headers */,
+				B252697C1E8FDA970096A0A7 /* pngpriv.h in Headers */,
+				B25269821E8FDA970096A0A7 /* pngstruct.h in Headers */,
+				B252696D1E8FDA7F0096A0A7 /* APNGKit.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -495,6 +556,24 @@
 			productName = APNGKitTests;
 			productReference = 4B0D67431B8E9DC000876BDF /* APNGKitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B25269591E8FD8EA0096A0A7 /* APNGKit OSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B252695F1E8FD8EA0096A0A7 /* Build configuration list for PBXNativeTarget "APNGKit OSX" */;
+			buildPhases = (
+				B25269551E8FD8EA0096A0A7 /* Sources */,
+				B25269561E8FD8EA0096A0A7 /* Frameworks */,
+				B25269571E8FD8EA0096A0A7 /* Headers */,
+				B25269581E8FD8EA0096A0A7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "APNGKit OSX";
+			productName = "APNGKit OSX";
+			productReference = B252695A1E8FD8EA0096A0A7 /* APNGKit.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 		D199B1F71B91445100BF8358 /* APNGKitDemo */ = {
 			isa = PBXNativeTarget;
@@ -569,6 +648,10 @@
 						CreatedOnToolsVersion = 7.0;
 						LastSwiftMigration = 0800;
 					};
+					B25269591E8FD8EA0096A0A7 = {
+						CreatedOnToolsVersion = 8.3;
+						ProvisioningStyle = Automatic;
+					};
 					D199B1F71B91445100BF8358 = {
 						CreatedOnToolsVersion = 7.0;
 						LastSwiftMigration = 0800;
@@ -599,6 +682,7 @@
 			projectRoot = "";
 			targets = (
 				4B0D67381B8E9DBF00876BDF /* APNGKit */,
+				B25269591E8FD8EA0096A0A7 /* APNGKit OSX */,
 				4B0D67421B8E9DC000876BDF /* APNGKitTests */,
 				D199B1F71B91445100BF8358 /* APNGKitDemo */,
 				D199B20A1B91445100BF8358 /* APNGKitDemoTests */,
@@ -629,6 +713,13 @@
 				D1614E231B91EDE200050104 /* over_background.apng in Resources */,
 				D187FEE91B934F1B0013372D /* pyani.apng in Resources */,
 				D190199C1B932A8E00E16EDB /* elephant_apng@2x.apng in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B25269581E8FD8EA0096A0A7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -734,6 +825,38 @@
 				D19019A21B9336B100E16EDB /* APNGImageCacheTests.swift in Sources */,
 				D127F6301B91D9FD0095832A /* APNGImageTests.swift in Sources */,
 				4B6B69191B8ED1C300C4868A /* LibPNGTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B25269551E8FD8EA0096A0A7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B25269831E8FDA970096A0A7 /* pngtrans.c in Sources */,
+				B252696C1E8FDA4A0096A0A7 /* Reader.swift in Sources */,
+				B252696F1E8FDA970096A0A7 /* filter_neon_intrinsics.c in Sources */,
+				B25269851E8FDA970096A0A7 /* pngwrite.c in Sources */,
+				B25269671E8FDA0E0096A0A7 /* APNGImageView.swift in Sources */,
+				B252697A1E8FDA970096A0A7 /* pngmem.c in Sources */,
+				B25269721E8FDA970096A0A7 /* png.c in Sources */,
+				B25269711E8FDA970096A0A7 /* arm_init.c in Sources */,
+				B252697F1E8FDA970096A0A7 /* pngrtran.c in Sources */,
+				B25269701E8FDA970096A0A7 /* filter_neon.S in Sources */,
+				B25269801E8FDA970096A0A7 /* pngrutil.c in Sources */,
+				B25269661E8FDA090096A0A7 /* GCDTimer.swift in Sources */,
+				B25269681E8FDA120096A0A7 /* APNGImageCache.swift in Sources */,
+				B25269771E8FDA970096A0A7 /* pngget.c in Sources */,
+				B25269841E8FDA970096A0A7 /* pngwio.c in Sources */,
+				B25269761E8FDA970096A0A7 /* pngerror.c in Sources */,
+				B252696B1E8FDA470096A0A7 /* Frame.swift in Sources */,
+				B25269811E8FDA970096A0A7 /* pngset.c in Sources */,
+				B25269861E8FDA970096A0A7 /* pngwtran.c in Sources */,
+				B252697B1E8FDA970096A0A7 /* pngpread.c in Sources */,
+				B252696E1E8FDA8F0096A0A7 /* pngwutil.c in Sources */,
+				B252697E1E8FDA970096A0A7 /* pngrio.c in Sources */,
+				B252697D1E8FDA970096A0A7 /* pngread.c in Sources */,
+				B25269691E8FDA400096A0A7 /* APNGImage.swift in Sources */,
+				B252696A1E8FDA430096A0A7 /* Disassembler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -848,6 +971,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -892,6 +1016,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -961,6 +1086,61 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		B25269601E8FD8EA0096A0A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = APNGKit/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKit;
+				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
+				PRODUCT_NAME = APNGKit;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		B25269611E8FD8EA0096A0A7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = APNGKit/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKit;
+				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
+				PRODUCT_NAME = APNGKit;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -1071,6 +1251,15 @@
 			buildConfigurations = (
 				4B0D67511B8E9DC000876BDF /* Debug */,
 				4B0D67521B8E9DC000876BDF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B252695F1E8FD8EA0096A0A7 /* Build configuration list for PBXNativeTarget "APNGKit OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B25269601E8FD8EA0096A0A7 /* Debug */,
+				B25269611E8FD8EA0096A0A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
