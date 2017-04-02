@@ -7,7 +7,7 @@ xcode_scheme: APNGKit
 script: 
 - |
     set -o pipefail
-    xcodebuild clean test -project APNGKit.xcodeproj -scheme APNGKit CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -destination 'platform=iOS Simulator,name=iPhone 7,OS=latest' | xcpretty
+    xcodebuild clean test -project APNGKit.xcodeproj -scheme -destination 'platform=iOS Simulator,name=iPhone 7,OS=latest' | xcpretty
 
 git:
   submodules: false
