@@ -26,11 +26,11 @@
 
 #if os(OSX)
     import Cocoa
-    public typealias APNG_View = NSView
+    public typealias APNGView = NSView
     typealias CocoaImage = NSImage
 #elseif os(iOS) || os(watchOS) || os(tvOS)
     import UIKit
-    public typealias APNG_View = UIView
+    public typealias APNGView = UIView
     typealias CocoaImage = UIImage
 #endif
     
@@ -42,7 +42,7 @@
 /// You can control the starting and stopping of the animation, as well as the repeat count.
 /// All images associated with an APNGImageView object should use the same scale. 
 /// If your application uses images with different scales, they may render incorrectly.
-open class APNGImageView: APNG_View {
+open class APNGImageView: APNGView {
     
     /// The image displayed in the image view.
     /// If you change the image when the animation playing, 
