@@ -33,16 +33,6 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B25310051E90A99400A65CEA"
-               BuildableName = "APNGKitTests OSX.xctest"
-               BlueprintName = "APNGKitTests OSX"
-               ReferencedContainer = "container:APNGKit.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "4B0D67421B8E9DC000876BDF"
                BuildableName = "APNGKitTests.xctest"
                BlueprintName = "APNGKitTests"
