@@ -83,6 +83,29 @@
 		B25269841E8FDA970096A0A7 /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68F21B8EB33100C4868A /* pngwio.c */; };
 		B25269851E8FDA970096A0A7 /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68F31B8EB33100C4868A /* pngwrite.c */; };
 		B25269861E8FDA970096A0A7 /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B68F41B8EB33100C4868A /* pngwtran.c */; };
+		B253100B1E90A99400A65CEA /* APNGKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B252695A1E8FD8EA0096A0A7 /* APNGKit.framework */; };
+		B253101B1E90AA3200A65CEA /* demo.png in Resources */ = {isa = PBXBuildFile; fileRef = 4B5DF6831B99718C00C4D421 /* demo.png */; };
+		B253101C1E90AA3200A65CEA /* pyani.apng in Resources */ = {isa = PBXBuildFile; fileRef = D187FEE81B934F1B0013372D /* pyani.apng */; };
+		B253101D1E90AA3200A65CEA /* elephant_apng.apng in Resources */ = {isa = PBXBuildFile; fileRef = D190199F1B93351300E16EDB /* elephant_apng.apng */; };
+		B253101E1E90AA3200A65CEA /* elephant_apng@2x.apng in Resources */ = {isa = PBXBuildFile; fileRef = D190199B1B932A8E00E16EDB /* elephant_apng@2x.apng */; };
+		B253101F1E90AA3200A65CEA /* minimalAPNG.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E321B91EE0000050104 /* minimalAPNG.apng */; };
+		B25310201E90AA3200A65CEA /* ball.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1D1B91EDE200050104 /* ball.apng */; };
+		B25310211E90AA3200A65CEA /* over_background.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1E1B91EDE200050104 /* over_background.apng */; };
+		B25310221E90AA3200A65CEA /* over_none.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1F1B91EDE200050104 /* over_none.apng */; };
+		B25310231E90AA3200A65CEA /* over_previous.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E201B91EDE200050104 /* over_previous.apng */; };
+		B25310241E90AA3200A65CEA /* spinfox.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E211B91EDE200050104 /* spinfox.apng */; };
+		B25310251E90AA3900A65CEA /* PNGSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B690F1B8EB50B00C4868A /* PNGSource.swift */; };
+		B25310261E90AA3900A65CEA /* XCTAssertSwiftError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2132131B8EFA7900A39502 /* XCTAssertSwiftError.swift */; };
+		B25310271E90AA3900A65CEA /* NSBundle+APNGKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19019991B930E1600E16EDB /* NSBundle+APNGKitTests.swift */; };
+		B25310281E90AA4200A65CEA /* APNGKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0D67481B8E9DC000876BDF /* APNGKitTests.swift */; };
+		B25310291E90AA4200A65CEA /* Fundamental Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69111B8EB65F00C4868A /* Fundamental Tests.swift */; };
+		B253102B1E90AA4200A65CEA /* ReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69161B8EBFC700C4868A /* ReaderTests.swift */; };
+		B253102C1E90AA4200A65CEA /* LibPNGTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B6B69181B8ED1C300C4868A /* LibPNGTests.swift */; };
+		B253102D1E90AA4200A65CEA /* LibAPNGTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2132091B8EF39000A39502 /* LibAPNGTests.swift */; };
+		B253102E1E90AA4200A65CEA /* DisassemblerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2132111B8EF94F00A39502 /* DisassemblerTests.swift */; };
+		B253102F1E90AA4200A65CEA /* APNGImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D127F62F1B91D9FD0095832A /* APNGImageTests.swift */; };
+		B25310301E90AA4200A65CEA /* APNGImageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF022031B94442800F00CDE /* APNGImageViewTests.swift */; };
+		B25310311E90AA4200A65CEA /* APNGImageCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19019A11B9336B100E16EDB /* APNGImageCacheTests.swift */; };
 		D122B9261B96CC8E00CB4F26 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D122B9251B96CC8E00CB4F26 /* libz.tbd */; };
 		D127F6301B91D9FD0095832A /* APNGImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D127F62F1B91D9FD0095832A /* APNGImageTests.swift */; };
 		D14B5B4B1B92B4A600F753E1 /* APNG-cube.apng in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B471B92B4A600F753E1 /* APNG-cube.apng */; };
@@ -127,6 +150,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4B0D67381B8E9DBF00876BDF;
 			remoteInfo = APNGKit;
+		};
+		B253100C1E90A99400A65CEA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B0D67301B8E9DBF00876BDF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B25269591E8FD8EA0096A0A7;
+			remoteInfo = "APNGKit OSX";
 		};
 		D199B20C1B91445100BF8358 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -213,6 +243,7 @@
 		4BF022031B94442800F00CDE /* APNGImageViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageViewTests.swift; sourceTree = "<group>"; };
 		B252695A1E8FD8EA0096A0A7 /* APNGKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = APNGKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B25269631E8FD9840096A0A7 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		B25310061E90A99400A65CEA /* APNGKitTests OSX.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "APNGKitTests OSX.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D122B9251B96CC8E00CB4F26 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		D127F62F1B91D9FD0095832A /* APNGImageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageTests.swift; sourceTree = "<group>"; };
 		D14B5B471B92B4A600F753E1 /* APNG-cube.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = "APNG-cube.apng"; path = "TestImages/APNG-cube.apng"; sourceTree = SOURCE_ROOT; };
@@ -279,6 +310,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B25310031E90A99400A65CEA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B253100B1E90A99400A65CEA /* APNGKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D199B1F51B91445100BF8358 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -325,6 +364,7 @@
 				D199B20B1B91445100BF8358 /* APNGKitDemoTests.xctest */,
 				D199B2161B91445100BF8358 /* APNGKitDemoUITests.xctest */,
 				B252695A1E8FD8EA0096A0A7 /* APNGKit.framework */,
+				B25310061E90A99400A65CEA /* APNGKitTests OSX.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -575,6 +615,24 @@
 			productReference = B252695A1E8FD8EA0096A0A7 /* APNGKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B25310051E90A99400A65CEA /* APNGKitTests OSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B25310101E90A99400A65CEA /* Build configuration list for PBXNativeTarget "APNGKitTests OSX" */;
+			buildPhases = (
+				B25310021E90A99400A65CEA /* Sources */,
+				B25310031E90A99400A65CEA /* Frameworks */,
+				B25310041E90A99400A65CEA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B253100D1E90A99400A65CEA /* PBXTargetDependency */,
+			);
+			name = "APNGKitTests OSX";
+			productName = "APNGKitTests OSX";
+			productReference = B25310061E90A99400A65CEA /* APNGKitTests OSX.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		D199B1F71B91445100BF8358 /* APNGKitDemo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D199B2231B91445100BF8358 /* Build configuration list for PBXNativeTarget "APNGKitDemo" */;
@@ -636,7 +694,7 @@
 		4B0D67301B8E9DBF00876BDF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0700;
+				LastSwiftUpdateCheck = 0830;
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "OneV's Den";
 				TargetAttributes = {
@@ -649,6 +707,10 @@
 						LastSwiftMigration = 0800;
 					};
 					B25269591E8FD8EA0096A0A7 = {
+						CreatedOnToolsVersion = 8.3;
+						ProvisioningStyle = Automatic;
+					};
+					B25310051E90A99400A65CEA = {
 						CreatedOnToolsVersion = 8.3;
 						ProvisioningStyle = Automatic;
 					};
@@ -684,6 +746,7 @@
 				4B0D67381B8E9DBF00876BDF /* APNGKit */,
 				B25269591E8FD8EA0096A0A7 /* APNGKit OSX */,
 				4B0D67421B8E9DC000876BDF /* APNGKitTests */,
+				B25310051E90A99400A65CEA /* APNGKitTests OSX */,
 				D199B1F71B91445100BF8358 /* APNGKitDemo */,
 				D199B20A1B91445100BF8358 /* APNGKitDemoTests */,
 				D199B2151B91445100BF8358 /* APNGKitDemoUITests */,
@@ -720,6 +783,23 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B25310041E90A99400A65CEA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B25310201E90AA3200A65CEA /* ball.apng in Resources */,
+				B253101F1E90AA3200A65CEA /* minimalAPNG.apng in Resources */,
+				B253101D1E90AA3200A65CEA /* elephant_apng.apng in Resources */,
+				B25310231E90AA3200A65CEA /* over_previous.apng in Resources */,
+				B253101E1E90AA3200A65CEA /* elephant_apng@2x.apng in Resources */,
+				B25310241E90AA3200A65CEA /* spinfox.apng in Resources */,
+				B253101B1E90AA3200A65CEA /* demo.png in Resources */,
+				B25310221E90AA3200A65CEA /* over_none.apng in Resources */,
+				B253101C1E90AA3200A65CEA /* pyani.apng in Resources */,
+				B25310211E90AA3200A65CEA /* over_background.apng in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -860,6 +940,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B25310021E90A99400A65CEA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B25310261E90AA3900A65CEA /* XCTAssertSwiftError.swift in Sources */,
+				B253102C1E90AA4200A65CEA /* LibPNGTests.swift in Sources */,
+				B25310301E90AA4200A65CEA /* APNGImageViewTests.swift in Sources */,
+				B25310271E90AA3900A65CEA /* NSBundle+APNGKitTests.swift in Sources */,
+				B25310281E90AA4200A65CEA /* APNGKitTests.swift in Sources */,
+				B25310291E90AA4200A65CEA /* Fundamental Tests.swift in Sources */,
+				B253102F1E90AA4200A65CEA /* APNGImageTests.swift in Sources */,
+				B253102D1E90AA4200A65CEA /* LibAPNGTests.swift in Sources */,
+				B25310311E90AA4200A65CEA /* APNGImageCacheTests.swift in Sources */,
+				B253102B1E90AA4200A65CEA /* ReaderTests.swift in Sources */,
+				B253102E1E90AA4200A65CEA /* DisassemblerTests.swift in Sources */,
+				B25310251E90AA3900A65CEA /* PNGSource.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D199B1F41B91445100BF8358 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -893,6 +992,11 @@
 			isa = PBXTargetDependency;
 			target = 4B0D67381B8E9DBF00876BDF /* APNGKit */;
 			targetProxy = 4B0D67451B8E9DC000876BDF /* PBXContainerItemProxy */;
+		};
+		B253100D1E90A99400A65CEA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B25269591E8FD8EA0096A0A7 /* APNGKit OSX */;
+			targetProxy = B253100C1E90A99400A65CEA /* PBXContainerItemProxy */;
 		};
 		D199B20D1B91445100BF8358 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1145,6 +1249,43 @@
 			};
 			name = Release;
 		};
+		B253100E1E90A99400A65CEA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = APNGKitTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		B253100F1E90A99400A65CEA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = APNGKitTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
 		D199B21D1B91445100BF8358 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1263,6 +1404,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		B25310101E90A99400A65CEA /* Build configuration list for PBXNativeTarget "APNGKitTests OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B253100E1E90A99400A65CEA /* Debug */,
+				B253100F1E90A99400A65CEA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		D199B2231B91445100BF8358 /* Build configuration list for PBXNativeTarget "APNGKitDemo" */ = {
 			isa = XCConfigurationList;
