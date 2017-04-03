@@ -55,7 +55,7 @@ class DisassemblerTests: XCTestCase {
             try dis1.checkFormat()
         }
         
-        #if os(OSX)
+        #if os(macOS)
             let infoPlistURL = Bundle.testBundle.bundleURL
                 .appendingPathComponent("Contents", isDirectory: true)
                 .appendingPathComponent("Info.plist", isDirectory: false)

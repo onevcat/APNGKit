@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if os(OSX)
+#if os(macOS)
     import Cocoa
 #else
     import UIKit
@@ -116,7 +116,7 @@ extension APNGImage {
         for f in frames {
             if let image = f.image {
                 // Totol bytes
-                #if os(OSX)
+                #if os(macOS)
                     s += Int(image.size.height * image.size.width * CGFloat(self.bitDepth))
                 #else
                     s += Int(image.size.height * image.size.width * image.scale * image.scale * CGFloat(self.bitDepth))

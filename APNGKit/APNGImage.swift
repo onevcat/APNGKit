@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if os(OSX)
+#if os(macOS)
     import Cocoa
 #else
     import UIKit
@@ -334,7 +334,7 @@ extension String {
         // We will try to find the version match current scale first, then the one with 1 less scale factor.
         var path: String?
         
-        #if os(OSX)
+        #if os(macOS)
             let scales = 1 ... Int(NSScreen.main()?.backingScaleFactor ?? 1)
         #else
             let scales = 1 ... Int(UIScreen.main.scale)

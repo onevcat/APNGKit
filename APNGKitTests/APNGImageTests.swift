@@ -198,7 +198,7 @@ class APNGImageTests: XCTestCase {
 private extension CocoaImage {
     func isEmpty() -> Bool {
         
-        #if os(OSX)
+        #if os(macOS)
             let cgImage = self.cgImage(forProposedRect: nil, context: nil, hints: nil)
         #else
             let cgImage = self.cgImage

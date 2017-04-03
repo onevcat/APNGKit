@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if os(OSX)
+#if os(macOS)
     import Cocoa
     public typealias APNGView = NSView
     typealias CocoaImage = NSImage
@@ -126,7 +126,7 @@ open class APNGImageView: APNGView {
             super.init(frame: CGRect.zero)
         }
         
-        #if os(OSX)
+        #if os(macOS)
             wantsLayer = true
         #else
             backgroundColor = UIColor.clear
@@ -262,7 +262,7 @@ open class APNGImageView: APNGView {
         
         let currentImage: CGImage?
         
-        #if os(OSX)
+        #if os(macOS)
             if layer?.contents != nil {
                 currentImage = (layer?.contents as! CGImage)
             } else {
