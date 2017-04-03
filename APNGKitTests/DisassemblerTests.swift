@@ -55,7 +55,16 @@ class DisassemblerTests: XCTestCase {
             try dis1.checkFormat()
         }
         
-        let infoPlistData = try! Data(contentsOf: URL(fileURLWithPath: Bundle.testBundle.path(forResource: "Info", ofType: ".plist")!))
+        #if os(macOS)
+            let infoPlistURL = Bundle.testBundle.bundleURL
+                .appendingPathComponent("Contents", isDirectory: true)
+                .appendingPathComponent("Info.plist", isDirectory: false)
+        #else
+            let infoPlistURL = URL(fileURLWithPath: Bundle.testBundle.path(forResource: "Info", ofType: ".plist")!)
+        #endif
+        
+        let infoPlistData = try! Data(contentsOf: infoPlistURL)
+        
         let dis2 = Disassembler(data: infoPlistData)
         XCTempAssertThrowsSpecificError(DisassemblerError.invalidFormat, "Empty data should throw invalid format") { () -> () in
             try dis2.checkFormat()

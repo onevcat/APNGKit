@@ -24,7 +24,11 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
+#if os(macOS)
+    import Cocoa
+#else
+    import UIKit
+#endif
 
 /// APNG animation should repeat forever.
 public let RepeatForever = -1
@@ -329,7 +333,12 @@ extension String {
         // Else, user is passing a common name without known suffix.
         // We will try to find the version match current scale first, then the one with 1 less scale factor.
         var path: String?
-        let scales = 1 ... Int(UIScreen.main.scale)
+        
+        #if os(macOS)
+            let scales = 1 ... Int(NSScreen.main()?.backingScaleFactor ?? 1)
+        #else
+            let scales = 1 ... Int(UIScreen.main.scale)
+        #endif
         
         path = scales.reversed().reduce(nil) { (result, scale) -> String? in
             return result ??

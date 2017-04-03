@@ -24,7 +24,11 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
+#if os(macOS)
+    import Cocoa
+#else
+    import UIKit
+#endif
 
 /// Cache for APNGKit. It will hold apng images initialized from specified init methods.
 /// If the same file is requested later, APNGKit will look it up in this cache first to improve performance.
@@ -49,15 +53,18 @@ open class APNGCache {
         cacheObject.countLimit = 15
         
         cacheObject.name = "com.onevcat.APNGKit.cache"
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(APNGCache.clearMemoryCache),
-                                                                   name: NSNotification.Name.UIApplicationDidReceiveMemoryWarning, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(APNGCache.clearMemoryCache),
-                                                                   name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        #if !os(OSX)
+            NotificationCenter.default.addObserver(self, selector: #selector(APNGCache.clearMemoryCache),
+                                                   name: NSNotification.Name.UIApplicationDidReceiveMemoryWarning, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(APNGCache.clearMemoryCache),
+                                                   name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        #endif
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self)
+        #if !os(OSX)
+            NotificationCenter.default.removeObserver(self)
+        #endif
     }
     
     /**
@@ -109,7 +116,11 @@ extension APNGImage {
         for f in frames {
             if let image = f.image {
                 // Totol bytes
-                s += Int(image.size.height * image.size.width * image.scale * image.scale * CGFloat(self.bitDepth))
+                #if os(macOS)
+                    s += Int(image.size.height * image.size.width * CGFloat(self.bitDepth))
+                #else
+                    s += Int(image.size.height * image.size.width * image.scale * image.scale * CGFloat(self.bitDepth))
+                #endif
             }
         }
         return s

@@ -1,0 +1,596 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4B92AA441E91E43500760A61 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B92AA431E91E43500760A61 /* AppDelegate.swift */; };
+		4B92AA491E91E43500760A61 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA471E91E43500760A61 /* Main.storyboard */; };
+		4B92AA4B1E91E43500760A61 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA4A1E91E43500760A61 /* Assets.xcassets */; };
+		4B92AA4E1E91E43500760A61 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA4C1E91E43500760A61 /* LaunchScreen.storyboard */; };
+		4B92AA571E91E4AC00760A61 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B92AA551E91E4AC00760A61 /* DetailViewController.swift */; };
+		4B92AA581E91E4AC00760A61 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B92AA561E91E4AC00760A61 /* TableViewController.swift */; };
+		4B92AA651E91E4E800760A61 /* APNG-cube.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA5A1E91E4E800760A61 /* APNG-cube.apng */; };
+		4B92AA661E91E4E800760A61 /* APNG-Icos4D.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA5B1E91E4E800760A61 /* APNG-Icos4D.apng */; };
+		4B92AA671E91E4E800760A61 /* ball.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA5C1E91E4E800760A61 /* ball.apng */; };
+		4B92AA681E91E4E800760A61 /* elephant_apng.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA5D1E91E4E800760A61 /* elephant_apng.apng */; };
+		4B92AA691E91E4E800760A61 /* elephant_apng@2x.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA5E1E91E4E800760A61 /* elephant_apng@2x.apng */; };
+		4B92AA6A1E91E4E800760A61 /* minimalAPNG.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA5F1E91E4E800760A61 /* minimalAPNG.apng */; };
+		4B92AA6B1E91E4E800760A61 /* over_background.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA601E91E4E800760A61 /* over_background.apng */; };
+		4B92AA6C1E91E4E800760A61 /* over_none.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA611E91E4E800760A61 /* over_none.apng */; };
+		4B92AA6D1E91E4E800760A61 /* over_previous.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA621E91E4E800760A61 /* over_previous.apng */; };
+		4B92AA6E1E91E4E800760A61 /* pyani.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA631E91E4E800760A61 /* pyani.apng */; };
+		4B92AA6F1E91E4E800760A61 /* spinfox.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA641E91E4E800760A61 /* spinfox.apng */; };
+		4B92AA711E91E58D00760A61 /* APNGKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B92AA701E91E58D00760A61 /* APNGKit.framework */; };
+		4B92AA721E91E58D00760A61 /* APNGKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B92AA701E91E58D00760A61 /* APNGKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B92AA7C1E91E71400760A61 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B92AA7B1E91E71400760A61 /* AppDelegate.swift */; };
+		4B92AA7E1E91E71400760A61 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B92AA7D1E91E71400760A61 /* ViewController.swift */; };
+		4B92AA801E91E71400760A61 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA7F1E91E71400760A61 /* Assets.xcassets */; };
+		4B92AA831E91E71400760A61 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA811E91E71400760A61 /* Main.storyboard */; };
+		4B92AA891E91E72A00760A61 /* APNGKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B92AA881E91E72A00760A61 /* APNGKit.framework */; };
+		4B92AA8A1E91E72A00760A61 /* APNGKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B92AA881E91E72A00760A61 /* APNGKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4B92AA991E91ED4700760A61 /* APNG-cube.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA8E1E91ED4700760A61 /* APNG-cube.apng */; };
+		4B92AA9A1E91ED4700760A61 /* APNG-Icos4D.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA8F1E91ED4700760A61 /* APNG-Icos4D.apng */; };
+		4B92AA9B1E91ED4700760A61 /* ball.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA901E91ED4700760A61 /* ball.apng */; };
+		4B92AA9C1E91ED4700760A61 /* elephant_apng.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA911E91ED4700760A61 /* elephant_apng.apng */; };
+		4B92AA9D1E91ED4700760A61 /* elephant_apng@2x.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA921E91ED4700760A61 /* elephant_apng@2x.apng */; };
+		4B92AA9E1E91ED4700760A61 /* minimalAPNG.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA931E91ED4700760A61 /* minimalAPNG.apng */; };
+		4B92AA9F1E91ED4700760A61 /* over_background.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA941E91ED4700760A61 /* over_background.apng */; };
+		4B92AAA01E91ED4700760A61 /* over_none.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA951E91ED4700760A61 /* over_none.apng */; };
+		4B92AAA11E91ED4700760A61 /* over_previous.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA961E91ED4700760A61 /* over_previous.apng */; };
+		4B92AAA21E91ED4700760A61 /* pyani.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA971E91ED4700760A61 /* pyani.apng */; };
+		4B92AAA31E91ED4700760A61 /* spinfox.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B92AA981E91ED4700760A61 /* spinfox.apng */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4B92AA731E91E58E00760A61 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4B92AA721E91E58D00760A61 /* APNGKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B92AA8B1E91E72A00760A61 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4B92AA8A1E91E72A00760A61 /* APNGKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		4B92AA401E91E43500760A61 /* APNGDemo-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "APNGDemo-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B92AA431E91E43500760A61 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4B92AA481E91E43500760A61 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4B92AA4A1E91E43500760A61 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B92AA4D1E91E43500760A61 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4B92AA4F1E91E43500760A61 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B92AA551E91E4AC00760A61 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		4B92AA561E91E4AC00760A61 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
+		4B92AA5A1E91E4E800760A61 /* APNG-cube.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = "APNG-cube.apng"; sourceTree = "<group>"; };
+		4B92AA5B1E91E4E800760A61 /* APNG-Icos4D.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = "APNG-Icos4D.apng"; sourceTree = "<group>"; };
+		4B92AA5C1E91E4E800760A61 /* ball.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = ball.apng; sourceTree = "<group>"; };
+		4B92AA5D1E91E4E800760A61 /* elephant_apng.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = elephant_apng.apng; sourceTree = "<group>"; };
+		4B92AA5E1E91E4E800760A61 /* elephant_apng@2x.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = "elephant_apng@2x.apng"; sourceTree = "<group>"; };
+		4B92AA5F1E91E4E800760A61 /* minimalAPNG.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = minimalAPNG.apng; sourceTree = "<group>"; };
+		4B92AA601E91E4E800760A61 /* over_background.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = over_background.apng; sourceTree = "<group>"; };
+		4B92AA611E91E4E800760A61 /* over_none.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = over_none.apng; sourceTree = "<group>"; };
+		4B92AA621E91E4E800760A61 /* over_previous.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = over_previous.apng; sourceTree = "<group>"; };
+		4B92AA631E91E4E800760A61 /* pyani.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = pyani.apng; sourceTree = "<group>"; };
+		4B92AA641E91E4E800760A61 /* spinfox.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = spinfox.apng; sourceTree = "<group>"; };
+		4B92AA701E91E58D00760A61 /* APNGKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = APNGKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B92AA791E91E71400760A61 /* APNGDemo-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "APNGDemo-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B92AA7B1E91E71400760A61 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4B92AA7D1E91E71400760A61 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		4B92AA7F1E91E71400760A61 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4B92AA821E91E71400760A61 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4B92AA841E91E71400760A61 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4B92AA881E91E72A00760A61 /* APNGKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = APNGKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B92AA8E1E91ED4700760A61 /* APNG-cube.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = "APNG-cube.apng"; sourceTree = "<group>"; };
+		4B92AA8F1E91ED4700760A61 /* APNG-Icos4D.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = "APNG-Icos4D.apng"; sourceTree = "<group>"; };
+		4B92AA901E91ED4700760A61 /* ball.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = ball.apng; sourceTree = "<group>"; };
+		4B92AA911E91ED4700760A61 /* elephant_apng.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = elephant_apng.apng; sourceTree = "<group>"; };
+		4B92AA921E91ED4700760A61 /* elephant_apng@2x.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = "elephant_apng@2x.apng"; sourceTree = "<group>"; };
+		4B92AA931E91ED4700760A61 /* minimalAPNG.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = minimalAPNG.apng; sourceTree = "<group>"; };
+		4B92AA941E91ED4700760A61 /* over_background.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = over_background.apng; sourceTree = "<group>"; };
+		4B92AA951E91ED4700760A61 /* over_none.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = over_none.apng; sourceTree = "<group>"; };
+		4B92AA961E91ED4700760A61 /* over_previous.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = over_previous.apng; sourceTree = "<group>"; };
+		4B92AA971E91ED4700760A61 /* pyani.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = pyani.apng; sourceTree = "<group>"; };
+		4B92AA981E91ED4700760A61 /* spinfox.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = spinfox.apng; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4B92AA3D1E91E43500760A61 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B92AA711E91E58D00760A61 /* APNGKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B92AA761E91E71400760A61 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B92AA891E91E72A00760A61 /* APNGKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4B92AA371E91E43500760A61 = {
+			isa = PBXGroup;
+			children = (
+				4B92AA421E91E43500760A61 /* APNGDemo-iOS */,
+				4B92AA7A1E91E71400760A61 /* APNGDemo-macOS */,
+				4B92AA411E91E43500760A61 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4B92AA411E91E43500760A61 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4B92AA401E91E43500760A61 /* APNGDemo-iOS.app */,
+				4B92AA791E91E71400760A61 /* APNGDemo-macOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4B92AA421E91E43500760A61 /* APNGDemo-iOS */ = {
+			isa = PBXGroup;
+			children = (
+				4B92AA741E91E67700760A61 /* Framework */,
+				4B92AA591E91E4E800760A61 /* TestImages */,
+				4B92AA431E91E43500760A61 /* AppDelegate.swift */,
+				4B92AA551E91E4AC00760A61 /* DetailViewController.swift */,
+				4B92AA561E91E4AC00760A61 /* TableViewController.swift */,
+				4B92AA471E91E43500760A61 /* Main.storyboard */,
+				4B92AA4A1E91E43500760A61 /* Assets.xcassets */,
+				4B92AA4C1E91E43500760A61 /* LaunchScreen.storyboard */,
+				4B92AA4F1E91E43500760A61 /* Info.plist */,
+			);
+			path = "APNGDemo-iOS";
+			sourceTree = "<group>";
+		};
+		4B92AA591E91E4E800760A61 /* TestImages */ = {
+			isa = PBXGroup;
+			children = (
+				4B92AA5A1E91E4E800760A61 /* APNG-cube.apng */,
+				4B92AA5B1E91E4E800760A61 /* APNG-Icos4D.apng */,
+				4B92AA5C1E91E4E800760A61 /* ball.apng */,
+				4B92AA5D1E91E4E800760A61 /* elephant_apng.apng */,
+				4B92AA5E1E91E4E800760A61 /* elephant_apng@2x.apng */,
+				4B92AA5F1E91E4E800760A61 /* minimalAPNG.apng */,
+				4B92AA601E91E4E800760A61 /* over_background.apng */,
+				4B92AA611E91E4E800760A61 /* over_none.apng */,
+				4B92AA621E91E4E800760A61 /* over_previous.apng */,
+				4B92AA631E91E4E800760A61 /* pyani.apng */,
+				4B92AA641E91E4E800760A61 /* spinfox.apng */,
+			);
+			name = TestImages;
+			path = ../../TestImages;
+			sourceTree = "<group>";
+		};
+		4B92AA741E91E67700760A61 /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				4B92AA701E91E58D00760A61 /* APNGKit.framework */,
+			);
+			name = Framework;
+			sourceTree = "<group>";
+		};
+		4B92AA7A1E91E71400760A61 /* APNGDemo-macOS */ = {
+			isa = PBXGroup;
+			children = (
+				4B92AA8C1E91E73300760A61 /* Framework */,
+				4B92AA8D1E91ED4700760A61 /* TestImages */,
+				4B92AA7B1E91E71400760A61 /* AppDelegate.swift */,
+				4B92AA7D1E91E71400760A61 /* ViewController.swift */,
+				4B92AA7F1E91E71400760A61 /* Assets.xcassets */,
+				4B92AA811E91E71400760A61 /* Main.storyboard */,
+				4B92AA841E91E71400760A61 /* Info.plist */,
+			);
+			path = "APNGDemo-macOS";
+			sourceTree = "<group>";
+		};
+		4B92AA8C1E91E73300760A61 /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				4B92AA881E91E72A00760A61 /* APNGKit.framework */,
+			);
+			name = Framework;
+			sourceTree = "<group>";
+		};
+		4B92AA8D1E91ED4700760A61 /* TestImages */ = {
+			isa = PBXGroup;
+			children = (
+				4B92AA8E1E91ED4700760A61 /* APNG-cube.apng */,
+				4B92AA8F1E91ED4700760A61 /* APNG-Icos4D.apng */,
+				4B92AA901E91ED4700760A61 /* ball.apng */,
+				4B92AA911E91ED4700760A61 /* elephant_apng.apng */,
+				4B92AA921E91ED4700760A61 /* elephant_apng@2x.apng */,
+				4B92AA931E91ED4700760A61 /* minimalAPNG.apng */,
+				4B92AA941E91ED4700760A61 /* over_background.apng */,
+				4B92AA951E91ED4700760A61 /* over_none.apng */,
+				4B92AA961E91ED4700760A61 /* over_previous.apng */,
+				4B92AA971E91ED4700760A61 /* pyani.apng */,
+				4B92AA981E91ED4700760A61 /* spinfox.apng */,
+			);
+			name = TestImages;
+			path = ../../TestImages;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4B92AA3F1E91E43500760A61 /* APNGDemo-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B92AA521E91E43500760A61 /* Build configuration list for PBXNativeTarget "APNGDemo-iOS" */;
+			buildPhases = (
+				4B92AA3C1E91E43500760A61 /* Sources */,
+				4B92AA3D1E91E43500760A61 /* Frameworks */,
+				4B92AA3E1E91E43500760A61 /* Resources */,
+				4B92AA731E91E58E00760A61 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "APNGDemo-iOS";
+			productName = "APNGDemo-iOS";
+			productReference = 4B92AA401E91E43500760A61 /* APNGDemo-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4B92AA781E91E71400760A61 /* APNGDemo-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B92AA851E91E71400760A61 /* Build configuration list for PBXNativeTarget "APNGDemo-macOS" */;
+			buildPhases = (
+				4B92AA751E91E71400760A61 /* Sources */,
+				4B92AA761E91E71400760A61 /* Frameworks */,
+				4B92AA771E91E71400760A61 /* Resources */,
+				4B92AA8B1E91E72A00760A61 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "APNGDemo-macOS";
+			productName = "APNGDemo-macOS";
+			productReference = 4B92AA791E91E71400760A61 /* APNGDemo-macOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4B92AA381E91E43500760A61 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0830;
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = "OneV's Den";
+				TargetAttributes = {
+					4B92AA3F1E91E43500760A61 = {
+						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = T499X543T7;
+						ProvisioningStyle = Automatic;
+					};
+					4B92AA781E91E71400760A61 = {
+						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = T499X543T7;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 4B92AA3B1E91E43500760A61 /* Build configuration list for PBXProject "APNGDemo" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4B92AA371E91E43500760A61;
+			productRefGroup = 4B92AA411E91E43500760A61 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4B92AA3F1E91E43500760A61 /* APNGDemo-iOS */,
+				4B92AA781E91E71400760A61 /* APNGDemo-macOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4B92AA3E1E91E43500760A61 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B92AA6C1E91E4E800760A61 /* over_none.apng in Resources */,
+				4B92AA681E91E4E800760A61 /* elephant_apng.apng in Resources */,
+				4B92AA6B1E91E4E800760A61 /* over_background.apng in Resources */,
+				4B92AA6F1E91E4E800760A61 /* spinfox.apng in Resources */,
+				4B92AA6A1E91E4E800760A61 /* minimalAPNG.apng in Resources */,
+				4B92AA6E1E91E4E800760A61 /* pyani.apng in Resources */,
+				4B92AA691E91E4E800760A61 /* elephant_apng@2x.apng in Resources */,
+				4B92AA671E91E4E800760A61 /* ball.apng in Resources */,
+				4B92AA6D1E91E4E800760A61 /* over_previous.apng in Resources */,
+				4B92AA651E91E4E800760A61 /* APNG-cube.apng in Resources */,
+				4B92AA661E91E4E800760A61 /* APNG-Icos4D.apng in Resources */,
+				4B92AA4E1E91E43500760A61 /* LaunchScreen.storyboard in Resources */,
+				4B92AA4B1E91E43500760A61 /* Assets.xcassets in Resources */,
+				4B92AA491E91E43500760A61 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B92AA771E91E71400760A61 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B92AA9C1E91ED4700760A61 /* elephant_apng.apng in Resources */,
+				4B92AA9E1E91ED4700760A61 /* minimalAPNG.apng in Resources */,
+				4B92AA9D1E91ED4700760A61 /* elephant_apng@2x.apng in Resources */,
+				4B92AA801E91E71400760A61 /* Assets.xcassets in Resources */,
+				4B92AAA31E91ED4700760A61 /* spinfox.apng in Resources */,
+				4B92AA9B1E91ED4700760A61 /* ball.apng in Resources */,
+				4B92AAA01E91ED4700760A61 /* over_none.apng in Resources */,
+				4B92AA9A1E91ED4700760A61 /* APNG-Icos4D.apng in Resources */,
+				4B92AA831E91E71400760A61 /* Main.storyboard in Resources */,
+				4B92AA9F1E91ED4700760A61 /* over_background.apng in Resources */,
+				4B92AAA11E91ED4700760A61 /* over_previous.apng in Resources */,
+				4B92AA991E91ED4700760A61 /* APNG-cube.apng in Resources */,
+				4B92AAA21E91ED4700760A61 /* pyani.apng in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4B92AA3C1E91E43500760A61 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B92AA571E91E4AC00760A61 /* DetailViewController.swift in Sources */,
+				4B92AA441E91E43500760A61 /* AppDelegate.swift in Sources */,
+				4B92AA581E91E4AC00760A61 /* TableViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4B92AA751E91E71400760A61 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B92AA7E1E91E71400760A61 /* ViewController.swift in Sources */,
+				4B92AA7C1E91E71400760A61 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		4B92AA471E91E43500760A61 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4B92AA481E91E43500760A61 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		4B92AA4C1E91E43500760A61 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4B92AA4D1E91E43500760A61 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		4B92AA811E91E71400760A61 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4B92AA821E91E71400760A61 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		4B92AA501E91E43500760A61 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4B92AA511E91E43500760A61 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4B92AA531E91E43500760A61 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = T499X543T7;
+				INFOPLIST_FILE = "APNGDemo-iOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.APNGDemo-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		4B92AA541E91E43500760A61 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = T499X543T7;
+				INFOPLIST_FILE = "APNGDemo-iOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.APNGDemo-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		4B92AA861E91E71400760A61 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = T499X543T7;
+				INFOPLIST_FILE = "APNGDemo-macOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.APNGDemo-macOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		4B92AA871E91E71400760A61 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = T499X543T7;
+				INFOPLIST_FILE = "APNGDemo-macOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.onevcat.APNGDemo-macOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4B92AA3B1E91E43500760A61 /* Build configuration list for PBXProject "APNGDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B92AA501E91E43500760A61 /* Debug */,
+				4B92AA511E91E43500760A61 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B92AA521E91E43500760A61 /* Build configuration list for PBXNativeTarget "APNGDemo-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B92AA531E91E43500760A61 /* Debug */,
+				4B92AA541E91E43500760A61 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		4B92AA851E91E71400760A61 /* Build configuration list for PBXNativeTarget "APNGDemo-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B92AA861E91E71400760A61 /* Debug */,
+				4B92AA871E91E71400760A61 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4B92AA381E91E43500760A61 /* Project object */;
+}

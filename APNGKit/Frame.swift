@@ -24,7 +24,11 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
+#if os(macOS)
+    import Cocoa
+#else
+    import UIKit
+#endif
 
 /**
 *  Represents a frame in an APNG file. 
@@ -43,7 +47,7 @@ class Frame {
     
     private var cleaned = false
     
-    var image: UIImage? {
+    var image: CocoaImage? {
         let unusedCallback: CGDataProviderReleaseDataCallback = { optionalPointer, pointer, valueInt in }
         guard let provider = CGDataProvider(dataInfo: nil, data: bytes, size: length, releaseData: unusedCallback) else {
             return nil
@@ -53,7 +57,11 @@ class Frame {
                                   bitmapInfo: [CGBitmapInfo.byteOrder32Big, CGBitmapInfo(rawValue: CGImageAlphaInfo.last.rawValue)],
                                   provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
         {
-            return UIImage(cgImage: imageRef, scale: scale, orientation: .up)
+            #if os(macOS)
+                return NSImage(cgImage: imageRef, size: NSSize(width: width, height: height))
+            #else
+                return UIImage(cgImage: imageRef, scale: scale, orientation: .up)
+            #endif
         }
         return nil
     }
@@ -114,12 +122,16 @@ extension Frame: CustomDebugStringConvertible {
 
     var data: Data? {
         if let image = image {
-           return UIImagePNGRepresentation(image)
+            #if os(iOS) || os(watchOS) || os(tvOS)
+                return UIImagePNGRepresentation(image)
+            #elseif os(OSX)
+                return image.tiffRepresentation
+            #endif
         }
         return nil
     }
     
     var debugDescription: String {
-        return "\(description)\ndata: \(data)"
+        return "\(description)\ndata: \(String(describing: data))"
     }
 }

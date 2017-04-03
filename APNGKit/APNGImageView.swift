@@ -24,8 +24,16 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-import UIKit
-
+#if os(macOS)
+    import Cocoa
+    public typealias APNGView = NSView
+    typealias CocoaImage = NSImage
+#elseif os(iOS) || os(watchOS) || os(tvOS)
+    import UIKit
+    public typealias APNGView = UIView
+    typealias CocoaImage = UIImage
+#endif
+    
 @objc public protocol APNGImageViewDelegate {
     @objc optional func apngImageView(_ imageView: APNGImageView, didFinishPlaybackForRepeatedCount count: Int)
 }
@@ -34,7 +42,7 @@ import UIKit
 /// You can control the starting and stopping of the animation, as well as the repeat count.
 /// All images associated with an APNGImageView object should use the same scale. 
 /// If your application uses images with different scales, they may render incorrectly.
-open class APNGImageView: UIView {
+open class APNGImageView: APNGView {
     
     /// The image displayed in the image view.
     /// If you change the image when the animation playing, 
@@ -118,8 +126,12 @@ open class APNGImageView: UIView {
             super.init(frame: CGRect.zero)
         }
         
-        backgroundColor = UIColor.clear
-        isUserInteractionEnabled = false
+        #if os(macOS)
+            wantsLayer = true
+        #else
+            backgroundColor = UIColor.clear
+            isUserInteractionEnabled = false
+        #endif
         
         if let frame = image?.next(currentIndex: 0) {
             updateContents(frame.image)
@@ -246,24 +258,38 @@ open class APNGImageView: UIView {
         
     }
     
-    func updateContents(_ image: UIImage?) {
-        let currentImage: CGImage?
-        if layer.contents != nil {
-            currentImage = (layer.contents as! CGImage)
-        } else {
-            currentImage = nil
-        }
-
-        let cgImage = image?.cgImage
-
-        if cgImage !== currentImage {
-            layer.contents = cgImage
-            if let image = image {
-                layer.contentsScale = image.scale
-            }
-
-        }
+    func updateContents(_ image: CocoaImage?) {
         
+        let currentImage: CGImage?
+        
+        #if os(macOS)
+            if layer?.contents != nil {
+                currentImage = (layer?.contents as! CGImage)
+            } else {
+                currentImage = nil
+            }
+            
+            let cgImage = image?.cgImage(forProposedRect: nil, context: nil, hints: nil)
+            
+            if cgImage !== currentImage {
+                layer?.contents = cgImage
+            }
+        #else
+            if layer.contents != nil {
+                currentImage = (layer.contents as! CGImage)
+            } else {
+                currentImage = nil
+            }
+            
+            let cgImage = image?.cgImage
+            
+            if cgImage !== currentImage {
+                layer.contents = cgImage
+                if let image = image {
+                    layer.contentsScale = image.scale
+                }
+            }
+        #endif
     }
 }
 
