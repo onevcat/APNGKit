@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>InitImages</key>
+	<array>
+		<dict>
+			<key>description</key>
+			<string>This is a normal APNG image: 100 × 100 pixels, file size: 64 KB, looped, 20 frames</string>
+			<key>name</key>
+			<string>ball</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>A nice spinning fox: 148 x 148 pixels, file size: 613 KB, looped, 25 frames</string>
+			<key>name</key>
+			<string>spinfox</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>A color cube in APNG: 192 x 192 pixels, file size: 996 KB, looped, 100 frames</string>
+			<key>name</key>
+			<string>APNG-cube</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>4D structure: 128 x 128 pixels, file size: 992 KB, looped, 48 frames</string>
+			<key>name</key>
+			<string>APNG-Icos4D</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>Color Balls: 200 x 125 pixels, file size: 1 MB, looped, 31 frames. First frame hidden</string>
+			<key>name</key>
+			<string>pyani</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>Cartoon Elephant: 480 x 400 pixels, file size: 379 KB, looped, 34 frames.</string>
+			<key>name</key>
+			<string>elephant_apng</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>Cartoon Elephant retina: 480 x 400 pixels, file size: 379 KB, looped, 34 frames.</string>
+			<key>name</key>
+			<string>elephant_apng@2x</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>Blend Over. Disposal None: 150 x 150 pixels</string>
+			<key>name</key>
+			<string>over_none</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>Blend Over. Disposal Previous: 150 x 150 pixels</string>
+			<key>name</key>
+			<string>over_previous</string>
+		</dict>
+		<dict>
+			<key>description</key>
+			<string>Blend Over. Disposal Background: 150 x 150 pixels</string>
+			<key>name</key>
+			<string>over_background</string>
+		</dict>
+	</array>
+	<key>LSMinimumSystemVersion</key>
+	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2017年 OneV&apos;s Den. All rights reserved.</string>
+	<key>NSMainStoryboardFile</key>
+	<string>Main</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
