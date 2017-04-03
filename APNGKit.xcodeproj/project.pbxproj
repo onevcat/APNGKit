@@ -560,9 +560,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		4B0D67381B8E9DBF00876BDF /* APNGKit */ = {
+		4B0D67381B8E9DBF00876BDF /* APNGKit-iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4B0D674D1B8E9DC000876BDF /* Build configuration list for PBXNativeTarget "APNGKit" */;
+			buildConfigurationList = 4B0D674D1B8E9DC000876BDF /* Build configuration list for PBXNativeTarget "APNGKit-iOS" */;
 			buildPhases = (
 				4B6B68DE1B8EA5FB00C4868A /* Copy libpng-apng files */,
 				4B0D67341B8E9DBF00876BDF /* Sources */,
@@ -574,7 +574,7 @@
 			);
 			dependencies = (
 			);
-			name = APNGKit;
+			name = "APNGKit-iOS";
 			productName = APNGKit;
 			productReference = 4B0D67391B8E9DBF00876BDF /* APNGKit.framework */;
 			productType = "com.apple.product-type.framework";
@@ -597,9 +597,9 @@
 			productReference = 4B0D67431B8E9DC000876BDF /* APNGKitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		B25269591E8FD8EA0096A0A7 /* APNGKit OSX */ = {
+		B25269591E8FD8EA0096A0A7 /* APNGKit-macOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B252695F1E8FD8EA0096A0A7 /* Build configuration list for PBXNativeTarget "APNGKit OSX" */;
+			buildConfigurationList = B252695F1E8FD8EA0096A0A7 /* Build configuration list for PBXNativeTarget "APNGKit-macOS" */;
 			buildPhases = (
 				B25269551E8FD8EA0096A0A7 /* Sources */,
 				B25269561E8FD8EA0096A0A7 /* Frameworks */,
@@ -610,7 +610,7 @@
 			);
 			dependencies = (
 			);
-			name = "APNGKit OSX";
+			name = "APNGKit-macOS";
 			productName = "APNGKit OSX";
 			productReference = B252695A1E8FD8EA0096A0A7 /* APNGKit.framework */;
 			productType = "com.apple.product-type.framework";
@@ -744,8 +744,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4B0D67381B8E9DBF00876BDF /* APNGKit */,
-				B25269591E8FD8EA0096A0A7 /* APNGKit OSX */,
+				4B0D67381B8E9DBF00876BDF /* APNGKit-iOS */,
+				B25269591E8FD8EA0096A0A7 /* APNGKit-macOS */,
 				4B0D67421B8E9DC000876BDF /* APNGKitTests */,
 				B25310051E90A99400A65CEA /* APNGKitTests OSX */,
 				D199B1F71B91445100BF8358 /* APNGKitDemo */,
@@ -991,12 +991,12 @@
 /* Begin PBXTargetDependency section */
 		4B0D67461B8E9DC000876BDF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4B0D67381B8E9DBF00876BDF /* APNGKit */;
+			target = 4B0D67381B8E9DBF00876BDF /* APNGKit-iOS */;
 			targetProxy = 4B0D67451B8E9DC000876BDF /* PBXContainerItemProxy */;
 		};
 		B253100D1E90A99400A65CEA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B25269591E8FD8EA0096A0A7 /* APNGKit OSX */;
+			target = B25269591E8FD8EA0096A0A7 /* APNGKit-macOS */;
 			targetProxy = B253100C1E90A99400A65CEA /* PBXContainerItemProxy */;
 		};
 		D199B20D1B91445100BF8358 /* PBXTargetDependency */ = {
@@ -1011,7 +1011,7 @@
 		};
 		D199B22B1B9145F900BF8358 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4B0D67381B8E9DBF00876BDF /* APNGKit */;
+			target = 4B0D67381B8E9DBF00876BDF /* APNGKit-iOS */;
 			targetProxy = D199B22A1B9145F900BF8358 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1146,7 +1146,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKit;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = APNGKit;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -1167,7 +1167,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.APNGKit;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = APNGKit;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
 			};
@@ -1393,7 +1393,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4B0D674D1B8E9DC000876BDF /* Build configuration list for PBXNativeTarget "APNGKit" */ = {
+		4B0D674D1B8E9DC000876BDF /* Build configuration list for PBXNativeTarget "APNGKit-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4B0D674E1B8E9DC000876BDF /* Debug */,
@@ -1411,7 +1411,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B252695F1E8FD8EA0096A0A7 /* Build configuration list for PBXNativeTarget "APNGKit OSX" */ = {
+		B252695F1E8FD8EA0096A0A7 /* Build configuration list for PBXNativeTarget "APNGKit-macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B25269601E8FD8EA0096A0A7 /* Debug */,
