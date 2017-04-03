@@ -17,6 +17,7 @@ Pod::Spec.new do |s|
   s.social_media_url   = "http://twitter.com/onevcat"
 
   s.ios.deployment_target = "8.0"
+  s.osx.deployment_target = "10.10"
   s.source       = { :git => "https://github.com/onevcat/APNGKit.git", :tag => s.version }
   
   s.source_files  = "APNGKit/*.{h,swift}", "APNGKit/libpng-apng/*.{h,c,S}"
