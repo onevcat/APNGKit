@@ -108,39 +108,21 @@
 		B25310311E90AA4200A65CEA /* APNGImageCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19019A11B9336B100E16EDB /* APNGImageCacheTests.swift */; };
 		D122B9261B96CC8E00CB4F26 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D122B9251B96CC8E00CB4F26 /* libz.tbd */; };
 		D127F6301B91D9FD0095832A /* APNGImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D127F62F1B91D9FD0095832A /* APNGImageTests.swift */; };
-		D14B5B4B1B92B4A600F753E1 /* APNG-cube.apng in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B471B92B4A600F753E1 /* APNG-cube.apng */; };
-		D14B5B4C1B92B4A600F753E1 /* APNG-Icos4D.apng in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B481B92B4A600F753E1 /* APNG-Icos4D.apng */; };
-		D14B5B4D1B92B4A600F753E1 /* elephant_apng.apng in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B491B92B4A600F753E1 /* elephant_apng.apng */; };
-		D14B5B4E1B92B4A600F753E1 /* pyani.apng in Resources */ = {isa = PBXBuildFile; fileRef = D14B5B4A1B92B4A600F753E1 /* pyani.apng */; };
 		D14B5B501B92DE4300F753E1 /* APNGImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14B5B4F1B92DE4300F753E1 /* APNGImageCache.swift */; };
 		D1614E221B91EDE200050104 /* ball.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1D1B91EDE200050104 /* ball.apng */; };
 		D1614E231B91EDE200050104 /* over_background.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1E1B91EDE200050104 /* over_background.apng */; };
 		D1614E241B91EDE200050104 /* over_none.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E1F1B91EDE200050104 /* over_none.apng */; };
 		D1614E251B91EDE200050104 /* over_previous.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E201B91EDE200050104 /* over_previous.apng */; };
 		D1614E261B91EDE200050104 /* spinfox.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E211B91EDE200050104 /* spinfox.apng */; };
-		D1614E2D1B91EDF800050104 /* ball.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E281B91EDF800050104 /* ball.apng */; };
-		D1614E2E1B91EDF800050104 /* over_background.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E291B91EDF800050104 /* over_background.apng */; };
-		D1614E2F1B91EDF800050104 /* over_none.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E2A1B91EDF800050104 /* over_none.apng */; };
-		D1614E301B91EDF800050104 /* over_previous.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E2B1B91EDF800050104 /* over_previous.apng */; };
-		D1614E311B91EDF800050104 /* spinfox.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E2C1B91EDF800050104 /* spinfox.apng */; };
 		D1614E331B91EE0000050104 /* minimalAPNG.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1614E321B91EE0000050104 /* minimalAPNG.apng */; };
-		D1614E351B91F28300050104 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1614E341B91F28300050104 /* TableViewController.swift */; };
 		D17398461B90A9B200913AEA /* APNGImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17398451B90A9B200913AEA /* APNGImageView.swift */; };
 		D187FEE91B934F1B0013372D /* pyani.apng in Resources */ = {isa = PBXBuildFile; fileRef = D187FEE81B934F1B0013372D /* pyani.apng */; };
 		D190199A1B930E1600E16EDB /* NSBundle+APNGKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19019991B930E1600E16EDB /* NSBundle+APNGKitTests.swift */; };
 		D190199C1B932A8E00E16EDB /* elephant_apng@2x.apng in Resources */ = {isa = PBXBuildFile; fileRef = D190199B1B932A8E00E16EDB /* elephant_apng@2x.apng */; };
-		D190199E1B932A9600E16EDB /* elephant_apng@2x.apng in Resources */ = {isa = PBXBuildFile; fileRef = D190199D1B932A9600E16EDB /* elephant_apng@2x.apng */; };
 		D19019A01B93351400E16EDB /* elephant_apng.apng in Resources */ = {isa = PBXBuildFile; fileRef = D190199F1B93351300E16EDB /* elephant_apng.apng */; };
 		D19019A21B9336B100E16EDB /* APNGImageCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19019A11B9336B100E16EDB /* APNGImageCacheTests.swift */; };
-		D199B1FB1B91445100BF8358 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D199B1FA1B91445100BF8358 /* AppDelegate.swift */; };
-		D199B2001B91445100BF8358 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D199B1FE1B91445100BF8358 /* Main.storyboard */; };
-		D199B2021B91445100BF8358 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D199B2011B91445100BF8358 /* Assets.xcassets */; };
-		D199B2051B91445100BF8358 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D199B2031B91445100BF8358 /* LaunchScreen.storyboard */; };
-		D199B2101B91445100BF8358 /* APNGKitDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D199B20F1B91445100BF8358 /* APNGKitDemoTests.swift */; };
-		D199B21B1B91445100BF8358 /* APNGKitDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D199B21A1B91445100BF8358 /* APNGKitDemoUITests.swift */; };
 		D199B2281B9145F900BF8358 /* APNGKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B0D67391B8E9DBF00876BDF /* APNGKit.framework */; };
 		D199B2291B9145F900BF8358 /* APNGKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4B0D67391B8E9DBF00876BDF /* APNGKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		D1CFDB821B92051900B12135 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CFDB811B92051900B12135 /* DetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -246,43 +228,22 @@
 		B25310061E90A99400A65CEA /* APNGKitTests OSX.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "APNGKitTests OSX.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D122B9251B96CC8E00CB4F26 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		D127F62F1B91D9FD0095832A /* APNGImageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageTests.swift; sourceTree = "<group>"; };
-		D14B5B471B92B4A600F753E1 /* APNG-cube.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = "APNG-cube.apng"; path = "TestImages/APNG-cube.apng"; sourceTree = SOURCE_ROOT; };
-		D14B5B481B92B4A600F753E1 /* APNG-Icos4D.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = "APNG-Icos4D.apng"; path = "TestImages/APNG-Icos4D.apng"; sourceTree = SOURCE_ROOT; };
-		D14B5B491B92B4A600F753E1 /* elephant_apng.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = elephant_apng.apng; path = TestImages/elephant_apng.apng; sourceTree = SOURCE_ROOT; };
-		D14B5B4A1B92B4A600F753E1 /* pyani.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = pyani.apng; path = TestImages/pyani.apng; sourceTree = SOURCE_ROOT; };
 		D14B5B4F1B92DE4300F753E1 /* APNGImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageCache.swift; sourceTree = "<group>"; };
 		D1614E1D1B91EDE200050104 /* ball.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = ball.apng; path = TestImages/ball.apng; sourceTree = SOURCE_ROOT; };
 		D1614E1E1B91EDE200050104 /* over_background.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = over_background.apng; path = TestImages/over_background.apng; sourceTree = SOURCE_ROOT; };
 		D1614E1F1B91EDE200050104 /* over_none.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = over_none.apng; path = TestImages/over_none.apng; sourceTree = SOURCE_ROOT; };
 		D1614E201B91EDE200050104 /* over_previous.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = over_previous.apng; path = TestImages/over_previous.apng; sourceTree = SOURCE_ROOT; };
 		D1614E211B91EDE200050104 /* spinfox.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = spinfox.apng; path = TestImages/spinfox.apng; sourceTree = SOURCE_ROOT; };
-		D1614E281B91EDF800050104 /* ball.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = ball.apng; path = TestImages/ball.apng; sourceTree = SOURCE_ROOT; };
-		D1614E291B91EDF800050104 /* over_background.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = over_background.apng; path = TestImages/over_background.apng; sourceTree = SOURCE_ROOT; };
-		D1614E2A1B91EDF800050104 /* over_none.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = over_none.apng; path = TestImages/over_none.apng; sourceTree = SOURCE_ROOT; };
-		D1614E2B1B91EDF800050104 /* over_previous.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = over_previous.apng; path = TestImages/over_previous.apng; sourceTree = SOURCE_ROOT; };
-		D1614E2C1B91EDF800050104 /* spinfox.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = spinfox.apng; path = TestImages/spinfox.apng; sourceTree = SOURCE_ROOT; };
 		D1614E321B91EE0000050104 /* minimalAPNG.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = minimalAPNG.apng; path = TestImages/minimalAPNG.apng; sourceTree = SOURCE_ROOT; };
-		D1614E341B91F28300050104 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		D17398451B90A9B200913AEA /* APNGImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageView.swift; sourceTree = "<group>"; };
 		D187FEE81B934F1B0013372D /* pyani.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = pyani.apng; path = TestImages/pyani.apng; sourceTree = SOURCE_ROOT; };
 		D19019991B930E1600E16EDB /* NSBundle+APNGKitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSBundle+APNGKitTests.swift"; sourceTree = "<group>"; };
 		D190199B1B932A8E00E16EDB /* elephant_apng@2x.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = "elephant_apng@2x.apng"; path = "TestImages/elephant_apng@2x.apng"; sourceTree = SOURCE_ROOT; };
-		D190199D1B932A9600E16EDB /* elephant_apng@2x.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = "elephant_apng@2x.apng"; path = "TestImages/elephant_apng@2x.apng"; sourceTree = SOURCE_ROOT; };
 		D190199F1B93351300E16EDB /* elephant_apng.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = elephant_apng.apng; path = TestImages/elephant_apng.apng; sourceTree = SOURCE_ROOT; };
 		D19019A11B9336B100E16EDB /* APNGImageCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageCacheTests.swift; sourceTree = "<group>"; };
 		D199B1F81B91445100BF8358 /* APNGKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = APNGKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D199B1FA1B91445100BF8358 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D199B1FF1B91445100BF8358 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		D199B2011B91445100BF8358 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		D199B2041B91445100BF8358 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		D199B2061B91445100BF8358 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D199B20B1B91445100BF8358 /* APNGKitDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = APNGKitDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D199B20F1B91445100BF8358 /* APNGKitDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNGKitDemoTests.swift; sourceTree = "<group>"; };
-		D199B2111B91445100BF8358 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D199B2161B91445100BF8358 /* APNGKitDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = APNGKitDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D199B21A1B91445100BF8358 /* APNGKitDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNGKitDemoUITests.swift; sourceTree = "<group>"; };
-		D199B21C1B91445100BF8358 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D1CFDB811B92051900B12135 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -348,9 +309,6 @@
 			children = (
 				4B0D673B1B8E9DBF00876BDF /* APNGKit */,
 				4B0D67471B8E9DC000876BDF /* APNGKitTests */,
-				D199B1F91B91445100BF8358 /* APNGKitDemo */,
-				D199B20E1B91445100BF8358 /* APNGKitDemoTests */,
-				D199B2191B91445100BF8358 /* APNGKitDemoUITests */,
 				4B0D673A1B8E9DBF00876BDF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -472,56 +430,6 @@
 				D1614E211B91EDE200050104 /* spinfox.apng */,
 			);
 			name = TestImages;
-			sourceTree = "<group>";
-		};
-		D1614E271B91EDEB00050104 /* TestImages */ = {
-			isa = PBXGroup;
-			children = (
-				D190199D1B932A9600E16EDB /* elephant_apng@2x.apng */,
-				D14B5B471B92B4A600F753E1 /* APNG-cube.apng */,
-				D14B5B481B92B4A600F753E1 /* APNG-Icos4D.apng */,
-				D14B5B491B92B4A600F753E1 /* elephant_apng.apng */,
-				D14B5B4A1B92B4A600F753E1 /* pyani.apng */,
-				D1614E281B91EDF800050104 /* ball.apng */,
-				D1614E291B91EDF800050104 /* over_background.apng */,
-				D1614E2A1B91EDF800050104 /* over_none.apng */,
-				D1614E2B1B91EDF800050104 /* over_previous.apng */,
-				D1614E2C1B91EDF800050104 /* spinfox.apng */,
-			);
-			name = TestImages;
-			sourceTree = "<group>";
-		};
-		D199B1F91B91445100BF8358 /* APNGKitDemo */ = {
-			isa = PBXGroup;
-			children = (
-				D1614E271B91EDEB00050104 /* TestImages */,
-				D199B1FA1B91445100BF8358 /* AppDelegate.swift */,
-				D199B1FE1B91445100BF8358 /* Main.storyboard */,
-				D199B2011B91445100BF8358 /* Assets.xcassets */,
-				D199B2031B91445100BF8358 /* LaunchScreen.storyboard */,
-				D199B2061B91445100BF8358 /* Info.plist */,
-				D1614E341B91F28300050104 /* TableViewController.swift */,
-				D1CFDB811B92051900B12135 /* DetailViewController.swift */,
-			);
-			path = APNGKitDemo;
-			sourceTree = "<group>";
-		};
-		D199B20E1B91445100BF8358 /* APNGKitDemoTests */ = {
-			isa = PBXGroup;
-			children = (
-				D199B20F1B91445100BF8358 /* APNGKitDemoTests.swift */,
-				D199B2111B91445100BF8358 /* Info.plist */,
-			);
-			path = APNGKitDemoTests;
-			sourceTree = "<group>";
-		};
-		D199B2191B91445100BF8358 /* APNGKitDemoUITests */ = {
-			isa = PBXGroup;
-			children = (
-				D199B21A1B91445100BF8358 /* APNGKitDemoUITests.swift */,
-				D199B21C1B91445100BF8358 /* Info.plist */,
-			);
-			path = APNGKitDemoUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -809,19 +717,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D199B2051B91445100BF8358 /* LaunchScreen.storyboard in Resources */,
-				D14B5B4E1B92B4A600F753E1 /* pyani.apng in Resources */,
-				D1614E2F1B91EDF800050104 /* over_none.apng in Resources */,
-				D14B5B4B1B92B4A600F753E1 /* APNG-cube.apng in Resources */,
-				D14B5B4D1B92B4A600F753E1 /* elephant_apng.apng in Resources */,
-				D190199E1B932A9600E16EDB /* elephant_apng@2x.apng in Resources */,
-				D14B5B4C1B92B4A600F753E1 /* APNG-Icos4D.apng in Resources */,
-				D199B2021B91445100BF8358 /* Assets.xcassets in Resources */,
-				D1614E2D1B91EDF800050104 /* ball.apng in Resources */,
-				D199B2001B91445100BF8358 /* Main.storyboard in Resources */,
-				D1614E311B91EDF800050104 /* spinfox.apng in Resources */,
-				D1614E301B91EDF800050104 /* over_previous.apng in Resources */,
-				D1614E2E1B91EDF800050104 /* over_background.apng in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -979,9 +874,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D1614E351B91F28300050104 /* TableViewController.swift in Sources */,
-				D199B1FB1B91445100BF8358 /* AppDelegate.swift in Sources */,
-				D1CFDB821B92051900B12135 /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -989,7 +881,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D199B2101B91445100BF8358 /* APNGKitDemoTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -997,7 +888,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D199B21B1B91445100BF8358 /* APNGKitDemoUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1030,25 +920,6 @@
 			targetProxy = D199B22A1B9145F900BF8358 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		D199B1FE1B91445100BF8358 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D199B1FF1B91445100BF8358 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		D199B2031B91445100BF8358 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D199B2041B91445100BF8358 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		4B0D674B1B8E9DC000876BDF /* Debug */ = {

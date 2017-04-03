@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4B0D67381B8E9DBF00876BDF"
-               BuildableName = "APNGKit-iOS.framework"
+               BuildableName = "APNGKit.framework"
                BlueprintName = "APNGKit-iOS"
                ReferencedContainer = "container:APNGKit.xcodeproj">
             </BuildableReference>
@@ -44,7 +44,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4B0D67381B8E9DBF00876BDF"
-            BuildableName = "APNGKit-iOS.framework"
+            BuildableName = "APNGKit.framework"
             BlueprintName = "APNGKit-iOS"
             ReferencedContainer = "container:APNGKit.xcodeproj">
          </BuildableReference>
@@ -66,7 +66,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4B0D67381B8E9DBF00876BDF"
-            BuildableName = "APNGKit-iOS.framework"
+            BuildableName = "APNGKit.framework"
             BlueprintName = "APNGKit-iOS"
             ReferencedContainer = "container:APNGKit.xcodeproj">
          </BuildableReference>
@@ -84,7 +84,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4B0D67381B8E9DBF00876BDF"
-            BuildableName = "APNGKit-iOS.framework"
+            BuildableName = "APNGKit.framework"
             BlueprintName = "APNGKit-iOS"
             ReferencedContainer = "container:APNGKit.xcodeproj">
          </BuildableReference>
