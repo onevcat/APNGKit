@@ -144,9 +144,18 @@ class APNGImageTests: XCTestCase {
     
     func testInitRetinaImage() {
         let retinaAPNG = APNGImage(named: "elephant_apng", in: .testBundle)
-        XCTAssertNotNil(retinaAPNG, "elephant_apng should be able to init at 2x.")
-        XCTAssertEqual(retinaAPNG?.scale, 2, "Retina version should be loaded")
-        XCTAssertEqual(retinaAPNG?.size, CGSize(width: 240, height: 200), "Size should be in point, not pixel.")
+        XCTAssertNotNil(retinaAPNG, "elephant_apng should be able to init")
+
+        #if os(macOS)
+        let screenScale = Int(NSScreen.main()?.backingScaleFactor ?? 1)
+        #else
+        let screenScale = Int(UIScreen.main.scale)
+        #endif
+            
+        XCTAssertEqual(retinaAPNG?.scale, CGFloat(screenScale), "The version matches current screen should be loaded")
+        
+        let size = CGSize(width: 480 / screenScale, height: 400 / screenScale)
+        XCTAssertEqual(retinaAPNG?.size, size, "Size should be in point, not pixel.")
 
         let anotherRetinaAPNG = APNGImage(named: "elephant_apng@2x", in: .testBundle)
         XCTAssertNotNil(anotherRetinaAPNG, "elephant_apng should be able to init at 2x.")
@@ -189,7 +198,7 @@ class APNGImageTests: XCTestCase {
 private extension CocoaImage {
     func isEmpty() -> Bool {
         
-        #if os(OSX)
+        #if os(macOS)
             let cgImage = self.cgImage(forProposedRect: nil, context: nil, hints: nil)
         #else
             let cgImage = self.cgImage

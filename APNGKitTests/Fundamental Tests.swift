@@ -39,7 +39,7 @@ class Fundamental_Tests: XCTestCase {
     }
     
     func testMinimalPNG() {
-        #if os(OSX)
+        #if os(macOS)
             let image = NSImage(data: redDotPNGData as Data)
         #else
             let image = UIImage(data: redDotPNGData as Data)

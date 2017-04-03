@@ -11,7 +11,7 @@
 <img src="https://img.shields.io/badge/made%20with-%3C3-blue.svg">
 </p>
 
-APNGKit is a high performance framework for loading and displaying APNG images in iOS. It's built on top of a [modified version of libpng](https://github.com/onevcat/libpng) with APNG support and written in Swift. High-level abstractions of Cocoa Touch is used for a delightful API. Since be that, you will feel at home and joy when using APNGKit to play with images in APNG format.
+APNGKit is a high performance framework for loading and displaying APNG images in iOS and macOS. It's built on top of a [modified version of libpng](https://github.com/onevcat/libpng) with APNG support and written in Swift. High-level abstractions of Cocoa Touch is used for a delightful API. Since be that, you will feel at home and joy when using APNGKit to play with images in APNG format.
 
 ## APNG, what and why?
 
@@ -23,7 +23,7 @@ Talk is cheap; show me the image. You can click on the image to see how it looks
 <a href="http://apng.onevcat.com/demo" target="_blank"><img src="https://raw.githubusercontent.com/onevcat/APNGKit/master/images/demo.png" alt="APNGKit Demo" title="APNGKit Demo"/></a>
 </p>
 
-That's cool. APNG is much better! But wait...why haven't I heard about APNG before? It is not a popular format, so why should I use it in my next great iOS app?
+That's cool. APNG is much better! But wait...why haven't I heard about APNG before? It is not a popular format, so why should I use it in my next great iOS/macOS app?
 
 Good question! APNG is an excellent extension for regular PNG, and it is also very simple to use and not conflicting with current PNG standard (It consists a standard PNG header, so if your platform does not support APNG, it will be recognized as a normal PNG with its first frame being displayed as a static image). But unfortunately, it is a rebel format so that it is not accepted by the PNG group. However, it is accepted by many vendors and is even mentioned in [W3C Standards](http://www.w3.org/TR/html5/embedded-content-0.html#the-img-element). There is another format called MNG (Multiple-image Network Graphics), which is created by the same team as PNG. It is a comprehensive format, but very very very (重要的事要说三遍) complex. It is so complex that despite being a "standard", it was almost universally rejected. There is only one "popular" browser called [Konqueror](https://konqueror.org)(at least I have used it before when I was in high school) that supports MNG, which is really a sad but reasonable story.
 
@@ -35,11 +35,7 @@ APNG is such a nice format to bring users much better experience of animating im
 
 ### Requirement
 
-iOS 7.0+ for using as submodule.
-iOS 8.0+ for using as dynamic framework (install from CocoaPods or Carthage, in other words)
-
-Swift 3 and Xcode 8 for version 0.3.0 or later.
-Swift 2 and Xcode 7 for version 0.2.2.
+iOS 8.0+ / macOS 10.10+
 
 Although it is written in Swift, the compatibility with Objective-C is also considered.
 
@@ -61,7 +57,7 @@ platform :ios, '8.0'
 use_frameworks!
 
 target 'your_app' do
-  pod 'APNGKit', '~> 0.5'
+  pod 'APNGKit', '~> 0.6'
 end
 ```
 
@@ -87,7 +83,7 @@ $ brew install carthage
 To integrate APNGKit into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "onevcat/APNGKit" ~> 0.5
+github "onevcat/APNGKit" ~> 0.6
 ```
 
 Then, run the following command to build the APNGKit framework:

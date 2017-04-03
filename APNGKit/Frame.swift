@@ -24,7 +24,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#if os(OSX)
+#if os(macOS)
     import Cocoa
 #else
     import UIKit
@@ -57,7 +57,7 @@ class Frame {
                                   bitmapInfo: [CGBitmapInfo.byteOrder32Big, CGBitmapInfo(rawValue: CGImageAlphaInfo.last.rawValue)],
                                   provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
         {
-            #if os(OSX)
+            #if os(macOS)
                 return NSImage(cgImage: imageRef, size: NSSize(width: width, height: height))
             #else
                 return UIImage(cgImage: imageRef, scale: scale, orientation: .up)
