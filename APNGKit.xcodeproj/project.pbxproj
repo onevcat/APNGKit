@@ -601,6 +601,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B252695F1E8FD8EA0096A0A7 /* Build configuration list for PBXNativeTarget "APNGKit-macOS" */;
 			buildPhases = (
+				4B30431C1E91E37100780096 /* Copy libpng-apng files */,
 				B25269551E8FD8EA0096A0A7 /* Sources */,
 				B25269561E8FD8EA0096A0A7 /* Frameworks */,
 				B25269571E8FD8EA0096A0A7 /* Headers */,
@@ -841,6 +842,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		4B30431C1E91E37100780096 /* Copy libpng-apng files */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy libpng-apng files";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "ruby ./sync-libpng-apng";
+		};
 		4B6B68DE1B8EA5FB00C4868A /* Copy libpng-apng files */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
