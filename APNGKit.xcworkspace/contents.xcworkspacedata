@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/JP20028/Dropbox/github/APNGKit/APNGDemo-iOS/APNGDemo.xcodeproj">
+      location = "group:APNGDemo-iOS/APNGDemo.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:APNGKit.xcodeproj">
