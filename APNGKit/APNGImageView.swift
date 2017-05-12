@@ -140,6 +140,12 @@ open class APNGImageView: APNGView {
     
     deinit {
         stopAnimating()
+        
+        #if os(macOS)
+            // fix issue that `APNGImageView` may cause crash when deinit
+            layer?.contents = nil
+            wantsLayer = false
+        #endif
     }
 
     /**
