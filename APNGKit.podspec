@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "APNGKit"
-  s.version      = "0.6.0"
+  s.version      = "0.6.1"
   s.summary      = "High performance and delightful way to play with APNG format in iOS."
 
   s.description  = <<-DESC
