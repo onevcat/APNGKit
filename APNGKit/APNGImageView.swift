@@ -238,15 +238,16 @@ open class APNGImageView: APNGView {
                 // If user set image to `nil`, do not render anymore.
                 guard let _ = self.image else { return }
                 
-                currentFrameIndex = 0
-                repeated = repeated + 1
-                
                 if image.repeatCount != RepeatForever && repeated >= image.repeatCount {
                     stopAnimating()
                     // Stop in the last frame
                     return
                 }
-                
+
+                // reset for image repeat
+                currentFrameIndex = 0
+                repeated = repeated + 1
+
                 // Only the first frame could be hidden.
                 if image.firstFrameHidden {
                     // Skip the first frame
