@@ -49,6 +49,8 @@ open class APNGImageView: APNGView {
     /// the animation of original image will stop, and the new one will start automatically.
     open var image: APNGImage? { // Setter should be run on main thread
         didSet {
+            invalidateIntrinsicContentSize()
+
             let animating = isAnimating
             stopAnimating()
             
@@ -94,6 +96,14 @@ open class APNGImageView: APNGView {
     
     open weak var delegate: APNGImageViewDelegate?
     
+    open override var intrinsicContentSize: CGSize {
+        if let image = image {
+            return image.size
+        } else {
+            return CGSize.zero
+        }
+    }
+
     var timer: GCDTimer?
     var lastTimestamp: TimeInterval = 0
     var currentPassedDuration: TimeInterval = 0
