@@ -97,6 +97,14 @@ open class GCDTimer {
     }
     
     /**
+     Cancel the timer.
+     */
+    open func cancel() {
+        timerSource.cancel()
+        once.reset(token: "com.laex.GCDTimer")
+    }
+    
+    /**
      Executes a block after a delay on the main thread.
      */
     open class func delay(_ afterSecs: Double, block: @escaping ()->()) {
