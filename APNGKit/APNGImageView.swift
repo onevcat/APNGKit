@@ -219,6 +219,7 @@ open class APNGImageView: APNGView {
         currentPassedDuration = 0
         currentFrameIndex = 0
         
+        timer?.pause()
         timer = nil
     }
     
