@@ -174,6 +174,19 @@ open class APNGImageView: APNGView {
     }
     
     /**
+     Initialize an APNG image view with a specified frame rectangle.
+     
+     - parameter frameRect: The frame rectangle for the created view object.
+     
+     - returns: An initialized image view object.
+     */
+    public override init(frame frameRect: NSRect) {
+        isAnimating = false
+        autoStartAnimation = false
+        super.init(frame: frameRect)
+    }
+    
+    /**
     Starts animation contained in the image.
     */
     open func startAnimating() {
