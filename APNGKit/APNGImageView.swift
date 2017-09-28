@@ -27,10 +27,12 @@
 #if os(macOS)
     import Cocoa
     public typealias APNGView = NSView
+    public typealias CocoaRect = NSRect
     typealias CocoaImage = NSImage
 #elseif os(iOS) || os(watchOS) || os(tvOS)
     import UIKit
     public typealias APNGView = UIView
+    public typealias CocoaRect = CGRect
     typealias CocoaImage = UIImage
 #endif
     
@@ -171,6 +173,19 @@ open class APNGImageView: APNGView {
         isAnimating = false
         autoStartAnimation = false
         super.init(coder: aDecoder)
+    }
+    
+    /**
+     Initialize an APNG image view with a specified frame rectangle.
+     
+     - parameter frame: The frame rectangle for the created view object.
+     
+     - returns: An initialized image view object.
+     */
+    public override init(frame: CocoaRect) {
+        isAnimating = false
+        autoStartAnimation = false
+        super.init(frame: frame)
     }
     
     /**

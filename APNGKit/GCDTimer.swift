@@ -19,7 +19,7 @@ open class GCDTimer {
         private var _onceTracker = [String]()
         
         // From: http://stackoverflow.com/questions/37886994/dispatch-once-in-swift-3
-        public func doIt(token: String, block:(Void)->Void) {
+        public func doIt(token: String, block:() -> Void) {
             objc_sync_enter(self); defer { objc_sync_exit(self) }
             
             if _onceTracker.contains(token) {
