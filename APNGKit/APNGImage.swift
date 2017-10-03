@@ -272,7 +272,7 @@ open class APNGImage: NSObject { // For ObjC compatibility
      - returns: A new image object for the specified data, or nil if the method could not initialize the image from the specified data.
     */
     public convenience init?(data: Data, scale: CGFloat, progressive: Bool = false) {
-        let disassembler = Disassembler(data: data)
+        let disassembler = Disassembler(data: data, scale: scale)
         
         do {
             if progressive {
