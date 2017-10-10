@@ -61,7 +61,7 @@ open class GCDTimer {
             event = newValue
             
             let time = DispatchTimeInterval.milliseconds(Int(interval * 1000.0))
-            self.timerSource.scheduleRepeating(deadline: DispatchTime.now(), interval: time)
+            self.timerSource.schedule(deadline: DispatchTime.now(), repeating: time)
             self.timerSource.setEventHandler { [weak self] in
                 self?.event()
             }
