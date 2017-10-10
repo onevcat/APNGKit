@@ -83,7 +83,7 @@ open class GCDTimer {
      Start the timer.
      */
     open func start() {
-        once.doIt(token: "com.laex.GCDTimer") { (Void) in
+        once.doIt(token: "com.laex.GCDTimer") {
             self.timerSource.resume()
         }
     }
