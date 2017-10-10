@@ -191,7 +191,7 @@ open class APNGImageView: APNGView {
     /**
     Starts animation contained in the image.
     */
-    open func startAnimating() {
+    @objc open func startAnimating() {
         let mainRunLoop = RunLoop.main
         let currentRunLoop = RunLoop.current
         
@@ -215,7 +215,7 @@ open class APNGImageView: APNGView {
     /**
     Starts animation contained in the image.
     */
-    open func stopAnimating() {
+    @objc open func stopAnimating() {
         let mainRunLoop = RunLoop.main
         let currentRunLoop = RunLoop.current
         
