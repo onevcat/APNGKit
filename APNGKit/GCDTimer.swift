@@ -61,7 +61,11 @@ open class GCDTimer {
             event = newValue
             
             let time = DispatchTimeInterval.milliseconds(Int(interval * 1000.0))
-            self.timerSource.scheduleRepeating(deadline: DispatchTime.now(), interval: time)
+            #if swift(>=4.0)
+                self.timerSource.schedule(deadline: DispatchTime.now(), repeating: time)
+            #else
+                self.timerSource.scheduleRepeating(deadline: DispatchTime.now(), interval: time)
+            #endif
             self.timerSource.setEventHandler { [weak self] in
                 self?.event()
             }
@@ -83,7 +87,7 @@ open class GCDTimer {
      Start the timer.
      */
     open func start() {
-        once.doIt(token: "com.laex.GCDTimer") { (Void) in
+        once.doIt(token: "com.laex.GCDTimer") {
             self.timerSource.resume()
         }
     }
