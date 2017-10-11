@@ -1,8 +1,8 @@
 
 /* pngwrite.c - general routines to write a PNG file
  *
- * Last changed in libpng 1.6.24 [August 4, 2016]
- * Copyright (c) 1998-2002,2004,2006-2016 Glenn Randers-Pehrson
+ * Last changed in libpng 1.6.32 [August 24, 2017]
+ * Copyright (c) 1998-2002,2004,2006-2017 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -241,6 +241,11 @@ png_write_info(png_structrp png_ptr, png_const_inforp info_ptr)
       png_write_bKGD(png_ptr, &(info_ptr->background), info_ptr->color_type);
 #endif
 
+#ifdef PNG_WRITE_eXIf_SUPPORTED
+   if ((info_ptr->valid & PNG_INFO_eXIf) != 0)
+      png_write_eXIf(png_ptr, info_ptr->exif, info_ptr->num_exif);
+#endif
+
 #ifdef PNG_WRITE_hIST_SUPPORTED
    if ((info_ptr->valid & PNG_INFO_hIST) != 0)
       png_write_hIST(png_ptr, info_ptr->hist, info_ptr->num_palette);
@@ -441,6 +446,12 @@ png_write_end(png_structrp png_ptr, png_inforp info_ptr)
          }
       }
 #endif
+
+#ifdef PNG_WRITE_eXIf_SUPPORTED
+   if ((info_ptr->valid & PNG_INFO_eXIf) != 0)
+      png_write_eXIf(png_ptr, info_ptr->exif, info_ptr->num_exif);
+#endif
+
 #ifdef PNG_WRITE_UNKNOWN_CHUNKS_SUPPORTED
       write_unknown_chunks(png_ptr, info_ptr, PNG_AFTER_IDAT);
 #endif
@@ -675,9 +686,9 @@ png_do_write_intrapixel(png_row_infop row_info, png_bytep row)
 
          for (i = 0, rp = row; i < row_width; i++, rp += bytes_per_pixel)
          {
-            png_uint_32 s0   = (*(rp    ) << 8) | *(rp + 1);
-            png_uint_32 s1   = (*(rp + 2) << 8) | *(rp + 3);
-            png_uint_32 s2   = (*(rp + 4) << 8) | *(rp + 5);
+            png_uint_32 s0   = (png_uint_32)(*(rp    ) << 8) | *(rp + 1);
+            png_uint_32 s1   = (png_uint_32)(*(rp + 2) << 8) | *(rp + 3);
+            png_uint_32 s2   = (png_uint_32)(*(rp + 4) << 8) | *(rp + 5);
             png_uint_32 red  = (png_uint_32)((s0 - s1) & 0xffffL);
             png_uint_32 blue = (png_uint_32)((s2 - s1) & 0xffffL);
             *(rp    ) = (png_byte)(red >> 8);
@@ -910,7 +921,7 @@ png_set_flush(png_structrp png_ptr, int nrows)
    if (png_ptr == NULL)
       return;
 
-   png_ptr->flush_dist = (nrows < 0 ? 0 : nrows);
+   png_ptr->flush_dist = (nrows < 0 ? 0 : (png_uint_32)nrows);
 }
 
 /* Flush the current output buffers now */
@@ -1016,8 +1027,8 @@ png_set_filter(png_structrp png_ptr, int method, int filters)
          case 5:
          case 6:
          case 7: png_app_error(png_ptr, "Unknown row filter for method 0");
-            /* FALL THROUGH */
 #endif /* WRITE_FILTER */
+            /* FALLTHROUGH */
          case PNG_FILTER_VALUE_NONE:
             png_ptr->do_filter = PNG_FILTER_NONE; break;
 
@@ -1571,7 +1582,8 @@ png_write_image_16bit(png_voidp argument)
        display->first_row);
    png_uint_16p output_row = png_voidcast(png_uint_16p, display->local_row);
    png_uint_16p row_end;
-   const int channels = (image->format & PNG_FORMAT_FLAG_COLOR) != 0 ? 3 : 1;
+   const unsigned int channels = (image->format & PNG_FORMAT_FLAG_COLOR) != 0 ?
+       3 : 1;
    int aindex = 0;
    png_uint_32 y = image->height;
 
@@ -1585,9 +1597,9 @@ png_write_image_16bit(png_voidp argument)
          ++output_row;
       }
          else
-            aindex = channels;
+            aindex = (int)channels;
 #     else
-         aindex = channels;
+         aindex = (int)channels;
 #     endif
    }
 
@@ -1600,7 +1612,7 @@ png_write_image_16bit(png_voidp argument)
     */
    row_end = output_row + image->width * (channels+1);
 
-   while (y-- > 0)
+   for (; y > 0; --y)
    {
       png_const_uint_16p in_ptr = input_row;
       png_uint_16p out_ptr = output_row;
@@ -1621,7 +1633,7 @@ png_write_image_16bit(png_voidp argument)
          if (alpha > 0 && alpha < 65535)
             reciprocal = ((0xffff<<15)+(alpha>>1))/alpha;
 
-         c = channels;
+         c = (int)channels;
          do /* always at least one channel */
          {
             png_uint_16 component = *in_ptr++;
@@ -1656,7 +1668,7 @@ png_write_image_16bit(png_voidp argument)
       }
 
       png_write_row(png_ptr, png_voidcast(png_const_bytep, display->local_row));
-      input_row += display->row_bytes/(sizeof (png_uint_16));
+      input_row += (png_uint_16)display->row_bytes/(sizeof (png_uint_16));
    }
 
    return 1;
@@ -1729,7 +1741,8 @@ png_write_image_8bit(png_voidp argument)
        display->first_row);
    png_bytep output_row = png_voidcast(png_bytep, display->local_row);
    png_uint_32 y = image->height;
-   const int channels = (image->format & PNG_FORMAT_FLAG_COLOR) != 0 ? 3 : 1;
+   const unsigned int channels = (image->format & PNG_FORMAT_FLAG_COLOR) != 0 ?
+       3 : 1;
 
    if ((image->format & PNG_FORMAT_FLAG_ALPHA) != 0)
    {
@@ -1746,12 +1759,12 @@ png_write_image_8bit(png_voidp argument)
 
       else
 #   endif
-      aindex = channels;
+      aindex = (int)channels;
 
       /* Use row_end in place of a loop counter: */
       row_end = output_row + image->width * (channels+1);
 
-      while (y-- > 0)
+      for (; y > 0; --y)
       {
          png_const_uint_16p in_ptr = input_row;
          png_bytep out_ptr = output_row;
@@ -1769,7 +1782,7 @@ png_write_image_8bit(png_voidp argument)
             if (alphabyte > 0 && alphabyte < 255)
                reciprocal = UNP_RECIPROCAL(alpha);
 
-            c = channels;
+            c = (int)channels;
             do /* always at least one channel */
                *out_ptr++ = png_unpremultiply(*in_ptr++, alpha, reciprocal);
             while (--c > 0);
@@ -1781,7 +1794,7 @@ png_write_image_8bit(png_voidp argument)
 
          png_write_row(png_ptr, png_voidcast(png_const_bytep,
              display->local_row));
-         input_row += display->row_bytes/(sizeof (png_uint_16));
+         input_row += (png_uint_16)display->row_bytes/(sizeof (png_uint_16));
       } /* while y */
    }
 
@@ -1792,7 +1805,7 @@ png_write_image_8bit(png_voidp argument)
        */
       png_bytep row_end = output_row + image->width * channels;
 
-      while (y-- > 0)
+      for (; y > 0; --y)
       {
          png_const_uint_16p in_ptr = input_row;
          png_bytep out_ptr = output_row;
@@ -1806,7 +1819,7 @@ png_write_image_8bit(png_voidp argument)
          }
 
          png_write_row(png_ptr, output_row);
-         input_row += display->row_bytes/(sizeof (png_uint_16));
+         input_row += (png_uint_16)display->row_bytes/(sizeof (png_uint_16));
       }
    }
 
@@ -1823,7 +1836,7 @@ png_image_set_PLTE(png_image_write_control *display)
 
    /* NOTE: the caller must check for cmap != NULL and entries != 0 */
    const png_uint_32 format = image->format;
-   const int channels = PNG_IMAGE_SAMPLE_CHANNELS(format);
+   const unsigned int channels = PNG_IMAGE_SAMPLE_CHANNELS(format);
 
 #   if defined(PNG_FORMAT_BGR_SUPPORTED) &&\
       defined(PNG_SIMPLIFIED_WRITE_AFIRST_SUPPORTED)
@@ -1855,7 +1868,7 @@ png_image_set_PLTE(png_image_write_control *display)
       {
          png_const_uint_16p entry = png_voidcast(png_const_uint_16p, cmap);
 
-         entry += i * channels;
+         entry += (unsigned int)i * channels;
 
          if ((channels & 1) != 0) /* no alpha */
          {
@@ -1911,7 +1924,7 @@ png_image_set_PLTE(png_image_write_control *display)
       {
          png_const_bytep entry = png_voidcast(png_const_bytep, cmap);
 
-         entry += i * channels;
+         entry += (unsigned int)i * channels;
 
          switch (channels)
          {
@@ -1919,7 +1932,7 @@ png_image_set_PLTE(png_image_write_control *display)
                tRNS[i] = entry[afirst ? 0 : 3];
                if (tRNS[i] < 255)
                   num_trans = i+1;
-               /* FALL THROUGH */
+               /* FALLTHROUGH */
             case 3:
                palette[i].blue = entry[afirst + (2 ^ bgr)];
                palette[i].green = entry[afirst + 1];
@@ -1930,7 +1943,7 @@ png_image_set_PLTE(png_image_write_control *display)
                tRNS[i] = entry[1 ^ afirst];
                if (tRNS[i] < 255)
                   num_trans = i+1;
-               /* FALL THROUGH */
+               /* FALLTHROUGH */
             case 1:
                palette[i].blue = palette[i].red = palette[i].green =
                   entry[afirst];
@@ -1956,7 +1969,7 @@ png_image_set_PLTE(png_image_write_control *display)
       png_set_tRNS(image->opaque->png_ptr, image->opaque->info_ptr, tRNS,
           num_trans, NULL);
 
-   image->colormap_entries = entries;
+   image->colormap_entries = (png_uint_32)entries;
 }
 
 static int
@@ -1973,7 +1986,7 @@ png_image_write_main(png_voidp argument)
    int colormap = (format & PNG_FORMAT_FLAG_COLORMAP);
    int linear = !colormap && (format & PNG_FORMAT_FLAG_LINEAR); /* input */
    int alpha = !colormap && (format & PNG_FORMAT_FLAG_ALPHA);
-   int write_16bit = linear && !colormap && (display->convert_to_8bit == 0);
+   int write_16bit = linear && (display->convert_to_8bit == 0);
 
 #   ifdef PNG_BENIGN_ERRORS_SUPPORTED
       /* Make sure we error out on any bad situation */
@@ -1986,7 +1999,7 @@ png_image_write_main(png_voidp argument)
    {
       const unsigned int channels = PNG_IMAGE_PIXEL_CHANNELS(image->format);
 
-      if (image->width <= 0x7FFFFFFFU/channels) /* no overflow */
+      if (image->width <= 0x7fffffffU/channels) /* no overflow */
       {
          png_uint_32 check;
          const png_uint_32 png_row_stride = image->width * channels;
@@ -1995,10 +2008,10 @@ png_image_write_main(png_voidp argument)
             display->row_stride = (png_int_32)/*SAFE*/png_row_stride;
 
          if (display->row_stride < 0)
-            check = -display->row_stride;
+            check = (png_uint_32)(-display->row_stride);
 
          else
-            check = display->row_stride;
+            check = (png_uint_32)display->row_stride;
 
          if (check >= png_row_stride)
          {
@@ -2006,7 +2019,7 @@ png_image_write_main(png_voidp argument)
              * limits the whole image size to 32 bits for API compatibility with
              * the current, 32-bit, PNG_IMAGE_BUFFER_SIZE macro.
              */
-            if (image->height > 0xFFFFFFFF/png_row_stride)
+            if (image->height > 0xffffffffU/png_row_stride)
                png_error(image->opaque->png_ptr, "memory image too large");
          }
 
@@ -2182,7 +2195,7 @@ png_image_write_main(png_voidp argument)
       ptrdiff_t row_bytes = display->row_bytes;
       png_uint_32 y = image->height;
 
-      while (y-- > 0)
+      for (; y > 0; --y)
       {
          png_write_row(png_ptr, row);
          row += row_bytes;
