@@ -335,7 +335,11 @@ extension String {
         var path: String?
         
         #if os(macOS)
+            #if swift(>=4.0)
+            let scales = 1 ... Int(NSScreen.main?.backingScaleFactor ?? 1)
+            #else
             let scales = 1 ... Int(NSScreen.main()?.backingScaleFactor ?? 1)
+            #endif
         #else
             let scales = 1 ... Int(UIScreen.main.scale)
         #endif

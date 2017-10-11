@@ -191,7 +191,7 @@ open class APNGImageView: APNGView {
     /**
     Starts animation contained in the image.
     */
-    open func startAnimating() {
+    @objc open func startAnimating() {
         let mainRunLoop = RunLoop.main
         let currentRunLoop = RunLoop.current
         
@@ -206,7 +206,7 @@ open class APNGImageView: APNGView {
         
         isAnimating = true
         timer = GCDTimer(intervalInSecs: 0.016)
-        timer!.Event = { [weak self] _ in
+        timer!.Event = { [weak self] in
             DispatchQueue.main.sync { self?.tick() }
         }
         timer!.start()
@@ -215,7 +215,7 @@ open class APNGImageView: APNGView {
     /**
     Starts animation contained in the image.
     */
-    open func stopAnimating() {
+    @objc open func stopAnimating() {
         let mainRunLoop = RunLoop.main
         let currentRunLoop = RunLoop.current
         

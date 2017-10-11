@@ -1,8 +1,8 @@
 
 /* pngwutil.c - utilities to write a PNG file
  *
- * Last changed in libpng 1.6.24 [August 4, 2016]
- * Copyright (c) 1998-2002,2004,2006-2016 Glenn Randers-Pehrson
+ * Last changed in libpng 1.6.32 [August 24, 2017]
+ * Copyright (c) 1998-2002,2004,2006-2017 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -408,7 +408,7 @@ png_deflate_claim(png_structrp png_ptr, png_uint_32 owner,
       png_ptr->zstream.avail_out = 0;
 
       /* Now initialize if required, setting the new parameters, otherwise just
-       * to a simple reset to the previous parameters.
+       * do a simple reset to the previous parameters.
        */
       if ((png_ptr->flags & PNG_FLAG_ZSTREAM_INITIALIZED) != 0)
          ret = deflateReset(&png_ptr->zstream);
@@ -675,6 +675,7 @@ png_write_IHDR(png_structrp png_ptr, png_uint_32 width, png_uint_32 height,
     int interlace_type)
 {
    png_byte buf[13]; /* Buffer to store the IHDR info */
+   int is_invalid_depth;
 
    png_debug(1, "in png_write_IHDR");
 
@@ -700,11 +701,11 @@ png_write_IHDR(png_structrp png_ptr, png_uint_32 width, png_uint_32 height,
          break;
 
       case PNG_COLOR_TYPE_RGB:
+         is_invalid_depth = (bit_depth != 8);
 #ifdef PNG_WRITE_16BIT_SUPPORTED
-         if (bit_depth != 8 && bit_depth != 16)
-#else
-         if (bit_depth != 8)
+         is_invalid_depth = (is_invalid_depth && bit_depth != 16);
 #endif
+         if (is_invalid_depth)
             png_error(png_ptr, "Invalid bit depth for RGB image");
 
          png_ptr->channels = 3;
@@ -726,18 +727,22 @@ png_write_IHDR(png_structrp png_ptr, png_uint_32 width, png_uint_32 height,
          break;
 
       case PNG_COLOR_TYPE_GRAY_ALPHA:
-         if (bit_depth != 8 && bit_depth != 16)
+         is_invalid_depth = (bit_depth != 8);
+#ifdef PNG_WRITE_16BIT_SUPPORTED
+         is_invalid_depth = (is_invalid_depth && bit_depth != 16);
+#endif
+         if (is_invalid_depth)
             png_error(png_ptr, "Invalid bit depth for grayscale+alpha image");
 
          png_ptr->channels = 2;
          break;
 
       case PNG_COLOR_TYPE_RGB_ALPHA:
+         is_invalid_depth = (bit_depth != 8);
 #ifdef PNG_WRITE_16BIT_SUPPORTED
-         if (bit_depth != 8 && bit_depth != 16)
-#else
-         if (bit_depth != 8)
+         is_invalid_depth = (is_invalid_depth && bit_depth != 16);
 #endif
+         if (is_invalid_depth)
             png_error(png_ptr, "Invalid bit depth for RGBA image");
 
          png_ptr->channels = 4;
@@ -1004,9 +1009,9 @@ png_compress_IDAT(png_structrp png_ptr, png_const_bytep input,
 #endif
 
 #        ifdef PNG_WRITE_APNG_SUPPORTED
-            if (png_ptr->num_frames_written == 0)
+            if (png_ptr->num_frames_written == 0 && size > 0)
 #        endif
-         png_write_complete_chunk(png_ptr, png_IDAT, data, size);
+            png_write_complete_chunk(png_ptr, png_IDAT, data, size);
 #        ifdef PNG_WRITE_APNG_SUPPORTED
             else
                png_write_fdAT(png_ptr, data, size);
@@ -1057,9 +1062,9 @@ png_compress_IDAT(png_structrp png_ptr, png_const_bytep input,
 #endif
 
 #        ifdef PNG_WRITE_APNG_SUPPORTED
-            if (png_ptr->num_frames_written == 0)
+            if (png_ptr->num_frames_written == 0 && size > 0)
 #        endif
-         png_write_complete_chunk(png_ptr, png_IDAT, data, size);
+            png_write_complete_chunk(png_ptr, png_IDAT, data, size);
 #        ifdef PNG_WRITE_APNG_SUPPORTED
             else
                png_write_fdAT(png_ptr, data, size);
@@ -1196,7 +1201,7 @@ png_write_sPLT(png_structrp png_ptr, png_const_sPLT_tp spalette)
    png_byte new_name[80];
    png_byte entrybuf[10];
    png_size_t entry_size = (spalette->depth == 8 ? 6 : 10);
-   png_size_t palette_size = entry_size * spalette->nentries;
+   png_size_t palette_size = entry_size * (png_size_t)spalette->nentries;
    png_sPLT_entryp ep;
 #ifndef PNG_POINTER_INDEXING_SUPPORTED
    int i;
@@ -1486,6 +1491,28 @@ png_write_bKGD(png_structrp png_ptr, png_const_color_16p back, int color_type)
 }
 #endif
 
+#ifdef PNG_WRITE_eXIf_SUPPORTED
+/* Write the Exif data */
+void /* PRIVATE */
+png_write_eXIf(png_structrp png_ptr, png_bytep exif, int num_exif)
+{
+   int i;
+   png_byte buf[1];
+
+   png_debug(1, "in png_write_eXIf");
+
+   png_write_chunk_header(png_ptr, png_eXIf, (png_uint_32)(num_exif));
+
+   for (i = 0; i < num_exif; i++)
+   {
+      buf[0] = exif[i];
+      png_write_chunk_data(png_ptr, buf, (png_size_t)1);
+   }
+
+   png_write_chunk_end(png_ptr);
+}
+#endif
+
 #ifdef PNG_WRITE_hIST_SUPPORTED
 /* Write the histogram */
 void /* PRIVATE */
@@ -1763,7 +1790,7 @@ png_write_pCAL(png_structrp png_ptr, png_charp purpose, png_int_32 X0,
    total_len = purpose_len + units_len + 10;
 
    params_len = (png_size_tp)png_malloc(png_ptr,
-       (png_alloc_size_t)(nparams * (sizeof (png_size_t))));
+       (png_alloc_size_t)((png_alloc_size_t)nparams * (sizeof (png_size_t))));
 
    /* Find the length of each parameter, making sure we don't count the
     * null terminator for the last parameter.
@@ -2351,7 +2378,7 @@ png_setup_sub_row(png_structrp png_ptr, const png_uint_32 bpp,
    png_bytep rp, dp, lp;
    png_size_t i;
    png_size_t sum = 0;
-   int v;
+   unsigned int v;
 
    png_ptr->try_row[0] = PNG_FILTER_VALUE_SUB;
 
@@ -2360,7 +2387,7 @@ png_setup_sub_row(png_structrp png_ptr, const png_uint_32 bpp,
    {
       v = *dp = *rp;
 #ifdef PNG_USE_ABS
-      sum += 128 - abs(v - 128);
+      sum += 128 - abs((int)v - 128);
 #else
       sum += (v < 128) ? v : 256 - v;
 #endif
@@ -2371,7 +2398,7 @@ png_setup_sub_row(png_structrp png_ptr, const png_uint_32 bpp,
    {
       v = *dp = (png_byte)(((int)*rp - (int)*lp) & 0xff);
 #ifdef PNG_USE_ABS
-      sum += 128 - abs(v - 128);
+      sum += 128 - abs((int)v - 128);
 #else
       sum += (v < 128) ? v : 256 - v;
 #endif
@@ -2412,7 +2439,7 @@ png_setup_up_row(png_structrp png_ptr, const png_size_t row_bytes,
    png_bytep rp, dp, pp;
    png_size_t i;
    png_size_t sum = 0;
-   int v;
+   unsigned int v;
 
    png_ptr->try_row[0] = PNG_FILTER_VALUE_UP;
 
@@ -2422,7 +2449,7 @@ png_setup_up_row(png_structrp png_ptr, const png_size_t row_bytes,
    {
       v = *dp = (png_byte)(((int)*rp - (int)*pp) & 0xff);
 #ifdef PNG_USE_ABS
-      sum += 128 - abs(v - 128);
+      sum += 128 - abs((int)v - 128);
 #else
       sum += (v < 128) ? v : 256 - v;
 #endif
@@ -2456,7 +2483,7 @@ png_setup_avg_row(png_structrp png_ptr, const png_uint_32 bpp,
    png_bytep rp, dp, pp, lp;
    png_uint_32 i;
    png_size_t sum = 0;
-   int v;
+   unsigned int v;
 
    png_ptr->try_row[0] = PNG_FILTER_VALUE_AVG;
 
@@ -2466,7 +2493,7 @@ png_setup_avg_row(png_structrp png_ptr, const png_uint_32 bpp,
       v = *dp++ = (png_byte)(((int)*rp++ - ((int)*pp++ / 2)) & 0xff);
 
 #ifdef PNG_USE_ABS
-      sum += 128 - abs(v - 128);
+      sum += 128 - abs((int)v - 128);
 #else
       sum += (v < 128) ? v : 256 - v;
 #endif
@@ -2478,7 +2505,7 @@ png_setup_avg_row(png_structrp png_ptr, const png_uint_32 bpp,
           & 0xff);
 
 #ifdef PNG_USE_ABS
-      sum += 128 - abs(v - 128);
+      sum += 128 - abs((int)v - 128);
 #else
       sum += (v < 128) ? v : 256 - v;
 #endif
@@ -2518,7 +2545,7 @@ png_setup_paeth_row(png_structrp png_ptr, const png_uint_32 bpp,
    png_bytep rp, dp, pp, cp, lp;
    png_size_t i;
    png_size_t sum = 0;
-   int v;
+   unsigned int v;
 
    png_ptr->try_row[0] = PNG_FILTER_VALUE_PAETH;
 
@@ -2528,7 +2555,7 @@ png_setup_paeth_row(png_structrp png_ptr, const png_uint_32 bpp,
       v = *dp++ = (png_byte)(((int)*rp++ - (int)*pp++) & 0xff);
 
 #ifdef PNG_USE_ABS
-      sum += 128 - abs(v - 128);
+      sum += 128 - abs((int)v - 128);
 #else
       sum += (v < 128) ? v : 256 - v;
 #endif
@@ -2561,7 +2588,7 @@ png_setup_paeth_row(png_structrp png_ptr, const png_uint_32 bpp,
       v = *dp++ = (png_byte)(((int)*rp++ - p) & 0xff);
 
 #ifdef PNG_USE_ABS
-      sum += 128 - abs(v - 128);
+      sum += 128 - abs((int)v - 128);
 #else
       sum += (v < 128) ? v : 256 - v;
 #endif
@@ -2684,14 +2711,14 @@ png_write_find_filter(png_structrp png_ptr, png_row_infop row_info)
       png_bytep rp;
       png_size_t sum = 0;
       png_size_t i;
-      int v;
+      unsigned int v;
 
       {
          for (i = 0, rp = row_buf + 1; i < row_bytes; i++, rp++)
          {
             v = *rp;
 #ifdef PNG_USE_ABS
-            sum += 128 - abs(v - 128);
+            sum += 128 - abs((int)v - 128);
 #else
             sum += (v < 128) ? v : 256 - v;
 #endif

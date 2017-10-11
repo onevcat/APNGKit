@@ -86,7 +86,7 @@ extension ViewController: NSTableViewDataSource {
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        let cell = tableView.make(withIdentifier: "imageNameCell", owner: nil) as! NSTableCellView
+        let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "imageNameCell"), owner: nil) as! NSTableCellView
         cell.textField?.stringValue = NSString(string: images[0][row].path).lastPathComponent
         return cell
     }
@@ -95,6 +95,9 @@ extension ViewController: NSTableViewDataSource {
 extension ViewController: NSTableViewDelegate {
     func tableViewSelectionDidChange(_ notification: Notification) {
         let row = tableView.selectedRow
+
+        if row == -1 { return }
+
         let path = images[0][row].path
         
         let image = APNGImage(contentsOfFile: path, saveToCache: true, progressive: true)!

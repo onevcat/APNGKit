@@ -1,8 +1,8 @@
 
 /* pngread.c - read a PNG file
  *
- * Last changed in libpng 1.6.24 [August 4, 2016]
- * Copyright (c) 1998-2002,2004,2006-2016 Glenn Randers-Pehrson
+ * Last changed in libpng 1.6.33 [September 28, 2017]
+ * Copyright (c) 1998-2002,2004,2006-2017 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -176,6 +176,11 @@ png_read_info(png_structrp png_ptr, png_inforp info_ptr)
 #ifdef PNG_READ_cHRM_SUPPORTED
       else if (chunk_name == png_cHRM)
          png_handle_cHRM(png_ptr, info_ptr, length);
+#endif
+
+#ifdef PNG_READ_eXIf_SUPPORTED
+      else if (chunk_name == png_eXIf)
+         png_handle_eXIf(png_ptr, info_ptr, length);
 #endif
 
 #ifdef PNG_READ_gAMA_SUPPORTED
@@ -439,9 +444,9 @@ png_do_read_intrapixel(png_row_infop row_info, png_bytep row)
 
          for (i = 0, rp = row; i < row_width; i++, rp += bytes_per_pixel)
          {
-            png_uint_32 s0   = (*(rp    ) << 8) | *(rp + 1);
-            png_uint_32 s1   = (*(rp + 2) << 8) | *(rp + 3);
-            png_uint_32 s2   = (*(rp + 4) << 8) | *(rp + 5);
+            png_uint_32 s0   = (png_uint_32)(*(rp    ) << 8) | *(rp + 1);
+            png_uint_32 s1   = (png_uint_32)(*(rp + 2) << 8) | *(rp + 3);
+            png_uint_32 s2   = (png_uint_32)(*(rp + 4) << 8) | *(rp + 5);
             png_uint_32 red  = (s0 + s1 + 65536) & 0xffff;
             png_uint_32 blue = (s2 + s1 + 65536) & 0xffff;
             *(rp    ) = (png_byte)((red >> 8) & 0xff);
@@ -614,6 +619,7 @@ png_read_row(png_structrp png_ptr, png_bytep row, png_bytep dsp_row)
       png_error(png_ptr, "Invalid attempt to read row data");
 
    /* Fill the row with IDAT data: */
+   png_ptr->row_buf[0]=255; /* to force error if no data was found */
    png_read_IDAT_data(png_ptr, png_ptr->row_buf, row_info.rowbytes + 1);
 
    if (png_ptr->row_buf[0] > PNG_FILTER_VALUE_NONE)
@@ -920,6 +926,11 @@ png_read_end(png_structrp png_ptr, png_inforp info_ptr)
 #ifdef PNG_READ_cHRM_SUPPORTED
       else if (chunk_name == png_cHRM)
          png_handle_cHRM(png_ptr, info_ptr, length);
+#endif
+
+#ifdef PNG_READ_eXIf_SUPPORTED
+      else if (chunk_name == png_eXIf)
+         png_handle_eXIf(png_ptr, info_ptr, length);
 #endif
 
 #ifdef PNG_READ_gAMA_SUPPORTED
@@ -1473,7 +1484,9 @@ png_image_read_header(png_voidp argument)
    png_structrp png_ptr = image->opaque->png_ptr;
    png_inforp info_ptr = image->opaque->info_ptr;
 
+#ifdef PNG_BENIGN_ERRORS_SUPPORTED
    png_set_benign_errors(png_ptr, 1/*warn*/);
+#endif
    png_read_info(png_ptr, info_ptr);
 
    /* Do this the fast way; just read directly out of png_struct. */
@@ -1511,7 +1524,7 @@ png_image_read_header(png_voidp argument)
             break;
 
          case PNG_COLOR_TYPE_PALETTE:
-            cmap_entries = png_ptr->num_palette;
+            cmap_entries = (png_uint_32)png_ptr->num_palette;
             break;
 
          default:
@@ -1961,7 +1974,7 @@ png_create_colormap_entry(png_image_read_control *display,
          {
             case 4:
                entry[afirst ? 0 : 3] = (png_uint_16)alpha;
-               /* FALL THROUGH */
+               /* FALLTHROUGH */
 
             case 3:
                if (alpha < 65535)
@@ -1983,7 +1996,7 @@ png_create_colormap_entry(png_image_read_control *display,
 
             case 2:
                entry[1 ^ afirst] = (png_uint_16)alpha;
-               /* FALL THROUGH */
+               /* FALLTHROUGH */
 
             case 1:
                if (alpha < 65535)
@@ -2012,6 +2025,7 @@ png_create_colormap_entry(png_image_read_control *display,
          {
             case 4:
                entry[afirst ? 0 : 3] = (png_byte)alpha;
+               /* FALLTHROUGH */
             case 3:
                entry[afirst + (2 ^ bgr)] = (png_byte)blue;
                entry[afirst + 1] = (png_byte)green;
@@ -2020,6 +2034,7 @@ png_create_colormap_entry(png_image_read_control *display,
 
             case 2:
                entry[1 ^ afirst] = (png_byte)alpha;
+               /* FALLTHROUGH */
             case 1:
                entry[afirst] = (png_byte)green;
                break;
@@ -2046,7 +2061,7 @@ make_gray_file_colormap(png_image_read_control *display)
    for (i=0; i<256; ++i)
       png_create_colormap_entry(display, i, i, i, i, 255, P_FILE);
 
-   return i;
+   return (int)i;
 }
 
 static int
@@ -2057,7 +2072,7 @@ make_gray_colormap(png_image_read_control *display)
    for (i=0; i<256; ++i)
       png_create_colormap_entry(display, i, i, i, i, 255, P_sRGB);
 
-   return i;
+   return (int)i;
 }
 #define PNG_GRAY_COLORMAP_ENTRIES 256
 
@@ -2111,7 +2126,7 @@ make_ga_colormap(png_image_read_control *display)
              P_sRGB);
    }
 
-   return i;
+   return (int)i;
 }
 
 #define PNG_GA_COLORMAP_ENTRIES 256
@@ -2136,7 +2151,7 @@ make_rgb_colormap(png_image_read_control *display)
       }
    }
 
-   return i;
+   return (int)i;
 }
 
 #define PNG_RGB_COLORMAP_ENTRIES 216
@@ -2329,7 +2344,7 @@ png_image_read_colormap(png_voidp argument)
             if (PNG_GRAY_COLORMAP_ENTRIES > image->colormap_entries)
                png_error(png_ptr, "gray[16] color-map: too few entries");
 
-            cmap_entries = make_gray_colormap(display);
+            cmap_entries = (unsigned int)make_gray_colormap(display);
 
             if (png_ptr->num_trans > 0)
             {
@@ -2427,7 +2442,7 @@ png_image_read_colormap(png_voidp argument)
             if (PNG_GA_COLORMAP_ENTRIES > image->colormap_entries)
                png_error(png_ptr, "gray+alpha color-map: too few entries");
 
-            cmap_entries = make_ga_colormap(display);
+            cmap_entries = (unsigned int)make_ga_colormap(display);
 
             background_index = PNG_CMAP_GA_BACKGROUND;
             output_processing = PNG_CMAP_GA;
@@ -2461,7 +2476,7 @@ png_image_read_colormap(png_voidp argument)
                if (PNG_GRAY_COLORMAP_ENTRIES > image->colormap_entries)
                   png_error(png_ptr, "gray-alpha color-map: too few entries");
 
-               cmap_entries = make_gray_colormap(display);
+               cmap_entries = (unsigned int)make_gray_colormap(display);
 
                if (output_encoding == P_LINEAR)
                {
@@ -2600,7 +2615,7 @@ png_image_read_colormap(png_voidp argument)
                if (PNG_GA_COLORMAP_ENTRIES > image->colormap_entries)
                   png_error(png_ptr, "rgb[ga] color-map: too few entries");
 
-               cmap_entries = make_ga_colormap(display);
+               cmap_entries = (unsigned int)make_ga_colormap(display);
                background_index = PNG_CMAP_GA_BACKGROUND;
                output_processing = PNG_CMAP_GA;
             }
@@ -2626,12 +2641,12 @@ png_image_read_colormap(png_voidp argument)
                   png_ptr->num_trans > 0) &&
                   png_gamma_not_sRGB(png_ptr->colorspace.gamma) != 0)
                {
-                  cmap_entries = make_gray_file_colormap(display);
+                  cmap_entries = (unsigned int)make_gray_file_colormap(display);
                   data_encoding = P_FILE;
                }
 
                else
-                  cmap_entries = make_gray_colormap(display);
+                  cmap_entries = (unsigned int)make_gray_colormap(display);
 
                /* But if the input has alpha or transparency it must be removed
                 */
@@ -2719,7 +2734,7 @@ png_image_read_colormap(png_voidp argument)
                   if (PNG_RGB_COLORMAP_ENTRIES+1+27 > image->colormap_entries)
                      png_error(png_ptr, "rgb+alpha color-map: too few entries");
 
-                  cmap_entries = make_rgb_colormap(display);
+                  cmap_entries = (unsigned int)make_rgb_colormap(display);
 
                   /* Add a transparent entry. */
                   png_create_colormap_entry(display, cmap_entries, 255, 255,
@@ -2768,7 +2783,7 @@ png_image_read_colormap(png_voidp argument)
                   if (PNG_RGB_COLORMAP_ENTRIES+1+27 > image->colormap_entries)
                      png_error(png_ptr, "rgb-alpha color-map: too few entries");
 
-                  cmap_entries = make_rgb_colormap(display);
+                  cmap_entries = (unsigned int)make_rgb_colormap(display);
 
                   png_create_colormap_entry(display, cmap_entries, back_r,
                       back_g, back_b, 0/*unused*/, output_encoding);
@@ -2853,7 +2868,7 @@ png_image_read_colormap(png_voidp argument)
                if (PNG_RGB_COLORMAP_ENTRIES > image->colormap_entries)
                   png_error(png_ptr, "rgb color-map: too few entries");
 
-               cmap_entries = make_rgb_colormap(display);
+               cmap_entries = (unsigned int)make_rgb_colormap(display);
                output_processing = PNG_CMAP_RGB;
             }
          }
@@ -2877,11 +2892,11 @@ png_image_read_colormap(png_voidp argument)
 
             output_processing = PNG_CMAP_NONE;
             data_encoding = P_FILE; /* Don't change from color-map indices */
-            cmap_entries = png_ptr->num_palette;
+            cmap_entries = (unsigned int)png_ptr->num_palette;
             if (cmap_entries > 256)
                cmap_entries = 256;
 
-            if (cmap_entries > image->colormap_entries)
+            if (cmap_entries > (unsigned int)image->colormap_entries)
                png_error(png_ptr, "palette color-map: too few entries");
 
             for (i=0; i < cmap_entries; ++i)
@@ -2939,7 +2954,7 @@ png_image_read_colormap(png_voidp argument)
       case P_sRGB:
          /* Change to 8-bit sRGB */
          png_set_alpha_mode_fixed(png_ptr, PNG_ALPHA_PNG, PNG_GAMMA_sRGB);
-         /* FALL THROUGH */
+         /* FALLTHROUGH */
 
       case P_FILE:
          if (png_ptr->bit_depth > 8)
@@ -2993,7 +3008,7 @@ png_image_read_colormap(png_voidp argument)
          png_error(png_ptr, "bad background index (internal error)");
    }
 
-   display->colormap_processing = output_processing;
+   display->colormap_processing = (int)output_processing;
 
    return 1/*ok*/;
 }
@@ -3257,8 +3272,7 @@ png_image_read_colormapped(png_voidp argument)
             image->colormap_entries == 244 /* 216 + 1 + 27 */)
             break;
 
-         /* goto bad_output; */
-         /* FALL THROUGH */
+         goto bad_output;
 
       default:
       bad_output:
@@ -3302,14 +3316,14 @@ png_image_read_colormapped(png_voidp argument)
 
    else
    {
-      png_alloc_size_t row_bytes = display->row_bytes;
+      png_alloc_size_t row_bytes = (png_alloc_size_t)display->row_bytes;
 
       while (--passes >= 0)
       {
          png_uint_32      y = image->height;
          png_bytep        row = png_voidcast(png_bytep, display->first_row);
 
-         while (y-- > 0)
+         for (; y > 0; --y)
          {
             png_read_row(png_ptr, row, NULL);
             row += row_bytes;
@@ -3637,8 +3651,9 @@ png_image_read_background(png_voidp argument)
              * stride which was multiplied by 2 (below) to get row_bytes.
              */
             ptrdiff_t    step_row = display->row_bytes / 2;
-            int preserve_alpha = (image->format & PNG_FORMAT_FLAG_ALPHA) != 0;
-            unsigned int outchannels = 1+preserve_alpha;
+            unsigned int preserve_alpha = (image->format &
+                PNG_FORMAT_FLAG_ALPHA) != 0;
+            unsigned int outchannels = 1U+preserve_alpha;
             int swap_alpha = 0;
 
 #           ifdef PNG_SIMPLIFIED_READ_AFIRST_SUPPORTED
@@ -3824,7 +3839,13 @@ png_image_read_direct(png_voidp argument)
          mode = PNG_ALPHA_PNG;
          output_gamma = PNG_DEFAULT_sRGB;
       }
-
+      
+      if ((change & PNG_FORMAT_FLAG_ASSOCIATED_ALPHA) != 0)
+      {
+         mode = PNG_ALPHA_OPTIMIZED;
+         change &= ~PNG_FORMAT_FLAG_ASSOCIATED_ALPHA;
+      }
+      
       /* If 'do_local_background' is set check for the presence of gamma
        * correction; this is part of the work-round for the libpng bug
        * described above.
@@ -4050,6 +4071,10 @@ png_image_read_direct(png_voidp argument)
       else if (do_local_compose != 0) /* internal error */
          png_error(png_ptr, "png_image_read: alpha channel lost");
 
+      if ((format & PNG_FORMAT_FLAG_ASSOCIATED_ALPHA) != 0) {
+         info_format |= PNG_FORMAT_FLAG_ASSOCIATED_ALPHA;
+      }
+
       if (info_ptr->bit_depth == 16)
          info_format |= PNG_FORMAT_FLAG_LINEAR;
 
@@ -4135,14 +4160,14 @@ png_image_read_direct(png_voidp argument)
 
    else
    {
-      png_alloc_size_t row_bytes = display->row_bytes;
+      png_alloc_size_t row_bytes = (png_alloc_size_t)display->row_bytes;
 
       while (--passes >= 0)
       {
          png_uint_32      y = image->height;
          png_bytep        row = png_voidcast(png_bytep, display->first_row);
 
-         while (y-- > 0)
+         for (; y > 0; --y)
          {
             png_read_row(png_ptr, row, NULL);
             row += row_bytes;
@@ -4171,7 +4196,7 @@ png_image_finish_read(png_imagep image, png_const_colorp background,
        * bits; this is just to verify that the 'row_stride' argument can be
        * represented.
        */
-      if (image->width <= 0x7FFFFFFFU/channels) /* no overflow */
+      if (image->width <= 0x7fffffffU/channels) /* no overflow */
       {
          png_uint_32 check;
          const png_uint_32 png_row_stride = image->width * channels;
@@ -4180,10 +4205,10 @@ png_image_finish_read(png_imagep image, png_const_colorp background,
             row_stride = (png_int_32)/*SAFE*/png_row_stride;
 
          if (row_stride < 0)
-            check = -row_stride;
+            check = (png_uint_32)(-row_stride);
 
          else
-            check = row_stride;
+            check = (png_uint_32)row_stride;
 
          /* This verifies 'check', the absolute value of the actual stride
           * passed in and detects overflow in the application calculation (i.e.
@@ -4208,7 +4233,7 @@ png_image_finish_read(png_imagep image, png_const_colorp background,
              * accomodated on 64-bit systems.
              */
             if (image->height <=
-                0xFFFFFFFFU/PNG_IMAGE_PIXEL_COMPONENT_SIZE(image->format)/check)
+                0xffffffffU/PNG_IMAGE_PIXEL_COMPONENT_SIZE(image->format)/check)
             {
                if ((image->format & PNG_FORMAT_FLAG_COLORMAP) == 0 ||
                   (image->colormap_entries > 0 && colormap != NULL))
