@@ -39,6 +39,8 @@ iOS 8.0+ / macOS 10.10+
 
 Although it is written in Swift, the compatibility with Objective-C is also considered.
 
+The latest versions (1.x) supports from Xcode 9 (Swift 3.2 or Swift 4). If you are still using Xcode 8, try [version 0.6.4](https://github.com/onevcat/APNGKit/releases/tag/0.6.4) instead.
+
 ### CocoaPods
 
 [CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects.
@@ -57,7 +59,7 @@ platform :ios, '8.0'
 use_frameworks!
 
 target 'your_app' do
-  pod 'APNGKit', '~> 0.6'
+  pod 'APNGKit', '~> 1.0'
 end
 ```
 
@@ -83,7 +85,7 @@ $ brew install carthage
 To integrate APNGKit into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "onevcat/APNGKit" ~> 0.6
+github "onevcat/APNGKit" ~> 1.0
 ```
 
 Then, run the following command to build the APNGKit framework:

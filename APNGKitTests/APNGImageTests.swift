@@ -147,7 +147,7 @@ class APNGImageTests: XCTestCase {
         XCTAssertNotNil(retinaAPNG, "elephant_apng should be able to init")
 
         #if os(macOS)
-        let screenScale = Int(NSScreen.main()?.backingScaleFactor ?? 1)
+        let screenScale = Int(NSScreen.main?.backingScaleFactor ?? 1)
         #else
         let screenScale = Int(UIScreen.main.scale)
         #endif
