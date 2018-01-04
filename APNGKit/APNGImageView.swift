@@ -245,7 +245,9 @@ open class APNGImageView: APNGView {
         
         let timestamp = CACurrentMediaTime()
         if lastTimestamp == 0 {
-            lastTimestamp = timestamp
+            if isAnimating {
+              lastTimestamp = timestamp
+            }
             return
         }
         
