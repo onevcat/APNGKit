@@ -232,6 +232,7 @@ open class APNGImageView: APNGView {
         repeated = 0
         lastTimestamp = 0
         currentPassedDuration = 0
+        currentFrameDuration = 0
         currentFrameIndex = 0
         
         timer = nil
@@ -244,7 +245,9 @@ open class APNGImageView: APNGView {
         
         let timestamp = CACurrentMediaTime()
         if lastTimestamp == 0 {
-            lastTimestamp = timestamp
+            if isAnimating {
+              lastTimestamp = timestamp
+            }
             return
         }
         
