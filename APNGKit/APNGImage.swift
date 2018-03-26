@@ -66,9 +66,9 @@ open class APNGImage: NSObject { // For ObjC compatibility
     public let frameCount: Int
     
     fileprivate(set) var frames: [Frame]?
+    fileprivate(set) var cachedFrames: [Frame]?
     
     // Keep a frame strong reference so it will not get released when using Disassembler
-    var currentFrame: Frame?
     fileprivate(set) var disassembler: Disassembler?
     
     func reset() {
@@ -86,15 +86,21 @@ open class APNGImage: NSObject { // For ObjC compatibility
             return frames[currentIndex]
         } else if let disassembler = disassembler {
             var frame = disassembler.next()
+            
+            if cachedFrames == nil {
+                cachedFrames = [Frame]()
+            }
+            
             // If the last frame encountered, the first `next` call will return `nil`
             // We should restart the iterator to get the first frame.
             if frame == nil {
-                frame = disassembler.next()
+                self.frames = cachedFrames
+                frame = cachedFrames?.first
+                cachedFrames = nil
             }
-            
-            currentFrame?.clean()
-            currentFrame = frame
-            
+            else {
+                cachedFrames?.append(frame!)
+            }
             return frame!
         } else {
             fatalError("Neither frames or disassembler exist.")
@@ -296,7 +302,6 @@ open class APNGImage: NSObject { // For ObjC compatibility
             }
         }
         disassembler?.clean()
-        currentFrame?.clean()
     }
 }
 
