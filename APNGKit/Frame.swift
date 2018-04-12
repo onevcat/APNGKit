@@ -100,7 +100,7 @@ class Frame {
     func clean() {
         cleaned = true
         bytes.deinitialize(count: length)
-        bytes.deallocate(capacity: length)
+        bytes.deallocate()
     }
     
     func updateCGImageRef(_ width: Int, height: Int, bits: Int, scale: CGFloat, blend: Bool) {
