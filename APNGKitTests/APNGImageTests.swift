@@ -149,7 +149,7 @@ class APNGImageTests: XCTestCase {
         #if os(macOS)
         let screenScale = Int(NSScreen.main?.backingScaleFactor ?? 1)
         #else
-        let screenScale = Int(UIScreen.main.scale)
+        let screenScale = 2
         #endif
             
         XCTAssertEqual(retinaAPNG?.scale, CGFloat(screenScale), "The version matches current screen should be loaded")
