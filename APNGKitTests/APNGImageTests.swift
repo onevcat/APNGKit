@@ -193,6 +193,11 @@ class APNGImageTests: XCTestCase {
         XCTAssertEqual(image?.frames!.first?.duration, TimeInterval.infinity, "And this frame lasts forever.")
         XCTAssertFalse(image!.frames!.first!.image!.isEmpty(), "This frame should not be an empty frame.")
     }
+    
+    func testEmptyImageName() {
+        let image = APNGImage(named: "", in: .testBundle)
+        XCTAssertNil(image, "Empty string should result in nil")
+    }
 }
 
 private extension CocoaImage {
