@@ -157,6 +157,11 @@ open class APNGImageView: APNGView {
             // fix issue that `APNGImageView` may cause crash when deinit
             layer?.contents = nil
             wantsLayer = false
+        #endif 
+        
+        #if os(iOS)
+            NotificationCenter.default.removeObserver(self, name:  Notification.Name.UIApplicationWillResignActive, object: nil)
+            NotificationCenter.default.removeObserver(self, name:  Notification.Name.UIApplicationDidBecomeActive, object: nil)
         #endif
     }
 
@@ -173,6 +178,8 @@ open class APNGImageView: APNGView {
         isAnimating = false
         autoStartAnimation = false
         super.init(coder: aDecoder)
+        
+        addObservers()
     }
     
     /**
@@ -186,6 +193,8 @@ open class APNGImageView: APNGView {
         isAnimating = false
         autoStartAnimation = false
         super.init(frame: frame)
+        
+        addObservers()
     }
     
     /**
@@ -236,6 +245,30 @@ open class APNGImageView: APNGView {
         currentFrameIndex = 0
         
         timer = nil
+    }
+    
+    /**
+     Stop animation when app send to background.
+     */
+    @objc private func appWillResignActive() {
+        stopAnimating()
+    }
+    
+    /**
+     Start animation when app become active.
+     */
+    @objc func appDidBecomeActive() {
+        startAnimating()
+    }
+    
+    /**
+     Add observers to the notification center to control app status
+     */
+    fileprivate func addObservers() {
+        #if os(iOS)
+            NotificationCenter.default.addObserver(self, selector: #selector(appWillResignActive), name: Notification.Name.UIApplicationWillResignActive, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
+        #endif
     }
     
     func tick() {
