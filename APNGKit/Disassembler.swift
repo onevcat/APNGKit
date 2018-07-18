@@ -396,7 +396,8 @@ class Disassembler {
                 memcpy(dp, sp, Int(width) * 4)
             } else { // APNG_BLEND_OP_OVER
                 for _ in 0 ..< Int(width){
-                    
+                    sp = sp.advanced(by: 4)
+                    dp = dp.advanced(by: 4)
                     let srcAlpha = Int(sp.advanced(by: 3).pointee) // Blend alpha to dst
                     if srcAlpha == 0xff {
                         memcpy(dp, sp, 4)
@@ -418,9 +419,6 @@ class Disassembler {
                             memcpy(dp, sp, 4)
                         }
                     }
-                    
-                    sp = sp.advanced(by: 4)
-                    dp = dp.advanced(by: 4)
                 }
             }
         }
