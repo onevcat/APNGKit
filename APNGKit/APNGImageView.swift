@@ -250,14 +250,14 @@ open class APNGImageView: APNGView {
     /**
      Stop animation when app send to background.
      */
-    @objc open func appWillResignActive() {
+    @objc open func appWillResignActive(noti: Notification) {
         stopAnimating()
     }
     
     /**
      Start animation when app become active.
      */
-    @objc open func appDidBecomeActive() {
+    @objc open func appDidBecomeActive(noti: Notification) {
         startAnimating()
     }
     
@@ -266,8 +266,8 @@ open class APNGImageView: APNGView {
      */
     fileprivate func addObservers() {
         #if os(iOS)
-            NotificationCenter.default.addObserver(self, selector: #selector(appWillResignActive), name: Notification.Name.UIApplicationWillResignActive, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(appWillResignActive(noti:)), name: Notification.Name.UIApplicationWillResignActive, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive(noti:)), name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
         #endif
     }
     
