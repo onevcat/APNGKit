@@ -159,10 +159,10 @@ open class APNGImageView: APNGView {
             wantsLayer = false
         #endif 
         
-//        #if os(iOS)
-//            NotificationCenter.default.removeObserver(self, name:  Notification.Name.UIApplicationWillResignActive, object: nil)
-//            NotificationCenter.default.removeObserver(self, name:  Notification.Name.UIApplicationDidBecomeActive, object: nil)
-//        #endif
+        #if os(iOS)
+            NotificationCenter.default.removeObserver(self, name:  Notification.Name.UIApplicationWillResignActive, object: nil)
+            NotificationCenter.default.removeObserver(self, name:  Notification.Name.UIApplicationDidBecomeActive, object: nil)
+        #endif
     }
 
     /**
@@ -265,10 +265,10 @@ open class APNGImageView: APNGView {
      Add observers to the notification center to control app status
      */
     fileprivate func addObservers() {
-//        #if os(iOS)
-//            NotificationCenter.default.addObserver(self, selector: #selector(appWillResignActive), name: Notification.Name.UIApplicationWillResignActive, object: nil)
-//            NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
-//        #endif
+        #if os(iOS)
+            NotificationCenter.default.addObserver(self, selector: #selector(stopAnimating), name: Notification.Name.UIApplicationWillResignActive, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(startAnimating), name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
+        #endif
     }
     
     func tick() {
