@@ -250,7 +250,7 @@ open class APNGImageView: APNGView {
     /**
      Stop animation when app send to background.
      */
-    @objc private func appWillResignActive() {
+    @objc func appWillResignActive() {
         stopAnimating()
     }
     
