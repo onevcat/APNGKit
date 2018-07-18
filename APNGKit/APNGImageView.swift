@@ -250,16 +250,16 @@ open class APNGImageView: APNGView {
     /**
      Stop animation when app send to background.
      */
-    @objc func appWillResignActive() {
-        stopAnimating()
-    }
+//    @objc func appWillResignActive() {
+//        stopAnimating()
+//    }
     
     /**
      Start animation when app become active.
      */
-    @objc func appDidBecomeActive() {
-        startAnimating()
-    }
+//    @objc func appDidBecomeActive() {
+//        startAnimating()
+//    }
     
     /**
      Add observers to the notification center to control app status
