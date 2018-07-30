@@ -148,6 +148,8 @@ open class APNGImageView: APNGView {
         if let frame = image?.next(currentIndex: 0) {
             updateContents(frame.image)
         }
+        
+        addObservers()
     }
     
     deinit {
