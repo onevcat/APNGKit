@@ -148,11 +148,11 @@ open class APNGImageView: APNGView {
         if let frame = image?.next(currentIndex: 0) {
             updateContents(frame.image)
         }
-        
         addObservers()
     }
     
     deinit {
+        isPaused = false
         stopAnimating()
         
         #if os(macOS)
@@ -210,19 +210,33 @@ open class APNGImageView: APNGView {
             performSelector(onMainThread: #selector(APNGImageView.startAnimating), with: nil, waitUntilDone: false)
             return
         }
-        
+
         if isAnimating {
             return
         }
-        
+
+        if isPaused {
+            // is resuming from pause, start at current time so animation doesn't speed up
+            lastTimestamp = CACurrentMediaTime()
+        }
+
         isAnimating = true
+        isPaused = false
         timer = GCDTimer(intervalInSecs: 0.016)
         timer!.Event = { [weak self] in
             DispatchQueue.main.sync { self?.tick() }
         }
         timer!.start()
     }
-    
+
+    var isPaused: Bool = false
+
+    @objc open func pauseAnimating() {
+        timer = nil
+        isPaused = true
+        isAnimating = false
+    }
+
     /**
     Starts animation contained in the image.
     */
@@ -238,14 +252,18 @@ open class APNGImageView: APNGView {
         if !isAnimating {
             return
         }
-        
+
+        if isPaused {
+            return
+        }
+
         isAnimating = false
         repeated = 0
         lastTimestamp = 0
         currentPassedDuration = 0
         currentFrameDuration = 0
         currentFrameIndex = 0
-        
+
         timer = nil
     }
     
@@ -253,7 +271,7 @@ open class APNGImageView: APNGView {
      Stop animation when app send to background.
      */
     @objc private func appWillResignActive() {
-        stopAnimating()
+        pauseAnimating()
     }
     
     /**
