@@ -80,6 +80,9 @@ open class APNGImageView: APNGView {
     /// A Bool value indicating whether the animation is running.
     open fileprivate(set) var isAnimating: Bool
     
+    /// A Bool value indicating whether the animation was running before app resigned active
+    private var wasAnimating: Bool = false
+    
     /// A Bool value indicating whether the animation should be 
     /// started automatically after an image is set. Default is false.
     open var autoStartAnimation: Bool {
@@ -253,6 +256,7 @@ open class APNGImageView: APNGView {
      Stop animation when app send to background.
      */
     @objc private func appWillResignActive() {
+        wasAnimating = isAnimating
         stopAnimating()
     }
     
@@ -260,7 +264,9 @@ open class APNGImageView: APNGView {
      Start animation when app become active.
      */
     @objc func appDidBecomeActive() {
-        startAnimating()
+        if wasAnimating {
+            startAnimating()
+        }
     }
     
     /**
