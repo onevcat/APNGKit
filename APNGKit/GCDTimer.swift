@@ -43,7 +43,7 @@ open class GCDTimer {
     fileprivate static let gcdTimerQueue = DispatchQueue(label: "gcdTimerQueue", attributes: [])
     
     /// Timer Source
-    open let timerSource = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: GCDTimer.gcdTimerQueue)
+    public let timerSource = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: GCDTimer.gcdTimerQueue)
     
     /// Default internal: 1 second
     fileprivate var interval:Double = 1
