@@ -317,6 +317,10 @@ extension APNGImage {
 
 extension String {
     func apng_filePathByCheckingNameExistingInBundle(_ bundle: Bundle) -> String? {
+        guard self != "" else {
+            return nil
+        }
+        
         let name = self as NSString
         let fileExtension = name.pathExtension
         let fileName = name.deletingPathExtension

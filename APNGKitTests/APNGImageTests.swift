@@ -149,7 +149,7 @@ class APNGImageTests: XCTestCase {
         #if os(macOS)
         let screenScale = Int(NSScreen.main?.backingScaleFactor ?? 1)
         #else
-        let screenScale = Int(UIScreen.main.scale)
+        let screenScale = 2
         #endif
             
         XCTAssertEqual(retinaAPNG?.scale, CGFloat(screenScale), "The version matches current screen should be loaded")
@@ -192,6 +192,11 @@ class APNGImageTests: XCTestCase {
         XCTAssertNotNil(image?.frames!.first?.image,"The image of frame should not be nil")
         XCTAssertEqual(image?.frames!.first?.duration, TimeInterval.infinity, "And this frame lasts forever.")
         XCTAssertFalse(image!.frames!.first!.image!.isEmpty(), "This frame should not be an empty frame.")
+    }
+    
+    func testEmptyImageName() {
+        let image = APNGImage(named: "", in: .testBundle)
+        XCTAssertNil(image, "Empty string should result in nil")
     }
 }
 
