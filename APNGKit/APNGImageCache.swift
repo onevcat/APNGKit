@@ -55,9 +55,9 @@ open class APNGCache {
         cacheObject.name = "com.onevcat.APNGKit.cache"
         #if !os(OSX)
             NotificationCenter.default.addObserver(self, selector: #selector(APNGCache.clearMemoryCache),
-                                                   name: NSNotification.Name.UIApplicationDidReceiveMemoryWarning, object: nil)
+                                                   name: UIApplication.didReceiveMemoryWarningNotification, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(APNGCache.clearMemoryCache),
-                                                   name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+                                                   name: UIApplication.didEnterBackgroundNotification, object: nil)
         #endif
     }
     
