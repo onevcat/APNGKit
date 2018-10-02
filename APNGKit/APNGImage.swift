@@ -51,7 +51,7 @@ open class APNGImage: NSObject { // For ObjC compatibility
     }
     
     /// Scale of the image.
-    open let scale: CGFloat
+    public let scale: CGFloat
     
     /// Repeat count of animation of the APNG image.
     /// It is read from APNG data. However, you can change it to modify the loop behaviors.

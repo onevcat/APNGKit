@@ -80,6 +80,9 @@ open class APNGImageView: APNGView {
     /// A Bool value indicating whether the animation is running.
     open fileprivate(set) var isAnimating: Bool
     
+    /// A Bool value indicating whether the animation was running before app resigned active
+    private var wasAnimating: Bool = false
+    
     /// A Bool value indicating whether the animation should be 
     /// started automatically after an image is set. Default is false.
     open var autoStartAnimation: Bool {
@@ -148,6 +151,8 @@ open class APNGImageView: APNGView {
         if let frame = image?.next(currentIndex: 0) {
             updateContents(frame.image)
         }
+        
+        addObservers()
     }
     
     deinit {
@@ -160,8 +165,8 @@ open class APNGImageView: APNGView {
         #endif 
         
         #if os(iOS)
-            NotificationCenter.default.removeObserver(self, name:  Notification.Name.UIApplicationWillResignActive, object: nil)
-            NotificationCenter.default.removeObserver(self, name:  Notification.Name.UIApplicationDidBecomeActive, object: nil)
+            NotificationCenter.default.removeObserver(self, name:  UIApplication.willResignActiveNotification, object: nil)
+            NotificationCenter.default.removeObserver(self, name:  UIApplication.didBecomeActiveNotification, object: nil)
         #endif
     }
 
@@ -251,6 +256,7 @@ open class APNGImageView: APNGView {
      Stop animation when app send to background.
      */
     @objc private func appWillResignActive() {
+        wasAnimating = isAnimating
         stopAnimating()
     }
     
@@ -258,7 +264,9 @@ open class APNGImageView: APNGView {
      Start animation when app become active.
      */
     @objc func appDidBecomeActive() {
-        startAnimating()
+        if wasAnimating {
+            startAnimating()
+        }
     }
     
     /**
@@ -266,8 +274,8 @@ open class APNGImageView: APNGView {
      */
     fileprivate func addObservers() {
         #if os(iOS)
-            NotificationCenter.default.addObserver(self, selector: #selector(appWillResignActive), name: Notification.Name.UIApplicationWillResignActive, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(appWillResignActive), name: UIApplication.willResignActiveNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         #endif
     }
     

@@ -128,7 +128,7 @@ extension Frame: CustomDebugStringConvertible {
     var data: Data? {
         if let image = image {
             #if os(iOS) || os(watchOS) || os(tvOS)
-                return UIImagePNGRepresentation(image)
+                return image.pngData()
             #elseif os(OSX)
                 return image.tiffRepresentation
             #endif
