@@ -30,6 +30,10 @@
     import UIKit
 #endif
 
+#if canImport(Clibpng)
+    import Clibpng
+#endif
+
 let signatureOfPNGLength = 8
 let kMaxPNGSize: UInt32 = 1000000;
 

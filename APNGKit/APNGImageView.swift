@@ -165,6 +165,8 @@ open class APNGImageView: APNGView {
         #endif 
         
         #if os(iOS)
+            // fix issue that `APNGImageView` may cause crash when deinit
+            layer.contents = nil
             NotificationCenter.default.removeObserver(self, name:  UIApplication.willResignActiveNotification, object: nil)
             NotificationCenter.default.removeObserver(self, name:  UIApplication.didBecomeActiveNotification, object: nil)
         #endif
@@ -296,8 +298,11 @@ open class APNGImageView: APNGView {
         lastTimestamp = timestamp
         
         currentPassedDuration += elapsedTime
+        if let duration = image.duration, currentPassedDuration > duration {
+            currentPassedDuration = currentPassedDuration.truncatingRemainder(dividingBy: duration)
+        }
         
-        if currentPassedDuration >= currentFrameDuration {
+        while currentPassedDuration >= currentFrameDuration {
             currentFrameIndex = currentFrameIndex + 1
             
             if currentFrameIndex == image.frameCount {
