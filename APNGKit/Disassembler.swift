@@ -35,7 +35,8 @@
 #endif
 
 let signatureOfPNGLength = 8
-let kMaxPNGSize: UInt32 = 1000000;
+let kMaxPNGSize: UInt32 = 1000000
+let kUserAllocMaxBytes: UInt32 = 100*1024*1024
 
 // Reading callback for libpng
 func readData(_ pngPointer: png_structp?, outBytes: png_bytep?, byteCountToRead: png_size_t) {
@@ -60,8 +61,8 @@ struct APNGMeta {
     
     let firstFrameHidden: Bool
     
-    var length: UInt32 {
-        return height * rowBytes
+    var length: Int {
+        return Int(height) * Int(rowBytes)
     }
     
     var firstImageIndex: Int {
@@ -291,6 +292,10 @@ class Disassembler {
         let height = png_get_image_height(pngPointer, infoPointer)
         let rowBytes = UInt32(png_get_rowbytes(pngPointer, infoPointer))
 
+        if width > kMaxPNGSize || height > kMaxPNGSize {
+            throw DisassemblerError.fileSizeExceeded
+        }
+
         // Decode acTL
         var frameCount: UInt32 = 0, playCount: UInt32 = 0
         png_get_acTL(pngPointer, infoPointer, &frameCount, &playCount)
@@ -312,7 +317,12 @@ class Disassembler {
             frameCount: frameCount,
             playCount: playCount,
             firstFrameHidden: firstFrameHidden)
-        
+
+        if meta.length > kUserAllocMaxBytes {
+            throw DisassemblerError.fileSizeExceeded
+            
+        }
+
         bufferFrame = Frame(length: meta.length, bytesInRow: meta.rowBytes)
         currentFrame = Frame(length: meta.length, bytesInRow: meta.rowBytes)
         apngMeta = meta
