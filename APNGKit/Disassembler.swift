@@ -307,6 +307,10 @@ class Disassembler {
             firstFrameHidden = png_get_first_frame_is_hidden(self.pngPointer, self.infoPointer) != 0
         }
 
+        guard height < kUserAllocMaxBytes / rowBytes else {
+            throw DisassemblerError.fileSizeExceeded
+        }
+
         // Setup apng meta
         let meta = APNGMeta(
             width: width,
@@ -317,11 +321,6 @@ class Disassembler {
             frameCount: frameCount,
             playCount: playCount,
             firstFrameHidden: firstFrameHidden)
-
-        if meta.length > kUserAllocMaxBytes {
-            throw DisassemblerError.fileSizeExceeded
-            
-        }
 
         bufferFrame = Frame(length: meta.length, bytesInRow: meta.rowBytes)
         currentFrame = Frame(length: meta.length, bytesInRow: meta.rowBytes)
