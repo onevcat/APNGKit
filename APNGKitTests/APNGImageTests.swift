@@ -198,6 +198,11 @@ class APNGImageTests: XCTestCase {
         let image = APNGImage(named: "", in: .testBundle)
         XCTAssertNil(image, "Empty string should result in nil")
     }
+
+    func testOverflowImage() {
+        let image = APNGImage(named: "malformed-size", in: .testBundle)
+        XCTAssertNil(image)
+    }
 }
 
 private extension CocoaImage {

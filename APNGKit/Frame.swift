@@ -88,8 +88,8 @@ class Frame {
     
     var duration: TimeInterval = 0
     
-    init(length: UInt32, bytesInRow: UInt32) {
-        self.length = Int(length)
+    init(length: Int, bytesInRow: UInt32) {
+        self.length = length
         self.bytesInRow = Int(bytesInRow)
         
         self.bytes = UnsafeMutablePointer<UInt8>.allocate(capacity: self.length)
