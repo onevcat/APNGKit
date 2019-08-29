@@ -48,6 +48,8 @@
 		4B7D4ED61B9559BF005C0598 /* filter_neon_intrinsics.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D4ED41B9559BF005C0598 /* filter_neon_intrinsics.c */; };
 		4B7D4ED71B9559BF005C0598 /* filter_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D4ED51B9559BF005C0598 /* filter_neon.S */; };
 		4B7D4ED91B955CBF005C0598 /* arm_init.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D4ED81B955CBF005C0598 /* arm_init.c */; };
+		4BA1EFA7231767BE00D6D06C /* malformed-size.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4BA1EFA6231767BD00D6D06C /* malformed-size.apng */; };
+		4BA1EFA8231767BE00D6D06C /* malformed-size.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4BA1EFA6231767BD00D6D06C /* malformed-size.apng */; };
 		4BF022041B94442800F00CDE /* APNGImageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF022031B94442800F00CDE /* APNGImageViewTests.swift */; };
 		B25269641E8FD9840096A0A7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B25269631E8FD9840096A0A7 /* libz.tbd */; };
 		B25269661E8FDA090096A0A7 /* GCDTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B19504F1E6D21670047B7DE /* GCDTimer.swift */; };
@@ -185,6 +187,7 @@
 		4B7D4ED41B9559BF005C0598 /* filter_neon_intrinsics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = filter_neon_intrinsics.c; sourceTree = "<group>"; };
 		4B7D4ED51B9559BF005C0598 /* filter_neon.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = filter_neon.S; sourceTree = "<group>"; };
 		4B7D4ED81B955CBF005C0598 /* arm_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = arm_init.c; sourceTree = "<group>"; };
+		4BA1EFA6231767BD00D6D06C /* malformed-size.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = "malformed-size.apng"; path = "TestImages/malformed-size.apng"; sourceTree = SOURCE_ROOT; };
 		4BF022031B94442800F00CDE /* APNGImageViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APNGImageViewTests.swift; sourceTree = "<group>"; };
 		B252695A1E8FD8EA0096A0A7 /* APNGKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = APNGKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B25269631E8FD9840096A0A7 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
@@ -371,6 +374,7 @@
 		D1614E1C1B91EDD700050104 /* TestImages */ = {
 			isa = PBXGroup;
 			children = (
+				4BA1EFA6231767BD00D6D06C /* malformed-size.apng */,
 				4B5DF6831B99718C00C4D421 /* demo.png */,
 				D187FEE81B934F1B0013372D /* pyani.apng */,
 				D190199F1B93351300E16EDB /* elephant_apng.apng */,
@@ -575,6 +579,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -606,6 +611,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D1614E251B91EDE200050104 /* over_previous.apng in Resources */,
+				4BA1EFA7231767BE00D6D06C /* malformed-size.apng in Resources */,
 				D1614E331B91EE0000050104 /* minimalAPNG.apng in Resources */,
 				D19019A01B93351400E16EDB /* elephant_apng.apng in Resources */,
 				D1614E261B91EDE200050104 /* spinfox.apng in Resources */,
@@ -630,6 +636,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B25310201E90AA3200A65CEA /* ball.apng in Resources */,
+				4BA1EFA8231767BE00D6D06C /* malformed-size.apng in Resources */,
 				B253101F1E90AA3200A65CEA /* minimalAPNG.apng in Resources */,
 				B253101D1E90AA3200A65CEA /* elephant_apng.apng in Resources */,
 				B25310231E90AA3200A65CEA /* over_previous.apng in Resources */,
