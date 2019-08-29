@@ -307,7 +307,7 @@ class Disassembler {
             firstFrameHidden = png_get_first_frame_is_hidden(self.pngPointer, self.infoPointer) != 0
         }
 
-        guard height < kUserAllocMaxBytes / rowBytes else {
+        guard rowBytes != 0 && height < kUserAllocMaxBytes / rowBytes else {
             throw DisassemblerError.fileSizeExceeded
         }
 
