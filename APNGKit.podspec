@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/onevcat/APNGKit.git", :tag => s.version }
   
   s.source_files  = "APNGKit/*.{h,swift}", "APNGKit/libpng-apng/*.{h,c,S}"
-  s.public_header_files = ["APNGKit/APNGKit.h", "APNGKit/libpng-apng/png.h", "APNGKit/libpng-apng/pnglibconf.h", "APNGKit/libpng-apng/pngconf.h"]
+  s.public_header_files = ["APNGKit/APNGKit.h", "APNGKit/libpng-apng/include/png.h", "APNGKit/libpng-apng/include/pnglibconf.h", "APNGKit/libpng-apng/include/pngconf.h"]
   s.library   = "z"
   s.swift_versions = ["4.2"]
 end
