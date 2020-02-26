@@ -62,11 +62,8 @@ open class APNGImageView: APNGView {
             }
             
             image.reset()
+            setCurrentFrame()
 
-            let frame = image.next(currentIndex: currentFrameIndex)
-            currentFrameDuration = frame.duration
-            updateContents(frame.image)
-            
             if animating {
                 startAnimating()
             }
@@ -219,7 +216,11 @@ open class APNGImageView: APNGView {
         if isAnimating {
             return
         }
-        
+
+        // Reset display content. It is necessary when restart the image view from a
+        // previous stop. https://github.com/onevcat/APNGKit/issues/96
+        setCurrentFrame()
+
         isAnimating = true
         timer = GCDTimer(intervalInSecs: 0.016)
         timer!.Event = { [weak self] in
@@ -330,12 +331,16 @@ open class APNGImageView: APNGView {
             }
             
             currentPassedDuration = currentPassedDuration - currentFrameDuration
-            
-            let frame = image.next(currentIndex: currentFrameIndex)
-            currentFrameDuration = frame.duration
-            updateContents(frame.image)
+
+            setCurrentFrame()
         }
-        
+    }
+
+    private func setCurrentFrame() {
+        guard let image = image else { return }
+        let frame = image.next(currentIndex: currentFrameIndex)
+        currentFrameDuration = frame.duration
+        updateContents(frame.image)
     }
     
     func updateContents(_ image: CocoaImage?) {

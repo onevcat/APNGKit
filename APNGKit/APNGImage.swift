@@ -101,7 +101,7 @@ open class APNGImage: NSObject { // For ObjC compatibility
         }
     }
     
-    // Strong refrence to another APNG to hold data if this image object is retrieved from cache
+    // Strong reference to another APNG to hold data if this image object is retrieved from cache
     // The frames data will not be changed once a frame is setup.
     // So we could share the bytes in it between two "same" APNG image objects.
     fileprivate let dataOwner: APNGImage?
@@ -129,7 +129,7 @@ open class APNGImage: NSObject { // For ObjC compatibility
         self.disassembler = nil
     }
     
-    // Init from a disaabler. This happens when loading progressivly.
+    // Init from a disassembler. This happens when loading progressively.
     convenience init(disassembler: Disassembler, scale: CGFloat, meta: APNGMeta) {
         self.init(scale: scale, meta: meta)
         self.disassembler = disassembler
