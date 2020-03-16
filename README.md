@@ -48,6 +48,12 @@ The latest versions (2.x) supports Swift 5
 pod 'APNGKit', :git => 'https://github.com/gali8/APNGKit'
 ```
 
+If you receive an error about "png.h", check the libpng-apng folder. If is empty, pull the submodule libpng using:
+
+```bash
+git submodule update --init --recursive
+```
+
 ### CocoaPods
 
 [CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects.
