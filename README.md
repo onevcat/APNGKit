@@ -39,7 +39,11 @@ iOS 8.0+ / macOS 10.10+
 
 Although it is written in Swift, the compatibility with Objective-C is also considered.
 
-The latest versions (1.x) supports from Xcode 9 (Swift 3.2 or Swift 4). If you are still using Xcode 8, try [version 0.6.4](https://github.com/onevcat/APNGKit/releases/tag/0.6.4) instead.
+The versions (1.x) supports from Xcode 9 (Swift 3.2 or Swift 4). If you are still using Xcode 8, try [version 0.6.4](https://github.com/onevcat/APNGKit/releases/tag/0.6.4) instead.
+
+The latest versions (2.x) supports Swift 5
+- there is not a official CocoaPods version yet - waiting for repo owner.
+pod 'APNGKit', :git => 'https://github.com/gali8/APNGKit'
 
 ### CocoaPods
 
