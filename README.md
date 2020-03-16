@@ -45,7 +45,7 @@ The latest versions (2.x) supports Swift 5
 - there is not an official CocoaPods version yet - waiting for repo owner.
 
 ```ruby
-pod 'APNGKit', :git => 'https://github.com/gali8/APNGKit'
+pod 'APNGKit', :git => 'https://github.com/gali8/APNGKit', :submodules => true
 ```
 
 If you receive an error about "png.h", check the libpng-apng folder. If is empty, pull the submodule libpng using:
