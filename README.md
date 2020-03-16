@@ -43,9 +43,10 @@ The versions (1.x) supports from Xcode 9 (Swift 3.2 or Swift 4). If you are stil
 
 The latest versions (2.x) supports Swift 5
 - there is not an official CocoaPods version yet - waiting for repo owner.
-pod 'APNGKit', :git => 'https://github.com/gali8/APNGKit'
 
-(A "Installing APNGKit 1.1.3" message will appear... i can't update the podfile version.)
+```ruby
+pod 'APNGKit', :git => 'https://github.com/gali8/APNGKit'
+```
 
 ### CocoaPods
 
