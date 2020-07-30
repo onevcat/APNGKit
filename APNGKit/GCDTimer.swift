@@ -32,9 +32,15 @@ open class GCDTimer {
         }
         
         public func reset(token: String) {
+            #if swift(>=5)
+            if let tokenIndex = _onceTracker.firstIndex(of: token) {
+                _onceTracker.remove(at: tokenIndex)
+            }
+            #else
             if let tokenIndex = _onceTracker.index(of: token) {
                 _onceTracker.remove(at: tokenIndex)
             }
+            #endif
         }
         
     }
