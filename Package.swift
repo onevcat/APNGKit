@@ -7,7 +7,8 @@ let package = Package(
     products: [
         .library(
             name: "APNGKit",
-            targets: ["APNGKit"])
+            targets: ["APNGKit"]
+        )
     ],
     targets: [
         .target(
@@ -16,7 +17,8 @@ let package = Package(
                 "Clibpng",
             ],
             path: "APNGKit",
-            exclude: ["libpng-apng"]
+            exclude: ["libpng-apng"],
+            publicHeadersPath: "."
         ),
         .target(
             name: "Clibpng",
