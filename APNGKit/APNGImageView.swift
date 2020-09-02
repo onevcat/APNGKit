@@ -44,6 +44,7 @@
 /// You can control the starting and stopping of the animation, as well as the repeat count.
 /// All images associated with an APNGImageView object should use the same scale. 
 /// If your application uses images with different scales, they may render incorrectly.
+@objcMembers
 open class APNGImageView: APNGView {
     
     /// The image displayed in the image view.

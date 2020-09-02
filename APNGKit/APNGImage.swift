@@ -36,6 +36,7 @@ public let RepeatForever = -1
 /// Represents a decoded APNG image. 
 /// You can use instance of this class to get image information or display it on screen with `APNGImageView`.
 /// `APNGImage` can hold an APNG image or a regular PNG image. If latter, there will be only one frame in the image.
+@objcMembers
 open class APNGImage: NSObject { // For ObjC compatibility
     
     /// Total duration of the animation. If progressive loading is used, this property returns `nil`.
