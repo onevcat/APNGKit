@@ -7,10 +7,7 @@ let package = Package(
     products: [
         .library(
             name: "APNGKit",
-            targets: ["APNGKit"]),
-        .library(
-            name: "Clibpng",
-            targets: ["Clibpng"]),
+            targets: ["APNGKit"])
     ],
     targets: [
         .target(
@@ -23,7 +20,12 @@ let package = Package(
         ),
         .target(
             name: "Clibpng",
-            path: "APNGKit/libpng-apng"),
+            path: "APNGKit/libpng-apng",
+            publicHeadersPath: "include",
+            cSettings: [
+                .headerSearchPath("."),
+            ]
+        )
     ],
     swiftLanguageVersions: [.v4_2]
 )
