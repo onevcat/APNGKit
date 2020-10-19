@@ -17,13 +17,21 @@ let package = Package(
             name: "APNGKit",
             dependencies: [
                 "Clibpng",
+                "APNGKitLibPNGErrorHandling",
             ],
             path: "APNGKit",
-            exclude: ["libpng-apng"]
+            exclude: ["libpng-apng", "LibPNGErrorHandling"]
         ),
         .target(
             name: "Clibpng",
             path: "APNGKit/libpng-apng"),
+        .target(
+            name: "APNGKitLibPNGErrorHandling",
+            dependencies: [
+                "Clibpng",
+            ],
+            path: "APNGKit/LibPNGErrorHandling"
+        )
     ],
     swiftLanguageVersions: [.v4_2]
 )
