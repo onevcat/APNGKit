@@ -34,6 +34,8 @@
     import Clibpng
 #endif
 
+import APNGKitLibPNGErrorHandling
+
 let signatureOfPNGLength = 8
 let kMaxPNGSize: UInt32 = 1000000
 let kUserAllocMaxBytes: UInt32 = 100*1024*1024
@@ -170,7 +172,25 @@ class Disassembler {
         blendOP: UInt8 = 0
         
         // Read header
-        png_read_frame_head(pngPointer, infoPointer)
+        let succeeded = try_png_read_frame_head(
+            png_jmpbuf(pngPointer),
+            pngPointer,
+            infoPointer
+        )
+        guard succeeded else {
+            self.apngMeta = APNGMeta(
+                width: apngMeta.width,
+                height: apngMeta.height,
+                bitDepth: apngMeta.bitDepth,
+                colorType: apngMeta.colorType,
+                rowBytes: apngMeta.rowBytes,
+                frameCount: UInt32(currentFrameIndex),
+                playCount: apngMeta.playCount,
+                firstFrameHidden: apngMeta.firstFrameHidden
+            )
+            return nil
+        }
+
         // Decode fcTL
         png_get_next_frame_fcTL(pngPointer, infoPointer, &frameWidth, &frameHeight,
                                 &offsetX, &offsetY, &delayNum, &delayDen, &disposeOP, &blendOP)
