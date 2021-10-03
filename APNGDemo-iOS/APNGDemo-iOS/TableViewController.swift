@@ -64,10 +64,7 @@ class TableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        self.navigationController?.navigationBar.shadowImage = nil
         loadData()
-
         tableView.reloadData()
     }
 
