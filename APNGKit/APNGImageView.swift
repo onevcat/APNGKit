@@ -62,7 +62,6 @@ open class APNGImageView: APNGView {
             }
             
             image.reset()
-            setCurrentFrame()
 
             if animating {
                 startAnimating()
