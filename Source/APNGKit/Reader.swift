@@ -70,7 +70,11 @@ class FileReader: Reader {
         }
         
         if #available(iOS 13.4, *) {
-            return try handle.read(upToCount: upToCount)
+            do {
+                return try handle.read(upToCount: upToCount)
+            } catch {
+                throw APNGKitError.decoderError(.fileHandleOperationFailed(handle, error))
+            }
         } else {
             return handle.readData(ofLength: upToCount)
         }
@@ -78,7 +82,11 @@ class FileReader: Reader {
     
     func seek(toOffset: UInt64) throws {
         if #available(iOS 13.0, *) {
-            try handle.seek(toOffset: UInt64(toOffset))
+            do {
+                try handle.seek(toOffset: UInt64(toOffset))
+            } catch {
+                throw APNGKitError.decoderError(.fileHandleOperationFailed(handle, error))
+            }
         } else {
             handle.seek(toFileOffset: UInt64(toOffset))
         }
@@ -100,15 +108,5 @@ class FileReader: Reader {
         } catch {
             return false
         }
-    }
-}
-
-extension Data {
-    var bytes: [Byte] { [UInt8](self) }
-}
-
-extension Comparable {
-    func clamped(to limits: ClosedRange<Self>) -> Self {
-        return min(max(self, limits.lowerBound), limits.upperBound)
     }
 }

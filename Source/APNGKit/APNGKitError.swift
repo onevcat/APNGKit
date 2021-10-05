@@ -14,5 +14,7 @@ public enum APNGKitError: Error {
 extension APNGKitError {
     public enum DecoderError {
         case fileHandleCreatingFailed(URL, Error)
+        case fileHandleOperationFailed(FileHandle, Error)
+        case wrongChunkData(name: String, data: Data)
     }
 }
