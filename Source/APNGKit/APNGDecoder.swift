@@ -40,6 +40,7 @@ class APNGDecoder {
         try setup()
     }
     
+    // Decode and load the common part and at least make the first frame prepared.
     private func setup() throws {
         guard let signature = try reader.read(upToCount: 8),
               signature.bytes == pngSignature
