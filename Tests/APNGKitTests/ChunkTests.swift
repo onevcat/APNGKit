@@ -50,4 +50,22 @@ class ChunkTests: XCTestCase {
         let verified = idhr.verifyCRC(chunkData: data, checksum: Data(crc))
         XCTAssertFalse(verified)
     }
+    
+    func testACTLChunk() throws {
+        let bytes: [UInt8] = [
+            0x00, 0x00, 0x00, 0x04,
+            0x00, 0x00, 0x00, 0x00
+        ]
+        let crc: [UInt8] = [
+            0x7C, 0xCD, 0x66, 0xD0
+        ]
+        
+        let data = Data(bytes)
+        let acTL = try acTL(data: data)
+        XCTAssertEqual(acTL.numberOfFrames, 4)
+        XCTAssertEqual(acTL.numberOfPlays, 0)
+        
+        let verified = acTL.verifyCRC(chunkData: data, checksum: Data(crc))
+        XCTAssertTrue(verified)
+    }
 }

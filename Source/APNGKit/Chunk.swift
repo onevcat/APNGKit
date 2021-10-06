@@ -90,12 +90,26 @@ struct IDAT: Chunk {
 
 struct IEND: Chunk {
     static let name: [Character] = ["I", "E", "N", "D"]
-    
+    func verifyCRC(chunkData: Data, checksum: Data) -> Bool {
+        guard chunkData.isEmpty else { return false }
+        // IEND has length of 0 and should always have the same checksum.
+        return checksum.bytes == [0xAE, 0x42, 0x60, 0x82]
+    }
 }
 
 struct acTL: Chunk {
-    static let name: [Character] = ["a", "C", "T", "L"]
+    static let name: [Character] = ["a", "c", "T", "L"]
     
+    let numberOfFrames: Int
+    let numberOfPlays: Int
+    
+    init(data: Data) throws {
+        guard data.count == 8 else {
+            throw APNGKitError.decoderError(.wrongChunkData(name: Self.nameString, data: data))
+        }
+        self.numberOfFrames = data[0...3].intValue
+        self.numberOfPlays = data[4...7].intValue
+    }
 }
 
 struct fcTL: Chunk {
