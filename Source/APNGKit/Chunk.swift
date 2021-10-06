@@ -68,16 +68,15 @@ struct IHDR: Chunk {
     }
 }
 
+enum ImageDataPresentation {
+    case data(Data)
+    case position(offset: UInt64, length: Int)
+}
+
 struct IDAT: Chunk {
-    
-    enum DataPresentation {
-        case data(Data)
-        case position(offset: UInt64, length: Int)
-    }
-    
     static let name: [Character] = ["I", "D", "A", "T"]
     
-    let dataPresentation: DataPresentation
+    let dataPresentation: ImageDataPresentation
     
     init(data: Data) {
         self.dataPresentation = .data(data)
@@ -164,4 +163,19 @@ struct fcTL: Chunk {
 struct fdAT: Chunk {
     static let name: [Character] = ["f", "d", "A", "T"]
     
+    let sequenceNumber: Int
+    let dataPresentation: ImageDataPresentation
+    
+    init(data: Data) throws {
+        guard data.count >= 4 else {
+            throw APNGKitError.decoderError(.wrongChunkData(name: Self.nameString, data: data))
+        }
+        self.sequenceNumber = data[0...3].intValue
+        self.dataPresentation = .data(data[4...])
+    }
+    
+    init(sequenceNumberBytes: Data, dataOffset: UInt64, dataLength: Int) {
+        self.sequenceNumber = sequenceNumberBytes.intValue
+        self.dataPresentation = .position(offset: dataOffset, length: dataLength)
+    }
 }
