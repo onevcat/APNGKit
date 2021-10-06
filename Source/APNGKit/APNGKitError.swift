@@ -19,5 +19,13 @@ extension APNGKitError {
         case fileFormatError
         case corruptedData(atOffset: UInt64?)
         case invalidChecksum
+        case lackOfChunk([Character])
+        case wrongSequenceNumber(expected: Int, got: Int)
+        case imageDataNotFound
+        case frameDataNotFound(expectedSequence: Int)
     }
+}
+
+extension Error {
+    var apngError: APNGKitError? { self as? APNGKitError }
 }

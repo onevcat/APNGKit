@@ -140,6 +140,11 @@ struct UntilChunkResult<T: Chunk> {
     let dataBeforeThunk: Data
 }
 
+enum Either<Left, Right> {
+    case left(Left)
+    case right(Right)
+}
+
 extension Reader {
 
     func readToInt(upToCount: Int) throws -> Int? {
@@ -165,10 +170,45 @@ extension Reader {
         return ChunkResult(chunk: chunk, fullData: lengthData + name + data + crc)
     }
     
-    /// Reads the following chunks until encountering the target type. Then return the target chunk and an offset
-    /// BEFORE that chunk.
-    func readUntilFirstChunk<T: Chunk>(type: T.Type, alreadyRead: Data? = nil) throws -> UntilChunkResult<T> {
+    /// Reads the following chunks until encountering the target type. Then read the target type chunk.
+    func readUntil<T: Chunk>(type: T.Type) throws -> UntilChunkResult<T> {
+        try readUntil(type: type, alreadyRead: .init())
+    }
+    
+    func readUntil<C1, C2>(
+        type chunkType1: C1.Type,
+        or chunkType2: C2.Type
+    ) throws -> Either<ChunkResult<C1>, ChunkResult<C2>>
+    where C1: Chunk, C2: Chunk
+    {
+        guard let lengthData = try read(upToCount: 4) else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
+        guard let name = try read(upToCount: 4) else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
         
+        let length = lengthData.intValue
+        guard let data = try read(upToCount: length),
+              let crc = try read(upToCount: 4)
+        else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
+        
+        if name.bytes == C1.nameBytes {
+            let chunk = try C1(data: data)
+            try chunk.verifyCRC(chunkData: data, checksum: crc)
+            return .left(.init(chunk: chunk, fullData: lengthData + name + data + crc))
+        } else if name.bytes == C2.nameBytes {
+            let chunk = try C2(data: data)
+            try chunk.verifyCRC(chunkData: data, checksum: crc)
+            return .right(.init(chunk: chunk, fullData: lengthData + name + data + crc))
+        } else {
+            return try readUntil(type: C1.self, or: C2.self)
+        }
+    }
+    
+    private func readUntil<T: Chunk>(type: T.Type, alreadyRead: Data) throws -> UntilChunkResult<T> {
         let starting = try offset()
         
         guard let lengthData = try read(upToCount: 4) else {
@@ -194,10 +234,149 @@ extension Reader {
                 chunk: chunk,
                 fullData: chunkData,
                 offsetBeforeThunk: starting,
-                dataBeforeThunk: alreadyRead ?? .init())
+                dataBeforeThunk: alreadyRead)
         } else {
-            let nextAlreadyRead = (alreadyRead ?? .init()) + chunkData
-            return try readUntilFirstChunk(type: T.self, alreadyRead: nextAlreadyRead)
+            let nextAlreadyRead = alreadyRead + chunkData
+            return try readUntil(type: T.self, alreadyRead: nextAlreadyRead)
         }
     }
+    
+    func readChunkIf<T: Chunk>(type: T.Type) throws -> ChunkResult<T>? {
+        let starting = try offset()
+        guard let lengthData = try read(upToCount: 4) else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
+        
+        guard let name = try read(upToCount: 4) else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
+        
+        guard name.bytes == T.nameBytes else {
+            // Not the target chunk.
+            // Reset pointer to the initial position
+            try seek(toOffset: starting)
+            return nil
+        }
+        
+        let length = lengthData.intValue
+        guard let data = try read(upToCount: length),
+              let crc = try read(upToCount: 4)
+        else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
+        let chunk = try T.init(data: data)
+        try chunk.verifyCRC(chunkData: data, checksum: crc)
+        return ChunkResult(chunk: chunk, fullData: lengthData + name + data + crc)
+    }
+    
+    func peek(handler: (ChunkPeekInfo, ChunkPeekHandler) throws -> Void) throws {
+        let starting = try offset()
+        guard let lengthData = try read(upToCount: 4) else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
+        guard let name = try read(upToCount: 4) else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
+        
+        let length = lengthData.intValue
+        let info = ChunkPeekInfo(name: name, length: length)
+        return try handler(info) { action in
+            switch action {
+            case .read(let T, let skipChecksumVerify):
+                guard let data = try read(upToCount: length),
+                      let crc = try read(upToCount: 4)
+                else {
+                    throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+                }
+                guard let C = T else { return .none }
+                let chunk = try C.init(data: data)
+                if !skipChecksumVerify {
+                    try chunk.verifyCRC(chunkData: data, checksum: crc)
+                }
+                return .chunk(chunk, data)
+                
+            case .readIndexedIDAT(let skipChecksumVerify):
+                let dataStart = try offset()
+                guard let data = try read(upToCount: length),
+                      let crc = try read(upToCount: 4)
+                else {
+                    throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+                }
+                let chunk = IDAT(offset: dataStart, length: info.length)
+                if !skipChecksumVerify {
+                    try chunk.verifyCRC(chunkData: data, checksum: crc)
+                }
+                return .chunk(chunk, data)
+                
+            case .readIndexedfdAT(let skipChecksumVerify):
+                let dataLength = length - 4
+                guard let sequenceNumber = try read(upToCount: 4) else {
+                    throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+                }
+                
+                let dataStart = try offset()
+                guard let data = try read(upToCount: dataLength),
+                      let crc = try read(upToCount: 4)
+                else {
+                    throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+                }
+                let chunk = fdAT(sequenceNumber: sequenceNumber, offset: dataStart, length: dataLength)
+                if !skipChecksumVerify {
+                    try chunk.verifyCRC(chunkData: sequenceNumber + data, checksum: crc)
+                }
+                return .chunk(chunk, data)
+                
+            case .reset:
+                try seek(toOffset: starting)
+                return .none
+            }
+        }
+        
+    }
+}
+
+struct ChunkPeekInfo {
+    let name: Data
+    let length: Int
+}
+
+enum PeekAction {
+    // Read a chunk and its data.
+    case read(type: Chunk.Type? = nil, skipChecksumVerify: Bool = false)
+    // Read a data IDAT chunk with offset and length.
+    case readIndexedIDAT(skipChecksumVerify: Bool = false)
+    // Read a data fdAT chunk with offset and length.
+    case readIndexedfdAT(skipChecksumVerify: Bool = false)
+    // Reset pointer to the position before peeking.
+    case reset
+}
+
+enum ChunkReadResult {
+    case chunk(Chunk, Data)
+    case none
+    
+    var fcTL: fcTL {
+        switch self {
+        case .chunk(let c, _): return c as! fcTL
+        case .none: fatalError()
+        }
+    }
+    
+    var IDAT: (IDAT, Data) {
+        switch self {
+        case .chunk(let c, let data): return (c as! IDAT, data)
+        case .none: fatalError()
+        }
+    }
+    
+    var fdAT: (fdAT, Data) {
+        switch self {
+        case .chunk(let c, let data): return (c as! fdAT, data)
+        case .none: fatalError()
+        }
+    }
+}
+
+extension Reader {
+    typealias ChunkPeekHandler = (PeekAction) throws -> ChunkReadResult
 }

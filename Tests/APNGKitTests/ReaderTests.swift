@@ -321,7 +321,7 @@ class ReadExtensionsTests: XCTestCase {
         
         let start = try reader.offset()
         
-        let result = try reader.readUntilFirstChunk(type: acTL.self)
+        let result = try reader.readUntil(type: acTL.self)
         XCTAssertEqual(result.chunk.numberOfFrames, 4)
         XCTAssertEqual(result.offsetBeforeThunk,
                        8 // PNG sig

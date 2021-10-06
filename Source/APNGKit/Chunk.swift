@@ -175,9 +175,9 @@ struct fdAT: DataChunk {
         self.dataPresentation = .data(data[4...])
     }
     
-    init(sequenceNumberBytes: Data, dataOffset: UInt64, dataLength: Int) {
-        self.sequenceNumber = sequenceNumberBytes.intValue
-        self.dataPresentation = .position(offset: dataOffset, length: dataLength)
+    init(sequenceNumber: Data, offset: UInt64, length: Int) {
+        self.sequenceNumber = sequenceNumber.intValue
+        self.dataPresentation = .position(offset: offset, length: length)
     }
 }
 
