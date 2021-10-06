@@ -12,8 +12,10 @@ class APNGDecoder {
     
     private var imageHeader: IHDR!
     private var animationControl: acTL!
-    private var frame: [APNGFrame] = []
-    private var sharedBytesOffset: UInt64!
+    private var frames: [APNGFrame?] = []
+    
+    // The data chunks shared by all frames. Use this to revert to a valid PNG for creating a CG data provider.
+    private var sharedData: Data!
     
     enum DecodingBehavior {
         case streaming
@@ -36,18 +38,19 @@ class APNGDecoder {
     }
     
     private func setup() throws {
-        func checkSignature() throws {
-            guard let signature = try reader.read(upToCount: 8),
-                  signature.bytes == pngSignature
-            else {
-                throw APNGKitError.decoderError(.fileFormatError)
-            }
+        guard let signature = try reader.read(upToCount: 8),
+              signature.bytes == pngSignature
+        else {
+            throw APNGKitError.decoderError(.fileFormatError)
         }
+        let ihdr = try reader.readChunk(type: IHDR.self)
+        imageHeader = ihdr.chunk
         
-        try checkSignature()
-        imageHeader = try reader.readChunk(type: IHDR.self)
-        (animationControl, sharedBytesOffset) = try reader.readUntilFirstChunk(type: acTL.self)
+        let acTL = try reader.readUntilFirstChunk(type: acTL.self)
+        animationControl = acTL.chunk
         
+        sharedData = signature + ihdr.fullData + acTL.dataBeforeThunk
+        frames = [APNGFrame?](repeating: nil, count: animationControl.numberOfFrames)
     }
 }
 

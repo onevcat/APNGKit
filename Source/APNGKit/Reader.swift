@@ -128,20 +128,33 @@ class FileReader: Reader {
     }
 }
 
+struct ChunkResult<T: Chunk> {
+    let chunk: T
+    let fullData: Data
+}
+
+struct UntilChunkResult<T: Chunk> {
+    let chunk: T
+    let fullData: Data
+    let offsetBeforeThunk: UInt64
+    let dataBeforeThunk: Data
+}
+
 extension Reader {
+
     func readToInt(upToCount: Int) throws -> Int? {
         (try read(upToCount: upToCount))?.intValue
     }
     
-    func readChunk<T: Chunk>(type: T.Type) throws -> T {
-        guard let length = try readToInt(upToCount: 4) else {
+    func readChunk<T: Chunk>(type: T.Type) throws -> ChunkResult<T> {
+        guard let lengthData = try read(upToCount: 4) else {
             throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
         }
         
         guard let name = try read(upToCount: 4), name.bytes == T.nameBytes else {
             throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
         }
-        
+        let length = lengthData.intValue
         guard let data = try read(upToCount: length),
               let crc = try read(upToCount: 4)
         else {
@@ -149,35 +162,42 @@ extension Reader {
         }
         let chunk = try T.init(data: data)
         try chunk.verifyCRC(chunkData: data, checksum: crc)
-        return chunk
+        return ChunkResult(chunk: chunk, fullData: lengthData + name + data + crc)
     }
     
     /// Reads the following chunks until encountering the target type. Then return the target chunk and an offset
     /// BEFORE that chunk.
-    func readUntilFirstChunk<T: Chunk>(type: T.Type) throws -> (T, UInt64) {
+    func readUntilFirstChunk<T: Chunk>(type: T.Type, alreadyRead: Data? = nil) throws -> UntilChunkResult<T> {
         
         let starting = try offset()
         
-        guard let length = try readToInt(upToCount: 4) else {
+        guard let lengthData = try read(upToCount: 4) else {
             throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
         }
         guard let name = try read(upToCount: 4) else {
             throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
         }
         
+        let length = lengthData.intValue
         guard let data = try read(upToCount: length),
               let crc = try read(upToCount: 4)
         else {
             throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
         }
         
+        let chunkData = lengthData + name + data + crc
         // Found target.
         if name.bytes == T.nameBytes {
             let chunk = try T.init(data: data)
             try chunk.verifyCRC(chunkData: data, checksum: crc)
-            return (chunk, starting)
+            return UntilChunkResult(
+                chunk: chunk,
+                fullData: chunkData,
+                offsetBeforeThunk: starting,
+                dataBeforeThunk: alreadyRead ?? .init())
         } else {
-            return try readUntilFirstChunk(type: T.self)
+            let nextAlreadyRead = (alreadyRead ?? .init()) + chunkData
+            return try readUntilFirstChunk(type: T.self, alreadyRead: nextAlreadyRead)
         }
     }
 }

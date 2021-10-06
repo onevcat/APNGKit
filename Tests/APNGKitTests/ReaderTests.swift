@@ -302,8 +302,12 @@ class ReadExtensionsTests: XCTestCase {
     func testReadChunk() throws {
         let reader = try SpecTesting.reader(of: 25)
         try reader.seek(toOffset: 8) // signature
-        let chunk = try reader.readChunk(type: IHDR.self)
-        XCTAssertEqual(chunk.width, 128)
+        let result = try reader.readChunk(type: IHDR.self)
+        XCTAssertEqual(result.chunk.width, 128)
+        
+        try reader.seek(toOffset: 8)
+        let ihdrData = try reader.read(upToCount: 4 + 4 + 13 + 4)
+        XCTAssertEqual(result.fullData, ihdrData)
     }
     
     func testReadChunkError() throws {
@@ -314,14 +318,20 @@ class ReadExtensionsTests: XCTestCase {
     func testReadUntilChunk() throws {
         let reader = try SpecTesting.reader(of: 25)
         try reader.seek(toOffset: 8) // signature
-        let (chunk, offset) = try reader.readUntilFirstChunk(type: acTL.self)
-        XCTAssertEqual(chunk.numberOfFrames, 4)
-        XCTAssertEqual(offset,
+        
+        let start = try reader.offset()
+        
+        let result = try reader.readUntilFirstChunk(type: acTL.self)
+        XCTAssertEqual(result.chunk.numberOfFrames, 4)
+        XCTAssertEqual(result.offsetBeforeThunk,
                        8 // PNG sig
                      + 4 // IHDR length
                      + 4 // IHDR name
                      + 13 // IHDR data
                      + 4 // IHDR CRC
         )
+        try reader.seek(toOffset: start)
+        let readData = try reader.read(upToCount: Int(result.offsetBeforeThunk - start))
+        XCTAssertEqual(result.dataBeforeThunk, readData)
     }
 }
