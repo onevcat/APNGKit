@@ -16,5 +16,8 @@ extension APNGKitError {
         case fileHandleCreatingFailed(URL, Error)
         case fileHandleOperationFailed(FileHandle, Error)
         case wrongChunkData(name: String, data: Data)
+        case fileFormatError
+        case corruptedData(atOffset: UInt64?)
+        case invalidChecksum
     }
 }

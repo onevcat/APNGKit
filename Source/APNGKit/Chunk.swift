@@ -8,24 +8,16 @@
 import Foundation
 import zlib
 
-enum ChunkType {
-    // PNG chunk
-    case IHDR(IHDR) // Image Header
-    case IDAT // Image Data
-    case IEND // Image Trailer
-    
-    // APNG chunk
-    case acTL // Animation Control
-    case fcTL // Frame Control
-    case fdAT // Frame Data
-    
-    // Other (ancillary) chunk types are not yet directly supported.
-    case other
-}
-
 protocol Chunk {
     static var name: [Character] { get }
-    func verifyCRC(chunkData: Data, checksum: Data) -> Bool
+    func verifyCRC(chunkData: Data, checksum: Data) throws
+    
+    init(data: Data) throws
+}
+
+protocol DataChunk: Chunk {
+    var sequenceNumber: Int? { get }
+    var dataPresentation: ImageDataPresentation { get }
 }
 
 extension Chunk {
@@ -33,12 +25,14 @@ extension Chunk {
     static var nameBytes: [UInt8] { name.map { $0.asciiValue! } }
     static var nameString: String { String(name) }
     
-    func verifyCRC(chunkData: Data, checksum: Data) -> Bool {
+    func verifyCRC(chunkData: Data, checksum: Data) throws {
         var data = Self.nameBytes + chunkData.bytes
         let calculated = UInt32(
             crc32(uLong(0), &data, uInt(data.count))
         ).bigEndianBytes
-        return calculated == checksum.bytes
+        guard calculated == checksum.bytes else {
+            throw APNGKitError.decoderError(.invalidChecksum)
+        }
     }
 }
 
@@ -73,9 +67,10 @@ enum ImageDataPresentation {
     case position(offset: UInt64, length: Int)
 }
 
-struct IDAT: Chunk {
+struct IDAT: DataChunk {
     static let name: [Character] = ["I", "D", "A", "T"]
     
+    var sequenceNumber: Int? { nil }
     let dataPresentation: ImageDataPresentation
     
     init(data: Data) {
@@ -88,6 +83,12 @@ struct IDAT: Chunk {
 }
 
 struct IEND: Chunk {
+    init(data: Data) throws {
+        guard data.isEmpty else {
+            throw APNGKitError.decoderError(.wrongChunkData(name: Self.nameString, data: data))
+        }
+    }
+    
     static let name: [Character] = ["I", "E", "N", "D"]
     func verifyCRC(chunkData: Data, checksum: Data) -> Bool {
         guard chunkData.isEmpty else { return false }
@@ -160,10 +161,10 @@ struct fcTL: Chunk {
     }
 }
 
-struct fdAT: Chunk {
+struct fdAT: DataChunk {
     static let name: [Character] = ["f", "d", "A", "T"]
     
-    let sequenceNumber: Int
+    let sequenceNumber: Int?
     let dataPresentation: ImageDataPresentation
     
     init(data: Data) throws {
@@ -179,3 +180,5 @@ struct fdAT: Chunk {
         self.dataPresentation = .position(offset: dataOffset, length: dataLength)
     }
 }
+
+let pngSignature: [Byte] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]

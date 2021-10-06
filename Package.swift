@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.3
 import PackageDescription
 
 let package = Package(
@@ -9,6 +9,8 @@ let package = Package(
     ],
     targets: [
         .target(name: "APNGKit"),
-        .testTarget(name: "APNGKitTests", dependencies: ["APNGKit"])
+        .testTarget(name: "APNGKitTests", dependencies: ["APNGKit"], resources: [
+            .copy("Resources/SpecTesting")
+        ])
     ]
 )

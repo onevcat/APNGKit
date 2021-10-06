@@ -107,6 +107,24 @@ class DataReaderTests: XCTestCase {
         let data = try reader.read(upToCount: 1)
         XCTAssertNil(data)
     }
+    
+    func testGetOffset() throws {
+        let zeroReader = DataReader(data: .init())
+        XCTAssertEqual(0, try zeroReader.offset())
+        _ = try zeroReader.read(upToCount: 10)
+        XCTAssertEqual(0, try zeroReader.offset())
+        
+        let normalReader = DataReader(bytes: [1,2,3,4,5])
+        XCTAssertEqual(0, try normalReader.offset())
+        _ = try normalReader.read(upToCount: 1)
+        XCTAssertEqual(1, try normalReader.offset())
+        _ = try normalReader.read(upToCount: 2)
+        XCTAssertEqual(3, try normalReader.offset())
+        _ = try normalReader.read(upToCount: 3)
+        XCTAssertEqual(5, try normalReader.offset())
+        _ = try normalReader.read(upToCount: 4)
+        XCTAssertEqual(5, try normalReader.offset())
+    }
 }
 
 class FileReaderTests: XCTestCase {
@@ -240,5 +258,70 @@ class FileReaderTests: XCTestCase {
         try reader.seek(toOffset: 100)
         let data = try reader.read(upToCount: 1)
         XCTAssertNil(data)
+    }
+    
+    func testGetOffset() throws {
+        let zeroReader = try FileReader(url: Self.tmpEmptyFile)
+        XCTAssertEqual(0, try zeroReader.offset())
+        _ = try zeroReader.read(upToCount: 10)
+        XCTAssertEqual(0, try zeroReader.offset())
+        
+        let normalReader = try FileReader(url: Self.tmpFileURL)
+        XCTAssertEqual(0, try normalReader.offset())
+        _ = try normalReader.read(upToCount: 1)
+        XCTAssertEqual(1, try normalReader.offset())
+        _ = try normalReader.read(upToCount: 2)
+        XCTAssertEqual(3, try normalReader.offset())
+        _ = try normalReader.read(upToCount: 3)
+        XCTAssertEqual(5, try normalReader.offset())
+        _ = try normalReader.read(upToCount: 4)
+        XCTAssertEqual(5, try normalReader.offset())
+    }
+}
+
+
+class ReadExtensionsTests: XCTestCase {
+    func testReadToInt() throws {
+        let bytes: [Byte] = [
+            0x00, 0x00, 0x00, 0x11, // 4 bit - 17
+            0x10, 0x12, 0x00, 0x22, // 4 bit - 269615138
+            0xFF,                   // 1 bit - 255
+            0xAA, 0x02,             // 2 bit - 43522
+            0x10, 0x20, 0x30        // 3 bit - 1056816
+        ]
+        let reader = DataReader(bytes: bytes)
+        XCTAssertEqual(17, try reader.readToInt(upToCount: 4))
+        XCTAssertEqual(269615138, try reader.readToInt(upToCount: 4))
+        XCTAssertEqual(255, try reader.readToInt(upToCount: 1))
+        XCTAssertEqual(43522, try reader.readToInt(upToCount: 2))
+        XCTAssertEqual(1056816, try reader.readToInt(upToCount: 3))
+        
+        XCTAssertNil(try reader.readToInt(upToCount:4))
+    }
+    
+    func testReadChunk() throws {
+        let reader = try SpecTesting.reader(of: 25)
+        try reader.seek(toOffset: 8) // signature
+        let chunk = try reader.readChunk(type: IHDR.self)
+        XCTAssertEqual(chunk.width, 128)
+    }
+    
+    func testReadChunkError() throws {
+        let reader = try SpecTesting.reader(of: 25)
+        XCTAssertThrowsError(try reader.readChunk(type: IHDR.self))
+    }
+
+    func testReadUntilChunk() throws {
+        let reader = try SpecTesting.reader(of: 25)
+        try reader.seek(toOffset: 8) // signature
+        let (chunk, offset) = try reader.readUntilFirstChunk(type: acTL.self)
+        XCTAssertEqual(chunk.numberOfFrames, 4)
+        XCTAssertEqual(offset,
+                       8 // PNG sig
+                     + 4 // IHDR length
+                     + 4 // IHDR name
+                     + 13 // IHDR data
+                     + 4 // IHDR CRC
+        )
     }
 }

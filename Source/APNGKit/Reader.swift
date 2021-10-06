@@ -18,11 +18,12 @@ protocol Reader {
     
     // Move the pointer to the target offset. If `toOffset` is larger than the end, set it to the end.
     func seek(toOffset: UInt64) throws
+    
+    func offset() throws -> UInt64
 }
 
-
 class DataReader: Reader {
-    
+
     private var cursor: Int = 0
     private let data: Data
     
@@ -47,6 +48,10 @@ class DataReader: Reader {
     
     func seek(toOffset: UInt64) throws {
         cursor = Int(toOffset.clamped(to: 0 ... UInt64(data.count)))
+    }
+    
+    func offset() throws -> UInt64 {
+        UInt64(cursor)
     }
 }
 
@@ -81,7 +86,7 @@ class FileReader: Reader {
     }
     
     func seek(toOffset: UInt64) throws {
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.4, *) {
             do {
                 try handle.seek(toOffset: UInt64(toOffset))
             } catch {
@@ -89,6 +94,18 @@ class FileReader: Reader {
             }
         } else {
             handle.seek(toFileOffset: UInt64(toOffset))
+        }
+    }
+    
+    func offset() throws -> UInt64 {
+        if #available(iOS 13.4, *) {
+            do {
+                return try handle.offset()
+            } catch {
+                throw APNGKitError.decoderError(.fileHandleOperationFailed(handle, error))
+            }
+        } else {
+            return handle.offsetInFile
         }
     }
     
@@ -107,6 +124,60 @@ class FileReader: Reader {
             }
         } catch {
             return false
+        }
+    }
+}
+
+extension Reader {
+    func readToInt(upToCount: Int) throws -> Int? {
+        (try read(upToCount: upToCount))?.intValue
+    }
+    
+    func readChunk<T: Chunk>(type: T.Type) throws -> T {
+        guard let length = try readToInt(upToCount: 4) else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
+        
+        guard let name = try read(upToCount: 4), name.bytes == T.nameBytes else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
+        
+        guard let data = try read(upToCount: length),
+              let crc = try read(upToCount: 4)
+        else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
+        let chunk = try T.init(data: data)
+        try chunk.verifyCRC(chunkData: data, checksum: crc)
+        return chunk
+    }
+    
+    /// Reads the following chunks until encountering the target type. Then return the target chunk and an offset
+    /// BEFORE that chunk.
+    func readUntilFirstChunk<T: Chunk>(type: T.Type) throws -> (T, UInt64) {
+        
+        let starting = try offset()
+        
+        guard let length = try readToInt(upToCount: 4) else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
+        guard let name = try read(upToCount: 4) else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
+        
+        guard let data = try read(upToCount: length),
+              let crc = try read(upToCount: 4)
+        else {
+            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+        }
+        
+        // Found target.
+        if name.bytes == T.nameBytes {
+            let chunk = try T.init(data: data)
+            try chunk.verifyCRC(chunkData: data, checksum: crc)
+            return (chunk, starting)
+        } else {
+            return try readUntilFirstChunk(type: T.self)
         }
     }
 }
