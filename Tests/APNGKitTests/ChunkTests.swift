@@ -68,4 +68,34 @@ class ChunkTests: XCTestCase {
         let verified = acTL.verifyCRC(chunkData: data, checksum: Data(crc))
         XCTAssertTrue(verified)
     }
+    
+    func testFCTLChunk() throws {
+        let bytes: [UInt8] = [
+            0x00, 0x00, 0x00, 0x01,
+            0x00, 0x00, 0x00, 0x80,
+            0x00, 0x00, 0x00, 0x40,
+            0x00, 0x00, 0x00, 0x10,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x32, 0x00, 0x64,
+            0x00, 0x01
+        ]
+        let crc: [UInt8] = [
+            0x82, 0xC6, 0xF2, 0xB8
+        ]
+        let data = Data(bytes)
+        let fcTL = try fcTL(data: data)
+        XCTAssertEqual(fcTL.sequenceNumber, 1)
+        XCTAssertEqual(fcTL.width, 128)
+        XCTAssertEqual(fcTL.height, 64)
+        XCTAssertEqual(fcTL.xOffset, 16)
+        XCTAssertEqual(fcTL.yOffset, 0)
+        XCTAssertEqual(fcTL.delayNumerator, 50)
+        XCTAssertEqual(fcTL.delayDenominator, 100)
+        XCTAssertEqual(fcTL.duration, 0.5)
+        XCTAssertEqual(fcTL.disposeOp, .none)
+        XCTAssertEqual(fcTL.blendOp, .over)
+        
+        let verified = fcTL.verifyCRC(chunkData: data, checksum: Data(crc))
+        XCTAssertTrue(verified)
+    }
 }

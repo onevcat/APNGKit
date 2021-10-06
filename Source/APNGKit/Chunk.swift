@@ -113,8 +113,52 @@ struct acTL: Chunk {
 }
 
 struct fcTL: Chunk {
+    
+    enum DisposeOp: Byte {
+        case none = 0
+        case background = 1
+        case previous = 2
+    }
+    
+    enum BlendOp: Byte {
+        case source = 0
+        case over = 1
+    }
+    
     static let name: [Character] = ["f", "c", "T", "L"]
     
+    let sequenceNumber: Int
+    let width: Int
+    let height: Int
+    let xOffset: Int
+    let yOffset: Int
+    let delayNumerator: Int
+    let delayDenominator: Int
+    let disposeOp: DisposeOp
+    let blendOp: BlendOp
+    
+    init(data: Data) throws {
+        guard data.count == 26 else {
+            throw APNGKitError.decoderError(.wrongChunkData(name: Self.nameString, data: data))
+        }
+        self.sequenceNumber = data[0...3].intValue
+        self.width = data[4...7].intValue
+        self.height = data[8...11].intValue
+        self.xOffset = data[12...15].intValue
+        self.yOffset = data[16...19].intValue
+        self.delayNumerator = data[20...21].intValue
+        self.delayDenominator = data[22...23].intValue
+        self.disposeOp = DisposeOp(rawValue: data[24]) ?? .background
+        self.blendOp = BlendOp(rawValue: data[25]) ?? .source
+    }
+    
+    var duration: TimeInterval {
+        if delayDenominator == 0 {
+            return TimeInterval(delayNumerator) / 100
+        } else {
+            return TimeInterval(delayNumerator) / TimeInterval(delayDenominator)
+        }
+    }
 }
 
 struct fdAT: Chunk {
