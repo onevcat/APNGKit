@@ -10,8 +10,8 @@ import zlib
 
 protocol Chunk {
     static var name: [Character] { get }
-    func verifyCRC(chunkData: Data, checksum: Data) throws
-    
+    func verifyCRC(payload: Data, checksum: Data) throws
+
     init(data: Data) throws
 }
 
@@ -25,40 +25,111 @@ extension Chunk {
     static var nameBytes: [UInt8] { name.map { $0.asciiValue! } }
     static var nameString: String { String(name) }
     
-    func verifyCRC(chunkData: Data, checksum: Data) throws {
-        var data = Self.nameBytes + chunkData.bytes
-        let calculated = UInt32(
-            crc32(uLong(0), &data, uInt(data.count))
-        ).bigEndianBytes
+    func verifyCRC(payload: Data, checksum: Data) throws {
+        let calculated = Self.generateCRC(payload: payload.bytes)
         guard calculated == checksum.bytes else {
             throw APNGKitError.decoderError(.invalidChecksum)
         }
+    }
+    
+    static func generateCRC(payload: [Byte]) -> [Byte] {
+        var data = Self.nameBytes + payload
+        return UInt32(
+            crc32(uLong(0), &data, uInt(data.count))
+        ).bigEndianBytes
     }
 }
 
 struct IHDR: Chunk {
     
-    static let name: [Character] = ["I", "H", "D", "R"]
+    enum ColorType: Byte {
+        case greyscale = 0
+        case trueColor = 2
+        case indexedColor = 3
+        case greyscaleWithAlpha = 4
+        case trueColorWithAlpha = 6
+        
+        var componentsPerPixel: Int {
+            switch self {
+            case .greyscale: return 1
+            case .trueColor: return 3
+            case .indexedColor: return 1
+            case .greyscaleWithAlpha: return 2
+            case .trueColorWithAlpha: return 4
+            }
+        }
+    }
     
-    let width: Int
-    let height: Int
+    static let name: [Character] = ["I", "H", "D", "R"]
+    static let expectedLength = 13
+    
+    private(set) var width: Int
+    private(set) var height: Int
     let bitDepth: Byte
-    let colorType: Byte
+    let colorType: ColorType
     let compression: Byte
     let filterMethod: Byte
     let interlaceMethod: Byte
     
     init(data: Data) throws {
-        guard data.count == 13 else {
+        guard data.count == IHDR.expectedLength else {
             throw APNGKitError.decoderError(.wrongChunkData(name: Self.nameString, data: data))
         }
         width = data[0...3].intValue
         height = data[4...7].intValue
         bitDepth = data[8]
-        colorType = data[9]
+        guard let c = ColorType(rawValue: data[9]) else {
+            throw APNGKitError.decoderError(.wrongChunkData(name: Self.nameString, data: data))
+        }
+        colorType = c
         compression = data[10]
         filterMethod = data[11]
         interlaceMethod = data[12]
+    }
+    
+    func updated(width: Int, height: Int) -> IHDR {
+        var result = self
+        result.width = width
+        result.height = height
+        return result
+    }
+    
+    func encode() throws -> Data {
+        var data = Data(capacity: 4 + 4 + IHDR.expectedLength + 4)
+        data.append(IHDR.expectedLength.fourBytesData)
+        data.append(contentsOf: Self.nameBytes)
+        
+        var payload = Data(capacity: IHDR.expectedLength)
+        
+        payload.append(width.fourBytesData)
+        payload.append(height.fourBytesData)
+        payload.append(bitDepth)
+        payload.append(colorType.rawValue)
+        payload.append(compression)
+        payload.append(filterMethod)
+        payload.append(interlaceMethod)
+        
+        data.append(payload)
+        data.append(contentsOf: Self.generateCRC(payload: payload.bytes))
+        return data
+    }
+    
+    var bitDepthPerComponent: Int {
+        // The sample depth is the same as the bit depth except in the case of
+        // indexed-colour PNG images (colour type 3), in which the sample depth is always 8 bits.
+        Int(colorType == .indexedColor ? 8 : bitDepth)
+    }
+    
+    var bitsPerPixel: UInt32 {
+        UInt32(colorType.componentsPerPixel * bitDepthPerComponent)
+    }
+    
+    var bytesPerPixel: UInt32 {
+        bitsPerPixel / 8
+    }
+    
+    var bytesPerRow: Int {
+        width * Int(bytesPerPixel)
     }
 }
 
@@ -79,6 +150,10 @@ struct IDAT: DataChunk {
     
     init(offset: UInt64, length: Int) {
         self.dataPresentation = .position(offset: offset, length: length)
+    }
+    
+    static func encode(data: Data) -> Data {
+        data.count.fourBytesData + Self.nameBytes + data + Self.generateCRC(payload: data.bytes)
     }
 }
 
@@ -180,5 +255,3 @@ struct fdAT: DataChunk {
         self.dataPresentation = .position(offset: offset, length: length)
     }
 }
-
-let pngSignature: [Byte] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]

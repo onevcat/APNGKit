@@ -28,6 +28,20 @@ extension Data {
     }
 }
 
+extension Int {
+    var fourBytesData: Data {
+        withUnsafeBytes(of: UInt32(self).bigEndian) {
+            Data($0)
+        }
+    }
+    
+    var byte: Data {
+        withUnsafeBytes(of: UInt8(self)) {
+            Data($0)
+        }
+    }
+}
+
 extension Comparable {
     func clamped(to limits: ClosedRange<Self>) -> Self {
         return min(max(self, limits.lowerBound), limits.upperBound)

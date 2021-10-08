@@ -50,4 +50,20 @@ class APNGDecoderTests: XCTestCase {
         
         print(decoder.frames[0]!.data[0].dataPresentation)
     }
+    
+    func testDecoderSetupTrivialImage025() throws {
+        let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(12))
+        XCTAssertEqual(decoder.imageHeader.width, 128)
+        XCTAssertEqual(decoder.imageHeader.height, 64)
+        
+        XCTAssertEqual(decoder.animationControl.numberOfFrames, 4)
+        XCTAssertEqual(decoder.animationControl.numberOfPlays, 0)
+        
+        XCTAssertFalse(decoder.defaultImageChunks.isEmpty)
+        XCTAssertEqual(decoder.frames.count, 4)
+        XCTAssertEqual(decoder.frames[0]!.frameControl.width, 128)
+        XCTAssertEqual(decoder.frames[0]!.data.count, 1)
+        
+        print(decoder.frames[0]!.data[0].dataPresentation)
+    }
 }

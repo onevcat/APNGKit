@@ -26,12 +26,12 @@ class ChunkTests: XCTestCase {
         XCTAssertEqual(idhr.width, 506)
         XCTAssertEqual(idhr.height, 258)
         XCTAssertEqual(idhr.bitDepth, 8)
-        XCTAssertEqual(idhr.colorType, 6)
+        XCTAssertEqual(idhr.colorType.rawValue, 6)
         XCTAssertEqual(idhr.compression, 0)
         XCTAssertEqual(idhr.filterMethod, 0)
         XCTAssertEqual(idhr.interlaceMethod, 0)
         
-        try idhr.verifyCRC(chunkData: data, checksum: Data(crc))
+        try idhr.verifyCRC(payload: data, checksum: Data(crc))
     }
     
     func testWrongCRC() throws {
@@ -46,7 +46,7 @@ class ChunkTests: XCTestCase {
         
         let data = Data(bytes)
         let idhr = try IHDR(data: data)
-        XCTAssertThrowsError(try idhr.verifyCRC(chunkData: data, checksum: Data(crc)), "Invalid checksum should throw.") { error in
+        XCTAssertThrowsError(try idhr.verifyCRC(payload: data, checksum: Data(crc)), "Invalid checksum should throw.") { error in
             guard case .decoderError(.invalidChecksum) = error as? APNGKitError else {
                 XCTFail("Wrong error type")
                 return
@@ -68,7 +68,7 @@ class ChunkTests: XCTestCase {
         XCTAssertEqual(acTL.numberOfFrames, 4)
         XCTAssertEqual(acTL.numberOfPlays, 0)
         
-        try acTL.verifyCRC(chunkData: data, checksum: Data(crc))
+        try acTL.verifyCRC(payload: data, checksum: Data(crc))
     }
     
     func testFCTLChunk() throws {
@@ -97,6 +97,6 @@ class ChunkTests: XCTestCase {
         XCTAssertEqual(fcTL.disposeOp, .none)
         XCTAssertEqual(fcTL.blendOp, .over)
         
-        try fcTL.verifyCRC(chunkData: data, checksum: Data(crc))
+        try fcTL.verifyCRC(payload: data, checksum: Data(crc))
     }
 }

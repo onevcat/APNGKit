@@ -128,34 +128,6 @@ class FileReader: Reader {
     }
 }
 
-struct ChunkResult<T: Chunk> {
-    let chunk: T
-    let fullData: Data
-}
-
-struct UntilChunkResult<T: Chunk> {
-    let chunk: T
-    let fullData: Data
-    let offsetBeforeThunk: UInt64
-    let dataBeforeThunk: Data
-}
-
-enum Either<Left, Right> {
-    case left(Left)
-    case right(Right)
-}
-
-struct GeneralChunk {
-    let lengthData: Data
-    let nameData: Data
-    let payload: Data
-    let crc: Data
-    
-    var fullData: Data {
-        lengthData + nameData + payload + crc
-    }
-}
-
 extension Reader {
     /// Reads some bytes and try to convert then to an Int value
     func readToInt(upToCount: Int) throws -> Int? {
@@ -164,16 +136,18 @@ extension Reader {
     
     /// Reads the following chunk as a certain type. An error throws if the following data is not a valid chunk or is
     /// not a chunk of desired type.
-    func readChunk<T: Chunk>(type: T.Type) throws -> ChunkResult<T> {
+    func readChunk<T: Chunk>(type: T.Type, skipChecksumVerify: Bool = false) throws -> ChunkResult<T> {
         let chunkData = try readGeneralChunk(type: T.self)
         let chunk = try T.init(data: chunkData.payload)
-        try chunk.verifyCRC(chunkData: chunkData.payload, checksum: chunkData.crc)
+        if !skipChecksumVerify {
+            try chunk.verifyCRC(payload: chunkData.payload, checksum: chunkData.crc)
+        }
         return ChunkResult(chunk: chunk, fullData: chunkData.fullData)
     }
     
     /// Reads the following chunks until encountering the target type. Then read the target type chunk.
-    func readUntil<T: Chunk>(type: T.Type) throws -> UntilChunkResult<T> {
-        try readUntil(type: type, alreadyRead: .init())
+    func readUntil<T: Chunk>(type: T.Type, skipChecksumVerify: Bool = false) throws -> UntilChunkResult<T> {
+        try readUntil(type: type, alreadyRead: .init(), skipChecksumVerify: skipChecksumVerify)
     }
     
     private func readLengthData() throws -> Data {
@@ -236,7 +210,7 @@ extension Reader {
         )
     }
     
-    private func readUntil<T: Chunk>(type: T.Type, alreadyRead: Data) throws -> UntilChunkResult<T> {
+    private func readUntil<T: Chunk>(type: T.Type, alreadyRead: Data, skipChecksumVerify: Bool) throws -> UntilChunkResult<T> {
         let starting = try offset()
         
         let chunkData = try readGeneralChunk()
@@ -244,7 +218,9 @@ extension Reader {
         // Found target.
         if chunkData.nameData.bytes == T.nameBytes {
             let chunk = try T.init(data: chunkData.payload)
-            try chunk.verifyCRC(chunkData: chunkData.payload, checksum: chunkData.crc)
+            if !skipChecksumVerify {
+                try chunk.verifyCRC(payload: chunkData.payload, checksum: chunkData.crc)
+            }
             return UntilChunkResult(
                 chunk: chunk,
                 fullData: chunkData.fullData,
@@ -252,7 +228,7 @@ extension Reader {
                 dataBeforeThunk: alreadyRead)
         } else {
             let nextAlreadyRead = alreadyRead + chunkData.fullData
-            return try readUntil(type: T.self, alreadyRead: nextAlreadyRead)
+            return try readUntil(type: T.self, alreadyRead: nextAlreadyRead, skipChecksumVerify: skipChecksumVerify)
         }
     }
     
@@ -268,24 +244,24 @@ extension Reader {
             case .read(let T, let skipChecksumVerify):
                 let payload = try readData(length)
                 let crc = try readCRC()
-                
+                // The position is important. We need to read necessary data (move the pointer to correct location) before return.
                 guard let C = T else { return .none }
                 let chunk = try C.init(data: payload)
                 if !skipChecksumVerify {
-                    try chunk.verifyCRC(chunkData: payload, checksum: crc)
+                    try chunk.verifyCRC(payload: payload, checksum: crc)
                 }
                 return .chunk(chunk, payload)
                 
             case .readIndexedIDAT(let skipChecksumVerify):
                 let dataStart = try offset()
-                let payload = try readData(length)
+                let imageData = try readData(length)
                 let crc = try readCRC()
                 // Use `offset, length` version to prevent hold raw frame data.
                 let chunk = IDAT(offset: dataStart, length: info.length)
                 if !skipChecksumVerify {
-                    try chunk.verifyCRC(chunkData: payload, checksum: crc)
+                    try chunk.verifyCRC(payload: imageData, checksum: crc)
                 }
-                return .chunk(chunk, payload)
+                return .chunk(chunk, imageData)
                 
             case .readIndexedfdAT(let skipChecksumVerify):
                 let dataLength = length - 4
@@ -294,14 +270,14 @@ extension Reader {
                 }
                 
                 let dataStart = try offset()
-                let payload = try readData(dataLength)
+                let frameData = try readData(dataLength)
                 let crc = try readCRC()
                 // Use `offset, length` version to prevent hold raw frame data.
                 let chunk = fdAT(sequenceNumber: sequenceNumber, offset: dataStart, length: dataLength)
                 if !skipChecksumVerify {
-                    try chunk.verifyCRC(chunkData: sequenceNumber + payload, checksum: crc)
+                    try chunk.verifyCRC(payload: sequenceNumber + frameData, checksum: crc)
                 }
-                return .chunk(chunk, payload)
+                return .chunk(chunk, frameData)
                 
             case .reset:
                 try seek(toOffset: starting)
@@ -311,9 +287,36 @@ extension Reader {
     }
 }
 
+struct ChunkResult<T: Chunk> {
+    let chunk: T
+    let fullData: Data
+}
+
+struct UntilChunkResult<T: Chunk> {
+    let chunk: T
+    let fullData: Data
+    let offsetBeforeThunk: UInt64
+    let dataBeforeThunk: Data
+}
+
+struct GeneralChunk {
+    let lengthData: Data
+    let nameData: Data
+    let payload: Data
+    let crc: Data
+    
+    var fullData: Data {
+        lengthData + nameData + payload + crc
+    }
+}
+
 struct ChunkPeekInfo {
     let name: Data
     let length: Int
+}
+
+extension Reader {
+    typealias ChunkPeekHandler = (PeekAction) throws -> ChunkReadResult
 }
 
 enum PeekAction {
@@ -351,8 +354,4 @@ enum ChunkReadResult {
         case .none: fatalError()
         }
     }
-}
-
-extension Reader {
-    typealias ChunkPeekHandler = (PeekAction) throws -> ChunkReadResult
 }

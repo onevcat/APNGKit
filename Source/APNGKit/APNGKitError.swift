@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ImageIO
 
 public enum APNGKitError: Error {
     case decoderError(DecoderError)
@@ -23,6 +24,9 @@ extension APNGKitError {
         case wrongSequenceNumber(expected: Int, got: Int)
         case imageDataNotFound
         case frameDataNotFound(expectedSequence: Int)
+        case invalidFrameImageData(data: Data, frameIndex: Int)
+        case frameImageCreatingFailed(source: CGImageSource, frameIndex: Int)
+        case outputImageCreatingFailed(frameIndex: Int)
     }
 }
 
