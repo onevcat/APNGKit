@@ -70,5 +70,56 @@ class APNGDecoderTests: XCTestCase {
         XCTAssertNotNil(decoder.output)
         let frame0 = try decoder.output!.get()
         XCTAssertEqual(frame0.height, 64)
+        XCTAssertEqual(decoder.currentIndex, 0)
+        
+        let frame1 = try decoder.renderNextAndGetResult()
+        XCTAssertEqual(frame1.height, 64)
+        XCTAssertEqual(decoder.currentIndex, 1)
+        
+        let frame2 = try decoder.renderNextAndGetResult()
+        XCTAssertEqual(frame2.height, 64)
+        XCTAssertEqual(decoder.currentIndex, 2)
+        
+        let frame3 = try decoder.renderNextAndGetResult()
+        XCTAssertEqual(frame3.height, 64)
+        XCTAssertEqual(decoder.currentIndex, 3)
+        
+        let frame0_ = try decoder.renderNextAndGetResult()
+        XCTAssertEqual(frame0_.height, 64)
+        XCTAssertEqual(decoder.currentIndex, 0)
+    }
+    
+    func testDecoderRenderAsync() throws {
+        
+        let expectation = expectation(description: "wait")
+        
+        let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25))
+        XCTAssertNotNil(decoder.output)
+        let frame0 = try decoder.output!.get()
+        XCTAssertEqual(frame0.height, 64)
+        XCTAssertEqual(decoder.currentIndex, 0)
+        
+        decoder.renderNext()
+        XCTAssertEqual(decoder.currentIndex, 0)
+        
+        Timer.scheduledTimer(withTimeInterval: 0.0001, repeats: true) { timer in
+            if decoder.output == nil {
+                XCTAssertEqual(decoder.currentIndex, 0)
+            } else {
+                let image = try? decoder.output?.get()
+                XCTAssertNotNil(image)
+                XCTAssertEqual(decoder.currentIndex, 1)
+                timer.invalidate()
+                expectation.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 1.0, handler: nil)
+    }
+}
+
+extension APNGDecoder {
+    func renderNextAndGetResult() throws -> CGImage {
+        try renderNextSync()
+        return try output!.get()
     }
 }

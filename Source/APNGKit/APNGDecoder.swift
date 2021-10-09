@@ -37,26 +37,16 @@ class APNGDecoder {
     // The data chunks shared by all frames: after IHDR and before the actual IDAT or fdAT chunk.
     // Use this to revert to a valid PNG for creating a CG data provider.
     private var sharedData: Data!
-    
     private var outputBuffer: CGContext!
-    
-    enum DecodingBehavior {
-        case streaming
-        case all
-    }
-    
     private let reader: Reader
-    private let decodingBehavior: DecodingBehavior
     
-    init(data: Data, behavior: DecodingBehavior = .streaming) throws {
+    init(data: Data) throws {
         self.reader = DataReader(data: data)
-        self.decodingBehavior = behavior
         try setup()
     }
     
-    init(fileURL: URL, behavior: DecodingBehavior = .streaming) throws {
+    init(fileURL: URL) throws {
         self.reader = try FileReader(url: fileURL)
-        self.decodingBehavior = behavior
         try setup()
     }
     
@@ -109,53 +99,57 @@ class APNGDecoder {
             _ = try reader.readChunk(type: IEND.self)
         }
     }
-    
-    // The result will be rendered to `output`.
-    func renderNext(sync: Bool = false) {
-        output = nil // This method is expected to be called on main thread.
-        if sync {
-            do {
-                self.output = .success(try renderNextImpl())
-            } catch {
-                self.output = .failure(error as? APNGKitError ?? .internalError(error))
-            }
-        } else {
-            renderingQueue.async {
-                do {
-                    let image = try self.renderNextImpl()
-                    DispatchQueue.main.async {
-                        self.output = .success(image)
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        self.output = .failure(error as? APNGKitError ?? .internalError(error))
-                    }
-                }
-            }
-        }
-    }
-    
-    private func renderNextImpl() throws -> CGImage {
+
+    private func renderNextImpl() throws -> (CGImage, Int) {
         let image: CGImage
-        currentIndex += 1
+        var newIndex = currentIndex + 1
         if firstPass {
             let (frame, data) = try loadFrame()
-            frames[currentIndex] = frame
+            frames[newIndex] = frame
             
-            image = try render(frame: frame, data: data, index: currentIndex)
+            image = try render(frame: frame, data: data, index: newIndex)
             if !firstPass {
                 _ = try reader.readChunk(type: IEND.self)
             }
         } else {
-            if currentIndex == frames.count {
-                currentIndex = 0
+            if newIndex == frames.count {
+                newIndex = 0
             }
             // It is not the first pass. All frames info should be already decoded and stored in `frames`.
             image = try renderFrame(frame: frames[currentIndex]!, index: currentIndex)
         }
-        return image
+        return (image, newIndex)
     }
     
+    func renderNextSync() throws {
+        output = nil
+        do {
+            let (image, index) = try renderNextImpl()
+            self.output = .success(image)
+            self.currentIndex = index
+        } catch {
+            self.output = .failure(error as? APNGKitError ?? .internalError(error))
+        }
+    }
+    
+    // The result will be rendered to `output`.
+    func renderNext() {
+        output = nil // This method is expected to be called on main thread.
+        renderingQueue.async {
+            do {
+                let (image, index) = try self.renderNextImpl()
+                DispatchQueue.main.async {
+                    self.output = .success(image)
+                    self.currentIndex = index
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.output = .failure(error as? APNGKitError ?? .internalError(error))
+                }
+            }
+        }
+    }
+
     private func render(frame: APNGFrame, data: Data, index: Int) throws -> CGImage {
         if index == 0 {
             // Reset for the first frame
@@ -216,7 +210,7 @@ class APNGDecoder {
         return nextOutputImage
     }
     
-    func renderFrame(frame: APNGFrame, index: Int) throws -> CGImage {
+    private func renderFrame(frame: APNGFrame, index: Int) throws -> CGImage {
         guard !firstPass else {
             preconditionFailure("renderFrame cannot work until all frames are loaded.")
         }
