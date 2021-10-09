@@ -13,6 +13,12 @@ import UIKit
 
 // Decodes an APNG to necessary information.
 class APNGDecoder {
+    
+    var output: Result<CGImage, APNGKitError>?
+    var currentIndex: Int = 0
+    
+    private let renderingQueue = DispatchQueue(label: "com.onevcat.apngkit.renderingQueue", qos: .userInteractive)
+    
     private(set) var imageHeader: IHDR!
     private(set) var animationControl: acTL!
     private(set) var frames: [APNGFrame?] = []
@@ -83,29 +89,7 @@ class APNGDecoder {
         let firstFrame: APNGFrame
         
         (firstFrame, firstFrameData, defaultImageChunks) = try loadFirstFrameAndDefaultImage()
-        self.frames[0] = firstFrame
-        
-//
-//        let uiimage = UIImage(cgImage: image)
-//        print(uiimage)
-//
-//        while currentFrameIndex < animationControl.numberOfFrames {
-//            // try to read next.
-//            let nextFrame = try loadFrame()
-//
-//            self.frames[currentFrameIndex] = nextFrame.0
-//            currentFrameIndex += 1
-//
-//            print(nextFrame)
-//            print("Loaded: \(loadedFrameCount)")
-//
-//            let d = try generateImageData(frameControl: nextFrame.0.frameControl, data: nextFrame.1)
-//            let source = CGImageSourceCreateWithData(d as CFData, nil)!
-//
-//            let image = CGImageSourceCreateImageAtIndex(source, 0, nil)!
-//            let iii = UIImage(cgImage: image)
-//            print(iii)
-//        }
+        self.frames[currentIndex] = firstFrame
 
         outputBuffer = CGContext(
             data: nil,
@@ -117,29 +101,62 @@ class APNGDecoder {
             bitmapInfo: imageHeader.bitmapInfo.rawValue
         )
         
-        let cgImage = try render(frame: firstFrame, data: firstFrameData, index: 0)
-        let i = UIImage(cgImage: cgImage)
-        
-        print(i)
-        
-        
-        while loadedFrameCount != frames.count {
-            let loaded = loadedFrameCount
-            let (frame, data) = try loadFrame()
-            self.frames[loaded] = frame
-            
-            let cgImage = try render(frame: frame, data: data, index: loaded)
-            let image = UIImage(cgImage: cgImage)
-            print(image)
+        // Render the first frame.
+        // It is safe to set it here since this `setup()` method will be only called in init, before any chance to
+        // make another call like `renderNext` to modify `output` at the same time.
+        output = .success(try render(frame: firstFrame, data: firstFrameData, index: currentIndex))
+        if !firstPass { // Animation with only one frame,check IEND.
+            _ = try reader.readChunk(type: IEND.self)
         }
-        
-        // try to read end.
-        let c = try reader.readChunk(type: IEND.self)
-        print(c)
     }
     
-    // Render next.
-    func render(frame: APNGFrame, data: Data, index: Int) throws -> CGImage {
+    // The result will be rendered to `output`.
+    func renderNext(sync: Bool = false) {
+        output = nil // This method is expected to be called on main thread.
+        if sync {
+            do {
+                self.output = .success(try renderNextImpl())
+            } catch {
+                self.output = .failure(error as? APNGKitError ?? .internalError(error))
+            }
+        } else {
+            renderingQueue.async {
+                do {
+                    let image = try self.renderNextImpl()
+                    DispatchQueue.main.async {
+                        self.output = .success(image)
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        self.output = .failure(error as? APNGKitError ?? .internalError(error))
+                    }
+                }
+            }
+        }
+    }
+    
+    private func renderNextImpl() throws -> CGImage {
+        let image: CGImage
+        currentIndex += 1
+        if firstPass {
+            let (frame, data) = try loadFrame()
+            frames[currentIndex] = frame
+            
+            image = try render(frame: frame, data: data, index: currentIndex)
+            if !firstPass {
+                _ = try reader.readChunk(type: IEND.self)
+            }
+        } else {
+            if currentIndex == frames.count {
+                currentIndex = 0
+            }
+            // It is not the first pass. All frames info should be already decoded and stored in `frames`.
+            image = try renderFrame(frame: frames[currentIndex]!, index: currentIndex)
+        }
+        return image
+    }
+    
+    private func render(frame: APNGFrame, data: Data, index: Int) throws -> CGImage {
         if index == 0 {
             // Reset for the first frame
             currentFrame = nil
@@ -170,8 +187,10 @@ class APNGDecoder {
                 outputBuffer.clear(currentRegion)
             case .previous:
                 if let previousOutputImage = previousOutputImage {
-                    outputBuffer.draw(previousOutputImage, in: currentRegion)
-                } else { // Current Frame is the first frame. `.previous` should be treated as `.background`
+                    outputBuffer.clear(canvasFullRect)
+                    outputBuffer.draw(previousOutputImage, in: canvasFullRect)
+                } else {
+                    // Current Frame is the first frame. `.previous` should be treated as `.background`
                     outputBuffer.clear(currentRegion)
                 }
             }
@@ -180,6 +199,7 @@ class APNGDecoder {
         // Blend & Draw
         switch frame.frameControl.blendOp {
         case .source:
+            outputBuffer.clear(frame.normalizedRect(fullHeight: imageHeader.height))
             outputBuffer.draw(nextFrameImage, in: frame.normalizedRect(fullHeight: imageHeader.height))
         case .over:
             // Temp
@@ -197,7 +217,7 @@ class APNGDecoder {
     }
     
     func renderFrame(frame: APNGFrame, index: Int) throws -> CGImage {
-        guard loadedFrameCount == frames.count else {
+        guard !firstPass else {
             preconditionFailure("renderFrame cannot work until all frames are loaded.")
         }
         
@@ -207,6 +227,10 @@ class APNGDecoder {
     
     private var loadedFrameCount: Int {
         frames.firstIndex { $0 == nil } ?? frames.count
+    }
+    
+    private var firstPass: Bool {
+        loadedFrameCount < frames.count
     }
     
     private func loadFirstFrameAndDefaultImage() throws -> (APNGFrame, Data, [IDAT]) {

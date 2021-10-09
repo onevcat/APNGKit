@@ -10,7 +10,8 @@ let package = Package(
     targets: [
         .target(name: "APNGKit"),
         .testTarget(name: "APNGKitTests", dependencies: ["APNGKit"], resources: [
-            .copy("Resources/SpecTesting")
+            .copy("Resources/SpecTesting"),
+            .copy("Resources/General")
         ])
     ]
 )

@@ -10,6 +10,8 @@ import ImageIO
 
 public enum APNGKitError: Error {
     case decoderError(DecoderError)
+    
+    case internalError(Error)
 }
 
 extension APNGKitError {

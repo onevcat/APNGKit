@@ -52,7 +52,7 @@ class APNGDecoderTests: XCTestCase {
     }
     
     func testDecoderSetupTrivialImage025() throws {
-        let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(12))
+        let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25))
         XCTAssertEqual(decoder.imageHeader.width, 128)
         XCTAssertEqual(decoder.imageHeader.height, 64)
         
@@ -63,7 +63,12 @@ class APNGDecoderTests: XCTestCase {
         XCTAssertEqual(decoder.frames.count, 4)
         XCTAssertEqual(decoder.frames[0]!.frameControl.width, 128)
         XCTAssertEqual(decoder.frames[0]!.data.count, 1)
-        
-        print(decoder.frames[0]!.data[0].dataPresentation)
+    }
+    
+    func testDecoderRenderCorrectFrames() throws {
+        let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25))
+        XCTAssertNotNil(decoder.output)
+        let frame0 = try decoder.output!.get()
+        XCTAssertEqual(frame0.height, 64)
     }
 }
