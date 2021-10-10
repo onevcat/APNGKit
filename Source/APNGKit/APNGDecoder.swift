@@ -9,7 +9,6 @@ import Foundation
 import Accelerate
 import ImageIO
 import zlib
-import UIKit
 
 // Decodes an APNG to necessary information.
 class APNGDecoder {

@@ -74,7 +74,7 @@ class FileReader: Reader {
             return nil
         }
         
-        if #available(iOS 13.4, *) {
+        if #available(iOS 13.4, tvOS 13.4, macOS 10.15.4, *) {
             do {
                 return try handle.read(upToCount: upToCount)
             } catch {
@@ -86,7 +86,7 @@ class FileReader: Reader {
     }
     
     func seek(toOffset: UInt64) throws {
-        if #available(iOS 13.4, *) {
+        if #available(iOS 13.4, tvOS 13.4, macOS 10.15.4, *) {
             do {
                 try handle.seek(toOffset: UInt64(toOffset))
             } catch {
@@ -98,7 +98,7 @@ class FileReader: Reader {
     }
     
     func offset() throws -> UInt64 {
-        if #available(iOS 13.4, *) {
+        if #available(iOS 13.4, tvOS 13.4, macOS 10.15.4, *) {
             do {
                 return try handle.offset()
             } catch {
@@ -111,7 +111,7 @@ class FileReader: Reader {
     
     private var isFilePointerAtEnd: Bool {
         do {
-            if #available(iOS 13.4, *) {
+            if #available(iOS 13.4, tvOS 13.4, macOS 10.15.4, *) {
                 let currentOffset = try handle.offset()
                 let endOffset = handle.seekToEndOfFile()
                 try handle.seek(toOffset: currentOffset)

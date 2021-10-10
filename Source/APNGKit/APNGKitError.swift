@@ -10,6 +10,7 @@ import ImageIO
 
 public enum APNGKitError: Error {
     case decoderError(DecoderError)
+    case imageError(ImageError)
     
     case internalError(Error)
 }
@@ -29,6 +30,10 @@ extension APNGKitError {
         case invalidFrameImageData(data: Data, frameIndex: Int)
         case frameImageCreatingFailed(source: CGImageSource, frameIndex: Int)
         case outputImageCreatingFailed(frameIndex: Int)
+    }
+    
+    public enum ImageError {
+        case resourceNotFound(name: String, bundle: Bundle)
     }
 }
 
