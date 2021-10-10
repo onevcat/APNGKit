@@ -115,7 +115,7 @@ class APNGDecoder {
                 newIndex = 0
             }
             // It is not the first pass. All frames info should be already decoded and stored in `frames`.
-            image = try renderFrame(frame: frames[currentIndex]!, index: currentIndex)
+            image = try renderFrame(frame: frames[newIndex]!, index: newIndex)
         }
         return (image, newIndex)
     }
@@ -222,7 +222,7 @@ class APNGDecoder {
         frames.firstIndex { $0 == nil } ?? frames.count
     }
     
-    private var firstPass: Bool {
+    var firstPass: Bool {
         loadedFrameCount < frames.count
     }
     

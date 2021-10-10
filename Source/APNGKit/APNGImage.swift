@@ -4,9 +4,13 @@ import CoreGraphics
 
 public class APNGImage {
     
-    private let decoder: APNGDecoder
-    public let scale: CGFloat
+    public enum Duration {
+        case loadedPartial(TimeInterval)
+        case full(TimeInterval)
+    }
     
+    let decoder: APNGDecoder
+    public let scale: CGFloat
     public var size: CGSize {
         .init(
             width:  CGFloat(decoder.imageHeader.width)  / scale,
@@ -14,11 +18,22 @@ public class APNGImage {
         )
     }
     
-    public convenience init(named name: String) throws {
-        try self.init(named: name, in: nil)
+    public var duration: Duration {
+        // If loading with a streaming way, there is no way to know the duration before the first loading pass finishes.
+        // In this case, before the first pass is done, a partial duration of the currently loaded frames will be
+        // returned.
+        //
+        // If you need to know the full duration before the first pass, use `DecodingOptions.fullFirstPass` to
+        // initialize the image object.
+        let knownDuration = decoder.frames.reduce(0.0) { $0 + ($1?.frameControl.duration ?? 0) }
+        return decoder.firstPass ? .loadedPartial(knownDuration) : .full(knownDuration)
     }
     
-    public init(named name: String, in bundle: Bundle?) throws {
+    public convenience init(named name: String) throws {
+        try self.init(named: name, in: nil, subdirectory: nil)
+    }
+    
+    public init(named name: String, in bundle: Bundle?, subdirectory subpath: String? = nil) throws {
 
         let fileName: String
         
@@ -49,7 +64,9 @@ public class APNGImage {
         
         for nameAndScale in guessingFromName {
             for ext in guessingExtension {
-                if let url = targetBundle.url(forResource: nameAndScale.name, withExtension: ext) {
+                if let url = targetBundle.url(
+                    forResource: nameAndScale.name, withExtension: ext, subdirectory: subpath
+                ) {
                     resource = (url, nameAndScale.scale)
                     break
                 }

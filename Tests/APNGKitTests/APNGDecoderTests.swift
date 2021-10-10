@@ -31,8 +31,6 @@ class APNGDecoderTests: XCTestCase {
         XCTAssertEqual(decoder.frames.count, 1)
         XCTAssertEqual(decoder.frames[0]!.frameControl.width, 128)
         XCTAssertEqual(decoder.frames[0]!.data.count, 1)
-        
-        print(decoder.frames[0]!.data[0].dataPresentation)
     }
     
     func testDecoderSetupTrivialImage002() throws {

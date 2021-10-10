@@ -43,7 +43,7 @@ class DataReader: Reader {
             return nil
         }
         defer { cursor = upper }
-        return data[cursor ..< upper]
+        return Data(data[cursor ..< upper])
     }
     
     func seek(toOffset: UInt64) throws {
