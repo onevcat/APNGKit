@@ -30,6 +30,7 @@ extension APNGKitError {
         case invalidFrameImageData(data: Data, frameIndex: Int)
         case frameImageCreatingFailed(source: CGImageSource, frameIndex: Int)
         case outputImageCreatingFailed(frameIndex: Int)
+        case canvasCreatingFailed
     }
     
     public enum ImageError {

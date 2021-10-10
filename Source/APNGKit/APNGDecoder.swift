@@ -13,14 +13,18 @@ import zlib
 // Decodes an APNG to necessary information.
 class APNGDecoder {
     
+    // Only valid on main thread.
     var output: Result<CGImage, APNGKitError>?
+    // Only valid on main thread.
     var currentIndex: Int = 0
+    
+    let imageHeader: IHDR
+    let animationControl: acTL
     
     private let renderingQueue = DispatchQueue(label: "com.onevcat.apngkit.renderingQueue", qos: .userInteractive)
     
-    private(set) var imageHeader: IHDR!
-    private(set) var animationControl: acTL!
     private(set) var frames: [APNGFrame?] = []
+    
     private(set) var defaultImageChunks: [IDAT]!
     
     private var expectedSequenceNumber = 0
@@ -28,29 +32,30 @@ class APNGDecoder {
     private var currentOutputImage: CGImage?
     private var previousOutputImage: CGImage?
     
-    private var currentFrame: APNGFrame?
-    
     private var canvasFullSize: CGSize { .init(width: imageHeader.width, height: imageHeader.height) }
     private var canvasFullRect: CGRect { .init(origin: .zero, size: canvasFullSize) }
     
     // The data chunks shared by all frames: after IHDR and before the actual IDAT or fdAT chunk.
     // Use this to revert to a valid PNG for creating a CG data provider.
-    private var sharedData: Data!
-    private var outputBuffer: CGContext!
+    private let sharedData: Data
+    private let outputBuffer: CGContext
     private let reader: Reader
     
-    init(data: Data) throws {
-        self.reader = DataReader(data: data)
-        try setup()
+    convenience init(data: Data) throws {
+        let reader = DataReader(data: data)
+        try self.init(reader: reader)
     }
     
-    init(fileURL: URL) throws {
-        self.reader = try FileReader(url: fileURL)
-        try setup()
+    convenience init(fileURL: URL) throws {
+        let reader = try FileReader(url: fileURL)
+        try self.init(reader: reader)
     }
     
-    // Decode and load the common part and at least make the first frame prepared.
-    private func setup() throws {
+    private init(reader: Reader) throws {
+    
+        self.reader = reader
+        
+        // Decode and load the common part and at least make the first frame prepared.
         guard let signature = try reader.read(upToCount: 8),
               signature.bytes == Self.pngSignature
         else {
@@ -74,13 +79,7 @@ class APNGDecoder {
         sharedData = acTLResult.dataBeforeThunk
         animationControl = acTLResult.chunk
         
-        var firstFrameData: Data
-        let firstFrame: APNGFrame
-        
-        (firstFrame, firstFrameData, defaultImageChunks) = try loadFirstFrameAndDefaultImage()
-        self.frames[currentIndex] = firstFrame
-
-        outputBuffer = CGContext(
+        guard let outputBuffer = CGContext(
             data: nil,
             width: imageHeader.width,
             height: imageHeader.height,
@@ -88,7 +87,16 @@ class APNGDecoder {
             bytesPerRow: imageHeader.bytesPerRow,
             space: imageHeader.colorSpace,
             bitmapInfo: imageHeader.bitmapInfo.rawValue
-        )
+        ) else {
+            throw APNGKitError.decoderError(.canvasCreatingFailed)
+        }
+        self.outputBuffer = outputBuffer
+        
+        // Decode the first frame, so the image view has the initial image to show from the very beginning.
+        var firstFrameData: Data
+        let firstFrame: APNGFrame
+        (firstFrame, firstFrameData, defaultImageChunks) = try loadFirstFrameAndDefaultImage()
+        self.frames[currentIndex] = firstFrame
         
         // Render the first frame.
         // It is safe to set it here since this `setup()` method will be only called in init, before any chance to
@@ -152,7 +160,6 @@ class APNGDecoder {
     private func render(frame: APNGFrame, data: Data, index: Int) throws -> CGImage {
         if index == 0 {
             // Reset for the first frame
-            currentFrame = nil
             previousOutputImage = nil
             currentOutputImage = nil
         }
@@ -168,10 +175,10 @@ class APNGDecoder {
         }
         
         // Dispose
-        if currentFrame == nil { // Next frame (rendering frame) is the first frame
+        if index == 0 { // Next frame (rendering frame) is the first frame
             outputBuffer.clear(canvasFullRect)
         } else {
-            let currentFrame = currentFrame!
+            let currentFrame = frames[index - 1]!
             let currentRegion = currentFrame.normalizedRect(fullHeight: imageHeader.height)
             switch currentFrame.frameControl.disposeOp {
             case .none:
@@ -203,7 +210,6 @@ class APNGDecoder {
             throw APNGKitError.decoderError(.outputImageCreatingFailed(frameIndex: index))
         }
         
-        currentFrame = frame
         previousOutputImage = currentOutputImage
         currentOutputImage = nextOutputImage
         return nextOutputImage
