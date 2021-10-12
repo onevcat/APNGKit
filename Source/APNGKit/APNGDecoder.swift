@@ -13,6 +13,11 @@ import zlib
 // Decodes an APNG to necessary information.
 class APNGDecoder {
     
+    struct ResetStatus {
+        let offset: UInt64
+        let expectedSequenceNumber: Int
+    }
+    
     // Only valid on main thread.
     var output: Result<CGImage, APNGKitError>?
     // Only valid on main thread.
@@ -40,6 +45,8 @@ class APNGDecoder {
     private let sharedData: Data
     private let outputBuffer: CGContext
     private let reader: Reader
+    
+    private var resetStatus: ResetStatus!
     
     convenience init(data: Data) throws {
         let reader = DataReader(data: data)
@@ -102,9 +109,35 @@ class APNGDecoder {
         // It is safe to set it here since this `setup()` method will be only called in init, before any chance to
         // make another call like `renderNext` to modify `output` at the same time.
         output = .success(try render(frame: firstFrame, data: firstFrameData, index: currentIndex))
+        
+        // Store the current reader offset. If later we need to reset the image loading state, we can start from here
+        // to make the whole image back to the state of just initialized.
+        resetStatus = ResetStatus(offset: try reader.offset(), expectedSequenceNumber: expectedSequenceNumber)
+        
         if !firstPass { // Animation with only one frame,check IEND.
             _ = try reader.readChunk(type: IEND.self)
         }
+    }
+    
+    func reset() throws {
+        if currentIndex == 0 {
+            // It is under the initial state. No need to reset.
+            return
+        }
+        
+        var firstFrame: APNGFrame? = nil
+        var firstFrameData: Data? = nil
+        
+        try renderingQueue.sync {
+            firstFrame = frames[0]
+            firstFrameData = try firstFrame?.loadData(with: reader)
+            try reader.seek(toOffset: resetStatus.offset)
+            expectedSequenceNumber = resetStatus.expectedSequenceNumber
+        }
+        
+        currentIndex = 0
+        output = .success(try render(frame: firstFrame!, data: firstFrameData!, index: 0))
+        
     }
 
     private func renderNextImpl() throws -> (CGImage, Int) {

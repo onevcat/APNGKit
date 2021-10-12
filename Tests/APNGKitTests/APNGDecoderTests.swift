@@ -30,6 +30,13 @@ class APNGDecoderTests: XCTestCase {
         XCTAssertFalse(decoder.defaultImageChunks.isEmpty)
         XCTAssertEqual(decoder.frames.count, 1)
         XCTAssertEqual(decoder.frames[0]!.frameControl.width, 128)
+        XCTAssertEqual(decoder.frames[0]!.frameControl.height, 64)
+        XCTAssertEqual(decoder.frames[0]!.frameControl.delayDenominator, 100)
+        XCTAssertEqual(decoder.frames[0]!.frameControl.delayNumerator, 100)
+        XCTAssertEqual(decoder.frames[0]!.frameControl.duration, 1.0, accuracy: 0.01)
+        XCTAssertEqual(decoder.frames[0]!.frameControl.blendOp, .over)
+        XCTAssertEqual(decoder.frames[0]!.frameControl.disposeOp, .none)
+                        
         XCTAssertEqual(decoder.frames[0]!.data.count, 1)
     }
     
@@ -110,6 +117,97 @@ class APNGDecoderTests: XCTestCase {
             }
         }
         waitForExpectations(timeout: 1.0, handler: nil)
+    }
+    
+    func testDecoderRenderMultipleLoops() throws {
+        let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25))
+        XCTAssertNotNil(decoder.output)
+        let frame0 = try decoder.output!.get()
+        XCTAssertEqual(frame0.height, 64)
+        XCTAssertEqual(decoder.currentIndex, 0)
+        
+        do {
+            for i in 1 ..< 100 {
+                let _ = try decoder.renderNextAndGetResult()
+                XCTAssertEqual(decoder.currentIndex, i % 4)
+            }
+        } catch {
+            XCTFail()
+        }
+    }
+    
+    func testDecoderCanResetToInitState() throws {
+        let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25))
+        XCTAssertNotNil(decoder.output)
+        let frame0 = try decoder.output!.get()
+        XCTAssertEqual(frame0.height, 64)
+        XCTAssertEqual(decoder.currentIndex, 0)
+                
+        for resetAt in 0 ... 10 {
+            for i in 0 ..< resetAt {
+                _ = try decoder.renderNextAndGetResult()
+                XCTAssertEqual(decoder.currentIndex, (i + 1) % 4)
+            }
+            try decoder.reset()
+            XCTAssertEqual(decoder.currentIndex, 0)
+
+            _ = try decoder.renderNextAndGetResult()
+            XCTAssertEqual(decoder.currentIndex, 1)
+            
+            _ = try decoder.renderNextAndGetResult()
+            XCTAssertEqual(decoder.currentIndex, 2)
+            
+            _ = try decoder.renderNextAndGetResult()
+            XCTAssertEqual(decoder.currentIndex, 3)
+            
+            _ = try decoder.renderNextAndGetResult()
+            XCTAssertEqual(decoder.currentIndex, 0)
+            
+            _ = try decoder.renderNextAndGetResult()
+            XCTAssertEqual(decoder.currentIndex, 1)
+            
+            try decoder.reset()
+        }
+    }
+    
+    func testDecoderCanResetToInitStateBeforeFirstPass() throws {
+        let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25))
+        XCTAssertNotNil(decoder.output)
+        let frame0 = try decoder.output!.get()
+        XCTAssertEqual(frame0.height, 64)
+        XCTAssertEqual(decoder.currentIndex, 0)
+                
+        for resetAt in 0 ... 10 {
+            for i in 0 ..< resetAt {
+                _ = try decoder.renderNextAndGetResult()
+                XCTAssertEqual(decoder.currentIndex, (i + 1) % 4)
+            }
+            try decoder.reset()
+            XCTAssertEqual(decoder.currentIndex, 0)
+
+            _ = try decoder.renderNextAndGetResult()
+            XCTAssertEqual(decoder.currentIndex, 1)
+            
+            try decoder.reset()
+        }
+    }
+    
+    func testDecoderCanResetToInitStateAtIndexZero() throws {
+        let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25))
+        XCTAssertNotNil(decoder.output)
+        let frame0 = try decoder.output!.get()
+        XCTAssertEqual(frame0.height, 64)
+        XCTAssertEqual(decoder.currentIndex, 0)
+                
+        for resetAt in 0 ... 10 {
+            for i in 0 ..< resetAt {
+                _ = try decoder.renderNextAndGetResult()
+                XCTAssertEqual(decoder.currentIndex, (i + 1) % 4)
+            }
+            try decoder.reset()
+            XCTAssertEqual(decoder.currentIndex, 0)
+            try decoder.reset()
+        }
     }
 }
 

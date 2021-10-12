@@ -10,6 +10,7 @@ public class APNGImage {
     }
     
     let decoder: APNGDecoder
+    
     public let scale: CGFloat
     public var size: CGSize {
         .init(
@@ -28,6 +29,8 @@ public class APNGImage {
         let knownDuration = decoder.frames.reduce(0.0) { $0 + ($1?.frameControl.duration ?? 0) }
         return decoder.firstPass ? .loadedPartial(knownDuration) : .full(knownDuration)
     }
+    
+    weak var owner: APNGImageView?
     
     public convenience init(named name: String) throws {
         try self.init(named: name, in: nil, subdirectory: nil)
@@ -105,6 +108,10 @@ public class APNGImage {
     public init(data: Data, scale: CGFloat = 1.0) throws {
         self.decoder = try APNGDecoder(data: data)
         self.scale = scale
+    }
+    
+    func reset() throws {
+        try decoder.reset()
     }
 }
 
