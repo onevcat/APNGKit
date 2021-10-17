@@ -20,6 +20,21 @@ protocol DataChunk: Chunk {
     var dataPresentation: ImageDataPresentation { get }
 }
 
+extension DataChunk {
+    func loadData(with reader: Reader) throws -> Data {
+        switch dataPresentation {
+        case .data(let chunkData):
+            return chunkData
+        case .position(let offset, let length):
+            try reader.seek(toOffset: offset)
+            guard let chunkData = try reader.read(upToCount: length) else {
+                throw APNGKitError.decoderError(.corruptedData(atOffset: offset))
+            }
+            return chunkData
+        }
+    }
+}
+
 extension Chunk {
     
     static var nameBytes: [UInt8] { name.map { $0.asciiValue! } }

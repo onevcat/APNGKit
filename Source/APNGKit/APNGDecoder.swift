@@ -30,7 +30,7 @@ class APNGDecoder {
     
     private(set) var frames: [APNGFrame?] = []
     
-    private(set) var defaultImageChunks: [IDAT]!
+    private(set) var defaultImageChunks: [IDAT] = []
     
     private var expectedSequenceNumber = 0
     
@@ -401,11 +401,27 @@ extension APNGDecoder {
     ]
     
     private func generateImageData(frameControl: fcTL, data: Data) throws -> Data {
+        try generateImageData(width: frameControl.width, height: frameControl.height, data: data)
+    }
+    
+    private func generateImageData(width: Int, height: Int, data: Data) throws -> Data {
         let ihdr = try imageHeader.updated(
-            width: frameControl.width, height: frameControl.height
+            width: width, height: height
         ).encode()
         let idat = IDAT.encode(data: data)
         return Self.pngSignature + ihdr + sharedData + idat + Self.IENDBytes
+    }
+}
+
+extension APNGDecoder {
+    func createDefaultImageData() throws -> Data {
+        let payload = try defaultImageChunks.map { idat in
+            try idat.loadData(with: self.reader)
+        }.joined()
+        let data = try generateImageData(
+            width: imageHeader.width, height: imageHeader.height, data: Data(payload)
+        )
+        return data
     }
 }
 
@@ -414,20 +430,10 @@ struct APNGFrame {
     let data: [DataChunk]
     
     func loadData(with reader: Reader) throws -> Data {
-        var combinedData = Data()
-        for chunk in data {
-            switch chunk.dataPresentation {
-            case .data(let chunkData):
-                combinedData.append(chunkData)
-            case .position(let offset, let length):
-                try reader.seek(toOffset: offset)
-                guard let chunkData = try reader.read(upToCount: length) else {
-                    throw APNGKitError.decoderError(.corruptedData(atOffset: offset))
-                }
-                combinedData.append(chunkData)
-            }
-        }
-        return combinedData
+        Data(
+            try data.map { try $0.loadData(with: reader) }
+                    .joined()
+        )
     }
     
     func normalizedRect(fullHeight: Int) -> CGRect {

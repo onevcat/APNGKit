@@ -8,18 +8,81 @@
 #if canImport(UIKit)
 import UIKit
 public typealias APNGView = UIView
+typealias ImageView = UIImageView
 #elseif canImport(AppKit)
 import AppKit
 typealias APNGView = NSView
+typealias ImageView = NSImageView
 #endif
 
 open class APNGImageView: APNGView {
     
-    private var _image: APNGImage?
     private var displayLink: CADisplayLink?
-    private var currentTimeStamp: CFTimeInterval = 0
+    private var displayingFrameStarted: CFTimeInterval = 0
+    
+    private var _image: APNGImage?
+    private let _imageView: ImageView = ImageView(frame: .zero)
+    
+    private var displayingFrameIndex = 0
+    
+    public convenience init(image: APNGImage?) {
+        self.init(frame: .zero)
+        self.image = image
+    }
+    
+    public convenience init(image: UIImage?) {
+        self.init(frame: .zero)
+        self._imageView.image = image
+    }
+    
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        commonSetup()
+    }
+    
+    required public init?(coder: NSCoder) {
+        super.init(coder: coder)
+        commonSetup()
+    }
+    
+    private func commonSetup() {
+        _imageView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(_imageView)
+        NSLayoutConstraint.activate([
+            _imageView.topAnchor.constraint(equalTo: topAnchor),
+            _imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            _imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            _imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+        
+        if let image = image, let output = image.decoder.output {
+            switch output {
+            case .success(let cgImage):
+                _imageView.image = UIImage(cgImage: cgImage, scale: image.scale, orientation: .up)
+            case .failure(let error):
+                print("[APNGKit] Encountered an error when decoding image frame: \(error). Trying to reverting to the default image.")
+                do {
+                    let data = try image.decoder.createDefaultImageData()
+                    _imageView.image = UIImage(data: data, scale: image.scale)
+                } catch {
+                    print("[APNGKit] Encountered an error when decoding the default image. \(error)")
+                    _imageView.image = nil
+                }
+            }
+        }
+    }
+    
+    open override var contentMode: UIView.ContentMode {
+        get { _imageView.contentMode }
+        set { _imageView.contentMode = newValue }
+    }
+    
+    open override var intrinsicContentSize: CGSize {
+        _image?.size ?? .zero
+    }
     
     open private(set) var isAnimating: Bool = false
+    
     open var runLoopMode: RunLoop.Mode? {
         didSet {
             if oldValue != nil {
@@ -48,9 +111,22 @@ open class APNGImageView: APNGView {
                 return
             }
             
-            // In case this is a dirty image. Try reset to the initial state.
-            try! nextImage.reset()
+            nextImage.owner = self
+            
+            do {
+                // In case this is a dirty image. Try reset to the initial state first.
+                try nextImage.reset()
+                displayingFrameIndex = 0
+            } catch {
+                assertionFailure("Error happened while reseting the image. Error: \(error)")
+            }
+            
             _image = nextImage
+            
+            invalidateIntrinsicContentSize()
+            if autoStartAnimationWhenSetImage {
+                startAnimating()
+            }
         }
     }
     
@@ -66,7 +142,7 @@ open class APNGImageView: APNGView {
             displayLink?.add(to: .main, forMode: runLoopMode ?? .common)
         }
         displayLink?.isPaused = false
-        currentTimeStamp = displayLink?.timestamp ?? 0
+        displayingFrameStarted = displayLink?.timestamp ?? 0
         
         isAnimating = true
     }
@@ -80,7 +156,48 @@ open class APNGImageView: APNGView {
     }
     
     @objc private func step(displaylink: CADisplayLink) {
-        print(displaylink.targetTimestamp)
+        guard let image = image else {
+            assertionFailure("No valid image set in current image view, but the display link is not paused. This should not happen.")
+            return
+        }
+        
+        guard let displayingFrame = image.decoder.frames[displayingFrameIndex] else {
+            assertionFailure("Cannot get correct frame which is being displayed.")
+            return
+        
+        }
+        
+        let frameDisplayedDuration = displaylink.timestamp - displayingFrameStarted
+        if frameDisplayedDuration < displayingFrame.frameControl.duration {
+            // Current displayed frame is not displayed for enough time. Do nothing.
+            return
+        }
+        
+        // We should display the next frame!
+        guard let output = image.decoder.output else {
+            // but unfortunately the decoding missed the target.
+            // we can just wait for the next `step`.
+            print("[APNGKit] Missed frame for image \(image), while displaying the current frame index: \(displayingFrameIndex).")
+            return
+        }
+        
+        // Have an output! Replace the current displayed one and start to render the next frame.
+        switch output {
+        case .success(let cgImage):
+            displayingFrameIndex = image.decoder.currentIndex
+            _imageView.image = UIImage(cgImage: cgImage, scale: image.scale, orientation: .up)
+            image.decoder.renderNext()
+        case .failure(let error):
+            print("[APNGKit] Encountered an error when decoding image frame while displaying the current frame index: \(displayingFrameIndex). Error:  \(error). Trying to reverting to the default image.")
+            do {
+                stopAnimating()
+                let data = try image.decoder.createDefaultImageData()
+                _imageView.image = UIImage(data: data, scale: image.scale)
+            } catch {
+                print("[APNGKit] Encountered an error when decoding the default image. \(error)")
+                _imageView.image = nil
+            }
+        }
     }
     
     deinit {
