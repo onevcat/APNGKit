@@ -18,7 +18,8 @@ typealias ImageView = NSImageView
 open class APNGImageView: APNGView {
     
     private var displayLink: CADisplayLink?
-    private var displayingFrameStarted: CFTimeInterval = 0
+    private var displayingFrameStarted: CFTimeInterval?
+    private var frameMissed: Bool = false
     
     private var _image: APNGImage?
     private let _imageView: ImageView = ImageView(frame: .zero)
@@ -142,7 +143,7 @@ open class APNGImageView: APNGView {
             displayLink?.add(to: .main, forMode: runLoopMode ?? .common)
         }
         displayLink?.isPaused = false
-        displayingFrameStarted = displayLink?.timestamp ?? 0
+        displayingFrameStarted = nil
         
         isAnimating = true
     }
@@ -167,7 +168,11 @@ open class APNGImageView: APNGView {
         
         }
         
-        let frameDisplayedDuration = displaylink.timestamp - displayingFrameStarted
+        if displayingFrameStarted == nil { // `step` is called by the first time after an animation.
+            displayingFrameStarted = displaylink.timestamp
+        }
+        
+        let frameDisplayedDuration = displaylink.timestamp - displayingFrameStarted!
         if frameDisplayedDuration < displayingFrame.frameControl.duration {
             // Current displayed frame is not displayed for enough time. Do nothing.
             return
@@ -178,15 +183,29 @@ open class APNGImageView: APNGView {
             // but unfortunately the decoding missed the target.
             // we can just wait for the next `step`.
             print("[APNGKit] Missed frame for image \(image), while displaying the current frame index: \(displayingFrameIndex).")
+            frameMissed = true
             return
         }
-        
+
         // Have an output! Replace the current displayed one and start to render the next frame.
+        let frameWasMissed = frameMissed
+        frameMissed = false
+
         switch output {
         case .success(let cgImage):
+            // for a 60 FPS system, we only have a chance of replacing the content per 16.6ms.
+            // To provide a more accurate animation we need the determine the frame starting
+            // by the frame def instead of real `timestamp`, unless we failed to display the frame in time.
+            displayingFrameStarted = frameWasMissed ?
+                displaylink.timestamp :
+                displayingFrameStarted! + displayingFrame.frameControl.duration
             displayingFrameIndex = image.decoder.currentIndex
+            
+            // Show the next image.
             _imageView.image = UIImage(cgImage: cgImage, scale: image.scale, orientation: .up)
+            // Start to render the next frame. This happens in a background thread in decoder.
             image.decoder.renderNext()
+            
         case .failure(let error):
             print("[APNGKit] Encountered an error when decoding image frame while displaying the current frame index: \(displayingFrameIndex). Error:  \(error). Trying to reverting to the default image.")
             do {
