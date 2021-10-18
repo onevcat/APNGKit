@@ -16,8 +16,7 @@ class SampleImageTableViewController: UITableViewController {
         "ball",
         "APNG-cube",
         "pyani",
-        "malformed-size",
-        "minimalAPNG",
+        "pia",
         "over_none",
         "over_background",
         "over_previous"

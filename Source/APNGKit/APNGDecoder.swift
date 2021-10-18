@@ -84,17 +84,6 @@ class APNGDecoder {
             throw APNGKitError.decoderError(.lackOfChunk(acTL.name))
         }
         
-        // fcTL and acTL order can be changed. Try to check if the first `fcTL` is already existing before `acTL`
-        let first_fcTLReader = DataReader(data: acTLResult.dataBeforeThunk)
-        let firstFCTL: fcTL?
-        do {
-            let first_fcTLResult = try first_fcTLReader.readUntil(type: fcTL.self)
-            firstFCTL = first_fcTLResult.chunk
-        } catch {
-            firstFCTL = nil
-        }
-        
-        
         let numberOfFrames = acTLResult.chunk.numberOfFrames
         if numberOfFrames == 0 { // 0 is not a valid value in `acTL`
             throw APNGKitError.decoderError(.invalidNumberOfFrames(value: 0))
@@ -131,6 +120,18 @@ class APNGDecoder {
         // Decode the first frame, so the image view has the initial image to show from the very beginning.
         var firstFrameData: Data
         let firstFrame: APNGFrame
+        
+        // fcTL and acTL order can be changed in APNG spec.
+        // Try to check if the first `fcTL` is already existing before `acTL`. If there is already a valid `fcTL`, use
+        // it as the first frame control to extract the default image.
+        let first_fcTLReader = DataReader(data: acTLResult.dataBeforeThunk)
+        let firstFCTL: fcTL?
+        do {
+            let first_fcTLResult = try first_fcTLReader.readUntil(type: fcTL.self)
+            firstFCTL = first_fcTLResult.chunk
+        } catch {
+            firstFCTL = nil
+        }
         
         (firstFrame, firstFrameData, defaultImageChunks) = try loadFirstFrameAndDefaultImage(firstFCTL: firstFCTL)
         self.frames[currentIndex] = firstFrame

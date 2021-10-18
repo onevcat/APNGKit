@@ -62,8 +62,10 @@ public class APNGImage {
         } else if fileName.hasSuffix("@3x") {
             guessingFromName = [(fileName, 3)]
         } else {
-            let scale = Int(screenScale)
-            guessingFromName = [("\(fileName)@\(scale)x", screenScale), (fileName, 1)]
+            let maxScale = Int(screenScale)
+            guessingFromName = (1...maxScale).reversed().map { scale in
+                return scale > 1 ? ("\(fileName)@\(scale)x", CGFloat(scale)) : (fileName, CGFloat(1))
+            }
         }
         
         let targetBundle = bundle ?? .main
