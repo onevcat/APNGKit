@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Delegate",
+        "repositoryURL": "https://github.com/onevcat/Delegate",
+        "state": {
+          "branch": null,
+          "revision": "2592bb2031df1b9b1363e78e4ce7f3b53fbec686",
+          "version": "1.0.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

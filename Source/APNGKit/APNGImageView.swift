@@ -41,6 +41,13 @@ open class APNGImageView: APNGView {
         commonSetup()
     }
     
+    open override func didMoveToSuperview() {
+        if superview == nil { // Removed from a super view.
+            stopAnimating()
+            cleanDisplayLink()
+        }
+    }
+    
     required public init?(coder: NSCoder) {
         super.init(coder: coder)
         commonSetup()
@@ -219,8 +226,8 @@ open class APNGImageView: APNGView {
         }
     }
     
-    deinit {
+    private func cleanDisplayLink() {
         displayLink?.invalidate()
-        displayLink?.remove(from: .main, forMode: runLoopMode ?? .common)
+        displayLink = nil
     }
 }
