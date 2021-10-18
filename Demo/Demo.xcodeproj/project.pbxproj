@@ -90,6 +90,7 @@
 		4BC6DC96271D4EB600634A99 /* SpecTestingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6DC95271D4EB600634A99 /* SpecTestingTableViewController.swift */; };
 		4BC6DC98271D4EC800634A99 /* SpecTestingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6DC97271D4EC800634A99 /* SpecTestingTableViewCell.swift */; };
 		4BC6DC9A271D566100634A99 /* spec-cases.json in Resources */ = {isa = PBXBuildFile; fileRef = 4BC6DC99271D566000634A99 /* spec-cases.json */; };
+		4BC6DC9E271DB6A700634A99 /* SpecTestingExplanationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC6DC9D271DB6A700634A99 /* SpecTestingExplanationViewController.swift */; };
 		4BFF950B271C077D001645A7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFF950A271C077D001645A7 /* AppDelegate.swift */; };
 		4BFF950F271C077D001645A7 /* TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFF950E271C077D001645A7 /* TopViewController.swift */; };
 		4BFF9514271C077F001645A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BFF9513271C077F001645A7 /* Assets.xcassets */; };
@@ -177,6 +178,7 @@
 		4BC6DC95271D4EB600634A99 /* SpecTestingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecTestingTableViewController.swift; sourceTree = "<group>"; };
 		4BC6DC97271D4EC800634A99 /* SpecTestingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecTestingTableViewCell.swift; sourceTree = "<group>"; };
 		4BC6DC99271D566000634A99 /* spec-cases.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "spec-cases.json"; path = "Demo/spec-cases.json"; sourceTree = SOURCE_ROOT; };
+		4BC6DC9D271DB6A700634A99 /* SpecTestingExplanationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecTestingExplanationViewController.swift; sourceTree = "<group>"; };
 		4BFF9507271C077D001645A7 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BFF950A271C077D001645A7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BFF950E271C077D001645A7 /* TopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopViewController.swift; sourceTree = "<group>"; };
@@ -304,6 +306,25 @@
 			path = SpecTesting;
 			sourceTree = "<group>";
 		};
+		4BC6DC9B271DB66E00634A99 /* SpecTestingScene */ = {
+			isa = PBXGroup;
+			children = (
+				4BC6DC95271D4EB600634A99 /* SpecTestingTableViewController.swift */,
+				4BC6DC97271D4EC800634A99 /* SpecTestingTableViewCell.swift */,
+				4BC6DC9D271DB6A700634A99 /* SpecTestingExplanationViewController.swift */,
+			);
+			path = SpecTestingScene;
+			sourceTree = "<group>";
+		};
+		4BC6DC9C271DB68200634A99 /* SampleImageScene */ = {
+			isa = PBXGroup;
+			children = (
+				4BC3D967271C759F004DF785 /* SampleImageTableViewController.swift */,
+				4BC3D969271C7934004DF785 /* SampleImageDetailViewController.swift */,
+			);
+			path = SampleImageScene;
+			sourceTree = "<group>";
+		};
 		4BFF94FE271C077D001645A7 = {
 			isa = PBXGroup;
 			children = (
@@ -325,13 +346,11 @@
 		4BFF9509271C077D001645A7 /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				4BC6DC9C271DB68200634A99 /* SampleImageScene */,
+				4BC6DC9B271DB66E00634A99 /* SpecTestingScene */,
 				4BC3D8CC271C095D004DF785 /* Resources */,
 				4BFF950A271C077D001645A7 /* AppDelegate.swift */,
-				4BC6DC95271D4EB600634A99 /* SpecTestingTableViewController.swift */,
-				4BC6DC97271D4EC800634A99 /* SpecTestingTableViewCell.swift */,
 				4BFF950E271C077D001645A7 /* TopViewController.swift */,
-				4BC3D967271C759F004DF785 /* SampleImageTableViewController.swift */,
-				4BC3D969271C7934004DF785 /* SampleImageDetailViewController.swift */,
 				4BFF9513271C077F001645A7 /* Assets.xcassets */,
 				4BFF9518271C077F001645A7 /* Info.plist */,
 				4BC3D963271C755D004DF785 /* LaunchScreen.storyboard */,
@@ -502,6 +521,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BC3D968271C759F004DF785 /* SampleImageTableViewController.swift in Sources */,
+				4BC6DC9E271DB6A700634A99 /* SpecTestingExplanationViewController.swift in Sources */,
 				4BFF950F271C077D001645A7 /* TopViewController.swift in Sources */,
 				4BFF950B271C077D001645A7 /* AppDelegate.swift in Sources */,
 				4BC6DC98271D4EC800634A99 /* SpecTestingTableViewCell.swift in Sources */,

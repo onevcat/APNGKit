@@ -23,6 +23,7 @@ extension APNGKitError {
         case wrongChunkData(name: String, data: Data)
         case fileFormatError
         case corruptedData(atOffset: UInt64?)
+        case chunkNameNotMatched(expected: [Character], actual: [Character])
         case invalidNumberOfFrames(value: Int)
         case invalidChecksum
         case lackOfChunk([Character])
@@ -33,6 +34,7 @@ extension APNGKitError {
         case frameImageCreatingFailed(source: CGImageSource, frameIndex: Int)
         case outputImageCreatingFailed(frameIndex: Int)
         case canvasCreatingFailed
+        case multipleAnimationControlChunk
     }
     
     public enum ImageError {
@@ -44,4 +46,24 @@ extension APNGKitError {
 
 extension Error {
     public var apngError: APNGKitError? { self as? APNGKitError }
+}
+
+extension APNGKitError {
+    var shouldRevertToNormalImage: Bool {
+        switch self {
+        case .decoderError(let reason):
+            switch reason {
+            case .chunkNameNotMatched(let expected, let actual):
+                return expected == IHDR.name && actual == ["C", "g", "B", "I"]
+            case .lackOfChunk(let name):
+                return name == acTL.name
+            default:
+                return false
+            }
+        case .imageError:
+            return false
+        case .internalError:
+            return false
+        }
+    }
 }

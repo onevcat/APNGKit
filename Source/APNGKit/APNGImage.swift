@@ -41,7 +41,7 @@ public class APNGImage {
         try self.init(named: name, in: nil, subdirectory: nil)
     }
     
-    public init(named name: String, in bundle: Bundle?, subdirectory subpath: String? = nil) throws {
+    public convenience init(named name: String, in bundle: Bundle?, subdirectory subpath: String? = nil) throws {
 
         let fileName: String
         
@@ -85,23 +85,15 @@ public class APNGImage {
             throw APNGKitError.imageError(.resourceNotFound(name: name, bundle: targetBundle))
         }
         
-        do {
-            decoder = try APNGDecoder(fileURL: resource.0)
-            scale = resource.1
-            
-            let repeatCount = decoder.animationControl.numberOfPlays
-            numberOfPlays = repeatCount == 0 ? nil : repeatCount
-        } catch {
-            let data = try Data(contentsOf: resource.0)
-            guard let image = UIImage(data: data, scale: resource.1) else {
-                throw error
-            }
-            throw APNGKitError.imageError(.normalImageDataLoaded(image: image))
-        }
+        try self.init(fileURL: resource.0, scale: resource.1)
+    }
+    
+    public convenience init(filePath: String, scale: CGFloat? = nil) throws {
+        let fileURL = URL(fileURLWithPath: filePath)
+        try self.init(fileURL: fileURL, scale: scale)
     }
 
     public init(fileURL: URL, scale: CGFloat? = nil) throws {
-        decoder = try APNGDecoder(fileURL: fileURL)
         if let scale = scale {
             self.scale = scale
         } else {
@@ -115,16 +107,44 @@ public class APNGImage {
                 self.scale = 1
             }
         }
-    }
-    
-    public convenience init(filePath: String, scale: CGFloat? = nil) throws {
-        let fileURL = URL(fileURLWithPath: filePath)
-        try self.init(fileURL: fileURL, scale: scale)
+        
+        do {
+            decoder = try APNGDecoder(fileURL: fileURL)
+            let repeatCount = decoder.animationControl.numberOfPlays
+            numberOfPlays = repeatCount == 0 ? nil : repeatCount
+        } catch {
+            // Special case when the error is lack of acTL. It means this image is not an APNG at all.
+            // Then try to load it as a normal image.
+            if let apngError = error.apngError, apngError.shouldRevertToNormalImage {
+                let data = try Data(contentsOf: fileURL)
+                guard let image = UIImage(data: data, scale: self.scale) else {
+                    throw error
+                }
+                throw APNGKitError.imageError(.normalImageDataLoaded(image: image))
+            } else {
+                throw error
+            }
+        }
     }
 
     public init(data: Data, scale: CGFloat = 1.0) throws {
-        self.decoder = try APNGDecoder(data: data)
         self.scale = scale
+        do {
+            self.decoder = try APNGDecoder(data: data)
+            let repeatCount = decoder.animationControl.numberOfPlays
+            numberOfPlays = repeatCount == 0 ? nil : repeatCount
+        } catch {
+            // Special case when the error is lack of acTL. It means this image is not an APNG at all.
+            // Then try to load it as a normal image.
+            if let apngError = error.apngError, apngError.shouldRevertToNormalImage {
+                guard let image = UIImage(data: data, scale: self.scale) else {
+                    throw error
+                }
+                throw APNGKitError.imageError(.normalImageDataLoaded(image: image))
+            } else {
+                throw error
+            }
+        }
     }
     
     func reset() throws {

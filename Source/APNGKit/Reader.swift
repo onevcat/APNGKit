@@ -167,7 +167,7 @@ extension Reader {
     private func readName<T: Chunk>(matching: T.Type) throws -> Data {
         let name = try readName()
         guard name.bytes == T.nameBytes else {
-            throw APNGKitError.decoderError(.corruptedData(atOffset: try? offset()))
+            throw APNGKitError.decoderError(.chunkNameNotMatched(expected: T.name, actual: name.characters ))
         }
         return name
     }

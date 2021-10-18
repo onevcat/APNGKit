@@ -21,13 +21,16 @@ class APNGDecoder {
     
     let onFirstPassDone = Delegate<(), Void>()
     
-    // Only valid on main thread.
+    // Only valid on main thread. Set the `output` to a `.failure` value would result the default image being rendered
+    // for the next frame in APNGImageView.
     var output: Result<CGImage, APNGKitError>?
     // Only valid on main thread.
     var currentIndex: Int = 0
     
     let imageHeader: IHDR
     let animationControl: acTL
+    
+    private var foundMultipleAnimationControl = false
     
     private let renderingQueue = DispatchQueue(label: "com.onevcat.apngkit.renderingQueue", qos: .userInteractive)
     
@@ -81,6 +84,17 @@ class APNGDecoder {
             throw APNGKitError.decoderError(.lackOfChunk(acTL.name))
         }
         
+        // fcTL and acTL order can be changed. Try to check if the first `fcTL` is already existing before `acTL`
+        let first_fcTLReader = DataReader(data: acTLResult.dataBeforeThunk)
+        let firstFCTL: fcTL?
+        do {
+            let first_fcTLResult = try first_fcTLReader.readUntil(type: fcTL.self)
+            firstFCTL = first_fcTLResult.chunk
+        } catch {
+            firstFCTL = nil
+        }
+        
+        
         let numberOfFrames = acTLResult.chunk.numberOfFrames
         if numberOfFrames == 0 { // 0 is not a valid value in `acTL`
             throw APNGKitError.decoderError(.invalidNumberOfFrames(value: 0))
@@ -117,13 +131,18 @@ class APNGDecoder {
         // Decode the first frame, so the image view has the initial image to show from the very beginning.
         var firstFrameData: Data
         let firstFrame: APNGFrame
-        (firstFrame, firstFrameData, defaultImageChunks) = try loadFirstFrameAndDefaultImage()
+        
+        (firstFrame, firstFrameData, defaultImageChunks) = try loadFirstFrameAndDefaultImage(firstFCTL: firstFCTL)
         self.frames[currentIndex] = firstFrame
         
         // Render the first frame.
         // It is safe to set it here since this `setup()` method will be only called in init, before any chance to
         // make another call like `renderNext` to modify `output` at the same time.
-        output = .success(try render(frame: firstFrame, data: firstFrameData, index: currentIndex))
+        if !foundMultipleAnimationControl {
+            output = .success(try render(frame: firstFrame, data: firstFrameData, index: currentIndex))
+        } else {
+            output = .failure(.decoderError(.multipleAnimationControlChunk))
+        }
         
         // Store the current reader offset. If later we need to reset the image loading state, we can start from here
         // to make the whole image back to the state of just initialized.
@@ -163,6 +182,11 @@ class APNGDecoder {
         var newIndex = currentIndex + 1
         if firstPass {
             let (frame, data) = try loadFrame()
+            
+            if foundMultipleAnimationControl {
+                throw APNGKitError.decoderError(.multipleAnimationControlChunk)
+            }
+            
             frames[newIndex] = frame
             
             image = try render(frame: frame, data: data, index: newIndex)
@@ -287,7 +311,7 @@ class APNGDecoder {
         loadedFrameCount < frames.count
     }
     
-    private func loadFirstFrameAndDefaultImage() throws -> (APNGFrame, Data, [IDAT]) {
+    private func loadFirstFrameAndDefaultImage(firstFCTL: fcTL?) throws -> (APNGFrame, Data, [IDAT]) {
         var result: (APNGFrame, Data, [IDAT])?
         while result == nil {
             try reader.peek { info, action in
@@ -309,9 +333,19 @@ class APNGDecoder {
                     // 0                  `fcTL` first frame
                     // 1                  first `fdAT` for first frame
                     _ = try action(.reset)
-                    let (defaultImageChunks, _) = try loadImageData()
-                    let (frame, frameData) = try loadFrame()
-                    result = (frame, frameData, defaultImageChunks)
+                    
+                    if let firstFCTL = firstFCTL {
+                        try checkSequenceNumber(firstFCTL)
+                        let (chunks, data) = try loadImageData()
+                        result = (APNGFrame(frameControl: firstFCTL, data: chunks), data, chunks)
+                    } else {
+                        let (defaultImageChunks, _) = try loadImageData()
+                        let (frame, frameData) = try loadFrame()
+                        result = (frame, frameData, defaultImageChunks)
+                    }
+                case acTL.nameBytes:
+                    self.foundMultipleAnimationControl = true
+                    _ = try action(.read())
                 default:
                     _ = try action(.read())
                 }
@@ -331,6 +365,9 @@ class APNGDecoder {
                     try checkSequenceNumber(frameControl)
                     let (dataChunks, data) = try loadFrameData()
                     result = (APNGFrame(frameControl: frameControl, data: dataChunks), data)
+                case acTL.nameBytes:
+                    self.foundMultipleAnimationControl = true
+                    _ = try action(.read())
                 default:
                     _ = try action(.read())
                 }

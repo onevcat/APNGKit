@@ -22,6 +22,8 @@ extension Data {
         return withUnsafeBytes { $0.load(as: Byte.self) }
     }
     
+    var characters: [Character] { map { .init(.init($0)) } }
+    
     subscript(_ index: Int) -> Byte {
         self[index ... index].byte
     }
