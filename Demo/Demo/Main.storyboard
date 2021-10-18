@@ -422,7 +422,10 @@
                     </tableView>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="durationLabel" destination="5CD-EI-JZW" id="5P7-Ur-RQR"/>
+                        <outlet property="frameCountLabel" destination="bSt-4j-vFy" id="gKA-8W-Gz6"/>
                         <outlet property="imageSizeLabel" destination="h7K-3W-UkI" id="cHp-7o-Gv4"/>
+                        <outlet property="repeatCountLabel" destination="b83-Tk-B4M" id="ogj-Xs-wK2"/>
                         <outlet property="setSizeHeightTextField" destination="cgK-0F-Bfx" id="jA6-qJ-PRg"/>
                         <outlet property="setSizeView" destination="stf-Fz-qCN" id="iJj-Pm-sqf"/>
                         <outlet property="setSizeWidthTextField" destination="q3q-Oe-9Mw" id="0i0-SI-8jU"/>

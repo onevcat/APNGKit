@@ -9,6 +9,7 @@ import Foundation
 import Accelerate
 import ImageIO
 import zlib
+import Delegate
 
 // Decodes an APNG to necessary information.
 class APNGDecoder {
@@ -17,6 +18,8 @@ class APNGDecoder {
         let offset: UInt64
         let expectedSequenceNumber: Int
     }
+    
+    let onFirstPassDone = Delegate<(), Void>()
     
     // Only valid on main thread.
     var output: Result<CGImage, APNGKitError>?
@@ -116,6 +119,9 @@ class APNGDecoder {
         
         if !firstPass { // Animation with only one frame,check IEND.
             _ = try reader.readChunk(type: IEND.self)
+            
+            // Dispatch to give the user a chance to setup delegate after they get the returned APNG image.
+            DispatchQueue.main.async { self.onFirstPassDone() }
         }
     }
     
@@ -150,6 +156,10 @@ class APNGDecoder {
             image = try render(frame: frame, data: data, index: newIndex)
             if !firstPass {
                 _ = try reader.readChunk(type: IEND.self)
+                DispatchQueue.main.asyncOrSyncIfMain {
+                    self.onFirstPassDone()
+                }
+                
             }
         } else {
             if newIndex == frames.count {
@@ -469,4 +479,14 @@ extension fcTL {
 extension CGColorSpace {
     static let deviceRGB = CGColorSpaceCreateDeviceRGB()
     static let deviceGray = CGColorSpaceCreateDeviceGray()
+}
+
+extension DispatchQueue {
+    func asyncOrSyncIfMain(execute block: @escaping () -> Void) {
+        if Thread.isMainThread {
+            block()
+        } else {
+            self.async(execute: block)
+        }
+    }
 }

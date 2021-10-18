@@ -1,15 +1,17 @@
 
 import Foundation
 import CoreGraphics
+import Delegate
 
 public class APNGImage {
-    
     public enum Duration {
         case loadedPartial(TimeInterval)
         case full(TimeInterval)
     }
     
     let decoder: APNGDecoder
+    
+    public var onFramesInformationPrepared: Delegate<(), Void> { decoder.onFirstPassDone }
     
     public let scale: CGFloat
     public var size: CGSize {
@@ -19,6 +21,8 @@ public class APNGImage {
         )
     }
     
+    public var numberOfPlays: Int?
+    public var numberOfFrames: Int { decoder.animationControl.numberOfFrames }
     public var duration: Duration {
         // If loading with a streaming way, there is no way to know the duration before the first loading pass finishes.
         // In this case, before the first pass is done, a partial duration of the currently loaded frames will be
@@ -81,6 +85,9 @@ public class APNGImage {
         }
         decoder = try APNGDecoder(fileURL: resource.0)
         scale = resource.1
+        
+        let repeatCount = decoder.animationControl.numberOfPlays
+        numberOfPlays = repeatCount == 0 ? nil : repeatCount
     }
 
     public init(fileURL: URL, scale: CGFloat? = nil) throws {

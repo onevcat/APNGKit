@@ -14,17 +14,41 @@ import AppKit
 typealias APNGView = NSView
 typealias ImageView = NSImageView
 #endif
+import Delegate
 
 open class APNGImageView: APNGView {
     
-    private var displayLink: CADisplayLink?
+    /// Whether the animation should be played automatically when a valid `APNGImage` is set to the `image` property
+    /// of `self`. Default is `true`.
+    open var autoStartAnimationWhenSetImage = true
+    
+    /// A delegate called when a "play" (a loop of the animated image) is played. The parameter number is the count
+    /// of played loop. If an animated image is newly set and played, after its whole duration, this delegate will be
+    /// called with the number `1`.
+    public let onOnePlayDone = Delegate<Int, Void>()
+    
+    /// A delegate called when the whole image is played for its `numberOfPlays` count. If the `numberOfPlays` of the
+    /// playing `image` is `nil`, this delegate will never be triggered.
+    public let onAllPlaysDone = Delegate<(), Void>()
+    
+    /// A delegate called when a frame decoding misses its requirement. This usually means the CPU resource is not
+    /// enough to display the animation at its full frame rate and causes a frame drop or latency of animation.
+    public let onFrameMissed = Delegate<Int, Void>()
+    
+    // When the current frame was started to be displayed on the screen. It is the base time to calculate the current
+    // frame duration.
     private var displayingFrameStarted: CFTimeInterval?
+    // The current displaying frame index in its decoder.
+    private var displayingFrameIndex = 0
+    // Whether the next displaying frame missed its target.
     private var frameMissed: Bool = false
     
+    private var displayLink: CADisplayLink?
     private var _image: APNGImage?
     private let _imageView: ImageView = ImageView(frame: .zero)
     
-    private var displayingFrameIndex = 0
+    // Number of played plays of the animated image.
+    private var playedCount = 0
     
     public convenience init(image: APNGImage?) {
         self.init(frame: .zero)
@@ -41,6 +65,7 @@ open class APNGImageView: APNGView {
         commonSetup()
     }
     
+    // Stop the animation and free the display link when the image view is not yet on the view hierarchy anymore.
     open override func didMoveToSuperview() {
         if superview == nil { // Removed from a super view.
             stopAnimating()
@@ -106,6 +131,7 @@ open class APNGImageView: APNGView {
                 _image?.owner = nil
                 stopAnimating()
                 _image = nil
+                playedCount = 0
                 return
             }
             
@@ -119,17 +145,18 @@ open class APNGImageView: APNGView {
                 return
             }
             
-            nextImage.owner = self
-            
             do {
                 // In case this is a dirty image. Try reset to the initial state first.
                 try nextImage.reset()
-                displayingFrameIndex = 0
             } catch {
                 assertionFailure("Error happened while reseting the image. Error: \(error)")
             }
             
+            displayingFrameIndex = 0
+            _image?.owner = nil
+            nextImage.owner = self
             _image = nextImage
+            playedCount = 0
             
             invalidateIntrinsicContentSize()
             if autoStartAnimationWhenSetImage {
@@ -137,8 +164,6 @@ open class APNGImageView: APNGView {
             }
         }
     }
-    
-    open var autoStartAnimationWhenSetImage = true
     
     open func startAnimating() {
         guard !isAnimating else {
@@ -185,11 +210,26 @@ open class APNGImageView: APNGView {
             return
         }
         
+        // The final of last frame in one play.
+        if displayingFrameIndex == image.decoder.frames.count - 1 {
+            playedCount = playedCount + 1
+            onOnePlayDone(playedCount)
+        }
+        
+        // Played enough count. Stop animating and stay at the last frame.
+        if playedCount == image.numberOfPlays {
+            stopAnimating()
+            onAllPlaysDone()
+            return
+        }
+        
         // We should display the next frame!
         guard let output = image.decoder.output else {
             // but unfortunately the decoding missed the target.
             // we can just wait for the next `step`.
-            print("[APNGKit] Missed frame for image \(image), while displaying the current frame index: \(displayingFrameIndex).")
+            let nextFrameIndex = displayingFrameIndex + 1 >= image.decoder.frames.count ? 0 : displayingFrameIndex + 1
+            print("[APNGKit] Missed frame for image \(image): target index: \(nextFrameIndex), while displaying the current frame index: \(displayingFrameIndex).")
+            onFrameMissed(nextFrameIndex)
             frameMissed = true
             return
         }

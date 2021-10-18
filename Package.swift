@@ -7,8 +7,11 @@ let package = Package(
     products: [
         .library(name: "APNGKit", targets: ["APNGKit"])
     ],
+    dependencies: [
+        .package(name: "Delegate", url: "https://github.com/onevcat/Delegate.git", .upToNextMajor(from: "1.0.0"))
+    ],
     targets: [
-        .target(name: "APNGKit"),
+        .target(name: "APNGKit", dependencies: ["Delegate"]),
         .testTarget(name: "APNGKitTests", dependencies: ["APNGKit"], resources: [
             .copy("Resources/SpecTesting"),
             .copy("Resources/General")

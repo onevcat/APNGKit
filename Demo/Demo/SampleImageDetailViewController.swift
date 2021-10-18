@@ -27,6 +27,16 @@ class SampleImageDetailViewController: UIViewController {
         }
         
         do {
+            imageView.onOnePlayDone.delegate(on: self) { (self, count) in
+                print("Played: \(count)")
+            }
+            imageView.onAllPlaysDone.delegate(on: self) { (self, _) in
+                print("Played Done!")
+            }
+            imageView.onFrameMissed.delegate(on: self) { (self, index) in
+                assertionFailure("Frame missed at index: \(index)")
+            }
+            
             let image = try APNGImage(named: imageName)
             imageView.image = image
             
@@ -48,13 +58,13 @@ class SampleImageDetailViewController: UIViewController {
         
         settingViewController.setup(with: image)
         
-        settingViewController.onIntrinsicToggled.delegate(on: self) { [unowned settingViewController] (self, useIntrinsic) in
+        settingViewController.onIntrinsicToggled.delegate(on: self) { (self, useIntrinsic) in
             if useIntrinsic {
                 self.imageViewWidthConstraint.constant = image.size.width
                 self.imageViewHeightConstraint.constant = image.size.height
             } else {
-                self.imageViewWidthConstraint.constant = settingViewController!.setSizeWidth
-                self.imageViewHeightConstraint.constant = settingViewController!.setSizeHeight
+                self.imageViewWidthConstraint.constant = self.settingViewController!.setSizeWidth
+                self.imageViewHeightConstraint.constant = self.settingViewController!.setSizeHeight
             }
         }
         
@@ -79,6 +89,9 @@ class SampleImageDetailSettingViewController: UITableViewController {
     @IBOutlet weak var setSizeView: UIView! {
         didSet { setSizeView.alpha = 0.5 }
     }
+    @IBOutlet weak var frameCountLabel: UILabel!
+    @IBOutlet weak var repeatCountLabel: UILabel!
+    @IBOutlet weak var durationLabel: UILabel!
     
     var setSizeWidth: CGFloat = 0.0
     var setSizeHeight: CGFloat = 0.0
@@ -94,6 +107,23 @@ class SampleImageDetailSettingViewController: UITableViewController {
         imageSizeLabel.text = "\(Int(image.size.width)) x \(Int(image.size.height)) @\(Int(image.scale))x"
         setSizeWidthTextField.text = "\(Int(image.size.width))"
         setSizeHeightTextField.text = "\(Int(image.size.height))"
+        
+        frameCountLabel.text = String(image.numberOfFrames)
+        if let num = image.numberOfPlays {
+            repeatCountLabel.text = String(num)
+        } else {
+            repeatCountLabel.text = "Forever"
+        }
+        
+        image.onFramesInformationPrepared.delegate(on: self) { (self, _) in
+            guard let i = self.image else { return }
+            switch i.duration {
+            case .loadedPartial:
+                fatalError("All frames should be already loaded.")
+            case .full(let d):
+                self.durationLabel.text = String(format: "%.3f", d) + " s"
+            }
+        }
     }
     
     @IBAction func intrinsicToggled(_ sender: UISwitch) {
