@@ -7,6 +7,7 @@
 
 import Foundation
 import ImageIO
+import UIKit
 
 public enum APNGKitError: Error {
     case decoderError(DecoderError)
@@ -22,6 +23,7 @@ extension APNGKitError {
         case wrongChunkData(name: String, data: Data)
         case fileFormatError
         case corruptedData(atOffset: UInt64?)
+        case invalidNumberOfFrames(value: Int)
         case invalidChecksum
         case lackOfChunk([Character])
         case wrongSequenceNumber(expected: Int, got: Int)
@@ -35,9 +37,11 @@ extension APNGKitError {
     
     public enum ImageError {
         case resourceNotFound(name: String, bundle: Bundle)
+        case normalImageDataLoaded(image: UIImage)
     }
+    
 }
 
 extension Error {
-    var apngError: APNGKitError? { self as? APNGKitError }
+    public var apngError: APNGKitError? { self as? APNGKitError }
 }

@@ -35,11 +35,35 @@ open class APNGImageView: APNGView {
     /// enough to display the animation at its full frame rate and causes a frame drop or latency of animation.
     public let onFrameMissed = Delegate<Int, Void>()
     
+    /// A delegate called when the `image` cannot be decoded during the displaying and the default image defined in the
+    /// APNG image data is displayed as a fallback.
+    ///
+    /// This delegate method is always called after the `onDecodingFrameError` delegate if in its parameter the
+    /// `DecodingErrorItem.canFallbackToDefaultImage` is `true`.
+    public let onFallBackToDefaultImage = Delegate<(), Void>()
+
+    /// A delegate called when the `image` cannot be decoded during the displaying and the default image decoding also
+    /// fails. The parameter error contains the reason why the default image cannot be decoded.
+    ///
+    /// This delegate method is always called after the `onDecodingFrameError` delegate if in its parameter the
+    /// `DecodingErrorItem.canFallbackToDefaultImage` is `false`.
+    public let onFallBackToDefaultImageFailed = Delegate<APNGKitError, Void>()
+    
+    /// A delegate called when the `image` cannot be decoded. It contains the encountered decoding error in its parameter.
+    /// After this delegate, either `onFallBackToDefaultImage` or `onFallBackToDefaultImageFailed` will be called.
+    public let onDecodingFrameError = Delegate<DecodingErrorItem, Void>()
+    
     // When the current frame was started to be displayed on the screen. It is the base time to calculate the current
     // frame duration.
     private var displayingFrameStarted: CFTimeInterval?
     // The current displaying frame index in its decoder.
     private var displayingFrameIndex = 0
+    private var nextFrameIndex: Int {
+        guard let image = _image else {
+            return 0
+        }
+        return displayingFrameIndex + 1 >= image.decoder.frames.count ? 0 : displayingFrameIndex + 1
+    }
     // Whether the next displaying frame missed its target.
     private var frameMissed: Bool = false
     
@@ -124,6 +148,10 @@ open class APNGImageView: APNGView {
         }
     }
     
+    public var staticImage: UIImage? = nil {
+        didSet { _imageView.image = staticImage }
+    }
+    
     public var image: APNGImage? {
         get { _image }
         set {
@@ -131,6 +159,7 @@ open class APNGImageView: APNGView {
                 _image?.owner = nil
                 stopAnimating()
                 _image = nil
+                _imageView.image = nil
                 playedCount = 0
                 return
             }
@@ -158,8 +187,24 @@ open class APNGImageView: APNGView {
             _image = nextImage
             playedCount = 0
             
+            let renderResult = renderCurrentDecoderOutput()
+            switch renderResult {
+            case .rendered(let initialImage):
+                _imageView.image = initialImage
+            case .fallbackToDefault(let defaultImage, let error):
+                onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: true))
+                _imageView.image = defaultImage
+                stopAnimating()
+                onFallBackToDefaultImage()
+            case .defaultDecodingError(let error, let defaultImageError):
+                onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: false))
+                _imageView.image = nil
+                stopAnimating()
+                onFallBackToDefaultImageFailed(defaultImageError)
+            }
+
             invalidateIntrinsicContentSize()
-            if autoStartAnimationWhenSetImage {
+            if autoStartAnimationWhenSetImage && !renderResult.hasError {
                 startAnimating()
             }
         }
@@ -203,13 +248,11 @@ open class APNGImageView: APNGView {
         if displayingFrameStarted == nil { // `step` is called by the first time after an animation.
             displayingFrameStarted = displaylink.timestamp
         }
-        
         let frameDisplayedDuration = displaylink.timestamp - displayingFrameStarted!
         if frameDisplayedDuration < displayingFrame.frameControl.duration {
             // Current displayed frame is not displayed for enough time. Do nothing.
             return
         }
-        
         // The final of last frame in one play.
         if displayingFrameIndex == image.decoder.frames.count - 1 {
             playedCount = playedCount + 1
@@ -224,10 +267,9 @@ open class APNGImageView: APNGView {
         }
         
         // We should display the next frame!
-        guard let output = image.decoder.output else {
+        guard let _ = image.decoder.output /* the frame image is rendered */ else {
             // but unfortunately the decoding missed the target.
             // we can just wait for the next `step`.
-            let nextFrameIndex = displayingFrameIndex + 1 >= image.decoder.frames.count ? 0 : displayingFrameIndex + 1
             print("[APNGKit] Missed frame for image \(image): target index: \(nextFrameIndex), while displaying the current frame index: \(displayingFrameIndex).")
             onFrameMissed(nextFrameIndex)
             frameMissed = true
@@ -237,9 +279,12 @@ open class APNGImageView: APNGView {
         // Have an output! Replace the current displayed one and start to render the next frame.
         let frameWasMissed = frameMissed
         frameMissed = false
-
-        switch output {
-        case .success(let cgImage):
+        
+        switch renderCurrentDecoderOutput() {
+        case .rendered(let renderedImage):
+            // Show the next image.
+            _imageView.image = renderedImage
+            
             // for a 60 FPS system, we only have a chance of replacing the content per 16.6ms.
             // To provide a more accurate animation we need the determine the frame starting
             // by the frame def instead of real `timestamp`, unless we failed to display the frame in time.
@@ -248,26 +293,67 @@ open class APNGImageView: APNGView {
                 displayingFrameStarted! + displayingFrame.frameControl.duration
             displayingFrameIndex = image.decoder.currentIndex
             
-            // Show the next image.
-            _imageView.image = UIImage(cgImage: cgImage, scale: image.scale, orientation: .up)
             // Start to render the next frame. This happens in a background thread in decoder.
             image.decoder.renderNext()
             
-        case .failure(let error):
-            print("[APNGKit] Encountered an error when decoding image frame while displaying the current frame index: \(displayingFrameIndex). Error:  \(error). Trying to reverting to the default image.")
-            do {
-                stopAnimating()
-                let data = try image.decoder.createDefaultImageData()
-                _imageView.image = UIImage(data: data, scale: image.scale)
-            } catch {
-                print("[APNGKit] Encountered an error when decoding the default image. \(error)")
-                _imageView.image = nil
-            }
+        case .fallbackToDefault(let defaultImage, let error):
+            onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: true))
+            _imageView.image = defaultImage
+            stopAnimating()
+            onFallBackToDefaultImage()
+        case .defaultDecodingError(let error, let defaultImageError):
+            onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: false))
+            _imageView.image = nil
+            stopAnimating()
+            onFallBackToDefaultImageFailed(defaultImageError)
         }
     }
     
     private func cleanDisplayLink() {
         displayLink?.invalidate()
         displayLink = nil
+    }
+    
+    private enum RenderResult {
+        case rendered(UIImage?)
+        case fallbackToDefault(UIImage?, APNGKitError)
+        case defaultDecodingError(frameError: APNGKitError, defaultDecodingError: APNGKitError)
+        
+        var hasError: Bool {
+            switch self {
+            case .rendered: return false
+            case .fallbackToDefault: return true
+            case .defaultDecodingError: return true
+            }
+        }
+    }
+    
+    private func renderCurrentDecoderOutput() -> RenderResult {
+        guard let image = _image, let output = image.decoder.output else {
+            return .rendered(nil)
+        }
+        switch output {
+        case .success(let cgImage):
+            return .rendered(UIImage(cgImage: cgImage, scale: image.scale, orientation: .up))
+        case .failure(let error):
+            do {
+                print("[APNGKit] Encountered an error when decoding the next image frame, index: \(nextFrameIndex). Error: \(error). Trying to reverting to the default image.")
+                let data = try image.decoder.createDefaultImageData()
+                return .fallbackToDefault(UIImage(data: data, scale: image.scale), error.apngError ?? .internalError(error))
+            } catch let defaultDecodingError {
+                print("[APNGKit] Encountered an error when decoding the default image. \(error)")
+                return .defaultDecodingError(
+                    frameError: error.apngError ?? .internalError(error),
+                    defaultDecodingError: defaultDecodingError.apngError ?? .internalError(defaultDecodingError)
+                )
+            }
+        }
+    }
+}
+
+extension APNGImageView {
+    public struct DecodingErrorItem {
+        public let error: APNGKitError
+        public let canFallbackToDefaultImage: Bool
     }
 }

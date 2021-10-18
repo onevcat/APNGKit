@@ -1,0 +1,246 @@
+[
+    {
+        "title": "Trivial static image.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "Trivial animated image - one frame; using default image.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "Trivial animated image - one frame; ignoring default image.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "Basic split IDAT.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "Split IDAT with zero-length chunk.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "Basic split fdAT.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "Split fdAT with zero-length chunk.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "APNG_DISPOSE_OP_NONE - basic.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "APNG_DISPOSE_OP_BACKGROUND - basic.",
+        "detail": "This should be transparent."
+    },
+    {
+        "title": "APNG_DISPOSE_OP_BACKGROUND - final frame.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "APNG_DISPOSE_OP_PREVIOUS - basic.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "APNG_DISPOSE_OP_PREVIOUS - final frame.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "APNG_DISPOSE_OP_PREVIOUS - first frame.",
+        "detail": "This should be transparent."
+    },
+    {
+        "title": "APNG_DISPOSE_OP_NONE in region.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "APNG_DISPOSE_OP_BACKGROUND before region.",
+        "detail": "This should be transparent."
+    },
+    {
+        "title": "APNG_DISPOSE_OP_BACKGROUND in region.",
+        "detail": "This should be a solid blue rectangle containing a smaller transparent rectangle."
+    },
+    {
+        "title": "APNG_DISPOSE_OP_PREVIOUS in region.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "APNG_BLEND_OP_SOURCE on solid colour.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "APNG_BLEND_OP_SOURCE on transparent colour.",
+        "detail": "This should be transparent."
+    },
+    {
+        "title": "APNG_BLEND_OP_SOURCE on nearly-transparent colour.",
+        "detail": "This should be very nearly transparent."
+    },
+    {
+        "title": "APNG_BLEND_OP_OVER on solid and transparent colours.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "APNG_BLEND_OP_OVER repeatedly with nearly-transparent colours.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "APNG_BLEND_OP_OVER",
+        "detail": "This should be solid slightly-dark green."
+    },
+    {
+        "title": "APNG_BLEND_OP_OVER",
+        "detail": "This should be solid nearly-black."
+    },
+    {
+        "title": "fcTL before acTL.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "Basic delays.",
+        "detail": "This should flash blue for half a second, then yellow for one second, then repeat."
+    },
+    {
+        "title": "Rounding of division.",
+        "detail": "This should flash blue for half a second, then yellow for one second, then repeat."
+    },
+    {
+        "title": "16-bit numerator/denominator.",
+        "detail": "This should flash blue for half a second, then yellow for one second, then repeat."
+    },
+    {
+        "title": "Zero denominator.",
+        "detail": "This should flash blue for half a second, then yellow for one second, then repeat."
+    },
+    {
+        "title": "Zero numerator.",
+        "detail": "This should flash cyan for a short period of time (perhaps zero), then magenta for the same short period of time, then blue for half a second, then yellow for one second, then repeat."
+    },
+    {
+        "title": "num_plays = 0",
+        "detail": "This should flash yellow for one second, then blue for one second, then repeat forever."
+    },
+    {
+        "title": "num_plays = 1",
+        "detail": "When first loaded, this should flash yellow for one second, then stay blue forever."
+    },
+    {
+        "title": "num_plays = 2",
+        "detail": "When first loaded, this should flash yellow for one second, then blue for one second, then yellow for one second, then blue forever."
+    },
+    {
+        "title": "16-bit colour.",
+        "detail": "This should be dark blue."
+    },
+    {
+        "title": "8-bit greyscale.",
+        "detail": "This should be a solid grey rectangle containing a solid white rectangle."
+    },
+    {
+        "title": "8-bit greyscale and alpha, with blending.",
+        "detail": "This should be solid grey."
+    },
+    {
+        "title": "2-color palette.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "2-bit palette and alpha.",
+        "detail": "This should be solid green."
+    },
+    {
+        "title": "1-bit palette and alpha, with blending.",
+        "detail": "This should be solid dark blue."
+    },
+    {
+        "title": "Missing acTL.",
+        "detail": ""
+    },
+    {
+        "title": "Repeated acTL.",
+        "detail": ""
+    },
+    {
+        "title": "acTL after IDAT.",
+        "detail": ""
+    },
+    {
+        "title": "Missing fcTL.",
+        "detail": ""
+    },
+    {
+        "title": "Repeated fcTL.",
+        "detail": ""
+    },
+    {
+        "title": "Missing fdAT.",
+        "detail": ""
+    },
+    {
+        "title": "num_frames = 0; no default image.",
+        "detail": "0 is not a valid value."
+    },
+    {
+        "title": "num_frames = 0; ignoring default image.",
+        "detail": "0 is not a valid value."
+    },
+    {
+        "title": "num_frames too low.",
+        "detail": "This must equal the number of `fcTL` chunks. If this value does not equal the actual number of frames it should be treated as an error."
+    },
+    {
+        "title": "num_frames too high by 1.",
+        "detail": "This must equal the number of `fcTL` chunks. If this value does not equal the actual number of frames it should be treated as an error."
+    },
+    {
+        "title": "num_frames too high by 2.",
+        "detail": "This must equal the number of `fcTL` chunks. If this value does not equal the actual number of frames it should be treated as an error."
+    },
+    {
+        "title": "num_frames outside valid range.",
+        "detail": "an `unsigned int` shall be a 32-bit unsigned integer in network byte order limited to the range 0 to (2^31)-1"
+    },
+    {
+        "title": "Not starting from 0.",
+        "detail": ""
+    },
+    {
+        "title": "Gap in sequence.",
+        "detail": ""
+    },
+    {
+        "title": "Duplicated sequence number.",
+        "detail": ""
+    },
+    {
+        "title": "Duplicated chunk.",
+        "detail": ""
+    },
+    {
+        "title": "Reordered fdAT chunks.",
+        "detail": ""
+    },
+    {
+        "title": "Reordered sequence numbers.",
+        "detail": ""
+    },
+    {
+        "title": "Separated fdAT and fcTL sequences.",
+        "detail": ""
+    },
+    {
+        "title": "Default image's fcTL size not matching IHDR.",
+        "detail": ""
+    },
+    {
+        "title": "fdAT too small.",
+        "detail": ""
+    },
+    {
+        "title": "fdAT too large.",
+        "detail": ""
+    }
+]

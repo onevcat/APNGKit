@@ -81,8 +81,20 @@ class APNGDecoder {
             throw APNGKitError.decoderError(.lackOfChunk(acTL.name))
         }
         
-        if acTLResult.chunk.numberOfFrames == 0 { // 0 is not a valid value in `acTL`
-            throw APNGKitError.decoderError(.corruptedData(atOffset: acTLResult.offsetBeforeThunk))
+        let numberOfFrames = acTLResult.chunk.numberOfFrames
+        if numberOfFrames == 0 { // 0 is not a valid value in `acTL`
+            throw APNGKitError.decoderError(.invalidNumberOfFrames(value: 0))
+        }
+        
+        // Too large `numberOfFrames`. Do not accept it since we are doing a pre-action memory alloc.
+        // Although 1024 frames should be enough for all normal case, there is an improvement plan:
+        // - Add a read option to loose this restriction (at user's risk. A large number would cause OOM.)
+        // - An alloc-with-use memory model. Do not alloc memory by this number (which might be malformed), but do the
+        //   alloc JIT.
+        //
+        // For now, just hard code a reasonable upper limitation.
+        if numberOfFrames >= 1024 {
+            throw APNGKitError.decoderError(.invalidNumberOfFrames(value: numberOfFrames))
         }
         frames = [APNGFrame?](repeating: nil, count: acTLResult.chunk.numberOfFrames)
         

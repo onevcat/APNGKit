@@ -2,6 +2,7 @@
 import Foundation
 import CoreGraphics
 import Delegate
+import UIKit
 
 public class APNGImage {
     public enum Duration {
@@ -83,11 +84,20 @@ public class APNGImage {
         guard let resource = resource else {
             throw APNGKitError.imageError(.resourceNotFound(name: name, bundle: targetBundle))
         }
-        decoder = try APNGDecoder(fileURL: resource.0)
-        scale = resource.1
         
-        let repeatCount = decoder.animationControl.numberOfPlays
-        numberOfPlays = repeatCount == 0 ? nil : repeatCount
+        do {
+            decoder = try APNGDecoder(fileURL: resource.0)
+            scale = resource.1
+            
+            let repeatCount = decoder.animationControl.numberOfPlays
+            numberOfPlays = repeatCount == 0 ? nil : repeatCount
+        } catch {
+            let data = try Data(contentsOf: resource.0)
+            guard let image = UIImage(data: data, scale: resource.1) else {
+                throw error
+            }
+            throw APNGKitError.imageError(.normalImageDataLoaded(image: image))
+        }
     }
 
     public init(fileURL: URL, scale: CGFloat? = nil) throws {
