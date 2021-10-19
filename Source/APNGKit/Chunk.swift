@@ -8,6 +8,7 @@
 import Foundation
 import zlib
 
+// A general chunk interface defines the minimal meaningful data block in APNG.
 protocol Chunk {
     static var name: [Character] { get }
     func verifyCRC(payload: Data, checksum: Data) throws
@@ -15,12 +16,15 @@ protocol Chunk {
     init(data: Data) throws
 }
 
+// The chunks which may contain actual image data, such as IDAT or fdAT chunk.
 protocol DataChunk: Chunk {
     var sequenceNumber: Int? { get }
     var dataPresentation: ImageDataPresentation { get }
 }
 
 extension DataChunk {
+    // Load the actual chunk data from the data chunk. If the data is already loaded and stored as `.data`, just return
+    // it. Otherwise, use the given `reader` to read it from a data block or file.
     func loadData(with reader: Reader) throws -> Data {
         switch dataPresentation {
         case .data(let chunkData):
@@ -76,7 +80,7 @@ struct IHDR: Chunk {
     }
     
     static let name: [Character] = ["I", "H", "D", "R"]
-    static let expectedLength = 13
+    static let expectedPayloadLength = 13
     
     private(set) var width: Int
     private(set) var height: Int
@@ -87,7 +91,7 @@ struct IHDR: Chunk {
     let interlaceMethod: Byte
     
     init(data: Data) throws {
-        guard data.count == IHDR.expectedLength else {
+        guard data.count == IHDR.expectedPayloadLength else {
             throw APNGKitError.decoderError(.wrongChunkData(name: Self.nameString, data: data))
         }
         width = data[0...3].intValue
@@ -102,6 +106,7 @@ struct IHDR: Chunk {
         interlaceMethod = data[12]
     }
     
+    /// Returns a new `IHDR` chunk with `width` and `height` updated.
     func updated(width: Int, height: Int) -> IHDR {
         var result = self
         result.width = width
@@ -110,11 +115,11 @@ struct IHDR: Chunk {
     }
     
     func encode() throws -> Data {
-        var data = Data(capacity: 4 + 4 + IHDR.expectedLength + 4)
-        data.append(IHDR.expectedLength.fourBytesData)
+        var data = Data(capacity: 4 /* length bytes */ + IHDR.name.count + IHDR.expectedPayloadLength + 4 /* crc bytes */)
+        data.append(IHDR.expectedPayloadLength.fourBytesData)
         data.append(contentsOf: Self.nameBytes)
         
-        var payload = Data(capacity: IHDR.expectedLength)
+        var payload = Data(capacity: IHDR.expectedPayloadLength)
         
         payload.append(width.fourBytesData)
         payload.append(height.fourBytesData)
@@ -127,24 +132,6 @@ struct IHDR: Chunk {
         data.append(payload)
         data.append(contentsOf: Self.generateCRC(payload: payload.bytes))
         return data
-    }
-    
-    var bitDepthPerComponent: Int {
-        // The sample depth is the same as the bit depth except in the case of
-        // indexed-colour PNG images (colour type 3), in which the sample depth is always 8 bits.
-        Int(colorType == .indexedColor ? 8 : bitDepth)
-    }
-    
-    var bitsPerPixel: UInt32 {
-        UInt32(colorType.componentsPerPixel * bitDepthPerComponent)
-    }
-    
-    var bytesPerPixel: UInt32 {
-        bitsPerPixel / 8
-    }
-    
-    var bytesPerRow: Int {
-        width * Int(bytesPerPixel)
     }
 }
 

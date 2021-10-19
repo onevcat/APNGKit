@@ -8,7 +8,7 @@
 import Foundation
 
 extension Data {
-    var bytes: [Byte] { [UInt8](self) }
+    var bytes: [Byte] { [Byte](self) }
     
     var intValue: Int {
         Int(UInt32(bytes))
@@ -30,14 +30,9 @@ extension Data {
 }
 
 extension Int {
+    // Convert an `Int` to four bytes of data, in network endian.
     var fourBytesData: Data {
         withUnsafeBytes(of: UInt32(self).bigEndian) {
-            Data($0)
-        }
-    }
-    
-    var byte: Data {
-        withUnsafeBytes(of: UInt8(self)) {
             Data($0)
         }
     }
@@ -50,13 +45,14 @@ extension Comparable {
 }
 
 extension FixedWidthInteger {
-    public var bigEndianBytes: [UInt8] {
-        [UInt8](withUnsafeBytes(of: self.bigEndian) { Data($0) })
+    public var bigEndianBytes: [Byte] {
+        [Byte](withUnsafeBytes(of: self.bigEndian) { Data($0) })
     }
 }
 
 extension UnsignedInteger {
-    init(_ bytes: [UInt8]) {
+    // Convert some bytes (network endian) into a number.
+    init(_ bytes: [Byte]) {
         precondition(bytes.count <= MemoryLayout<Self>.size)
         var value: UInt64 = 0
         for byte in bytes {

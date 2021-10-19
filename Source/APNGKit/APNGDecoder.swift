@@ -501,6 +501,7 @@ struct APNGFrame {
     }
 }
 
+// Drawing properties for IHDR.
 extension IHDR {
     var colorSpace: CGColorSpace {
         switch colorType {
@@ -518,6 +519,28 @@ extension IHDR {
             return CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
         }
     }
+    
+    var bitDepthPerComponent: Int {
+        // The sample depth is the same as the bit depth except in the case of
+        // indexed-colour PNG images (colour type 3), in which the sample depth is always 8 bits.
+        Int(colorType == .indexedColor ? 8 : bitDepth)
+    }
+    
+    var bitsPerPixel: UInt32 {
+        let componentsPerPixel =
+            colorType == .indexedColor ? 4 /* Draw indexed color as true color with alpha in CG world. */
+                                       : colorType.componentsPerPixel
+        return UInt32(componentsPerPixel * bitDepthPerComponent)
+    }
+    
+    var bytesPerPixel: UInt32 {
+        bitsPerPixel / 8
+    }
+    
+    var bytesPerRow: Int {
+        width * Int(bytesPerPixel)
+    }
+
 }
 
 extension fcTL {
