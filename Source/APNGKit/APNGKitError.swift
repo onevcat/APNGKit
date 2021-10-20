@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  APNGKitError.swift
 //  
 //
 //  Created by Wang Wei on 2021/10/05.
@@ -7,7 +7,6 @@
 
 import Foundation
 import ImageIO
-import UIKit
 
 public enum APNGKitError: Error {
     case decoderError(DecoderError)
@@ -39,17 +38,16 @@ extension APNGKitError {
     
     public enum ImageError {
         case resourceNotFound(name: String, bundle: Bundle)
-        case normalImageDataLoaded(image: UIImage)
+        case normalImageDataLoaded(data: Data, scale: CGFloat)
     }
-    
 }
 
 extension APNGKitError {
-    public var normalImage: UIImage? {
-        guard case .imageError(.normalImageDataLoaded(let image)) = self else {
+    public var normalImageData: (Data, CGFloat)? {
+        guard case .imageError(.normalImageDataLoaded(let data, let scale)) = self else {
             return nil
         }
-        return image
+        return (data, scale)
     }
 }
 

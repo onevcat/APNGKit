@@ -134,7 +134,7 @@ class APNGImageTests: XCTestCase {
         let url = SpecTesting.specTestingURL(0)
         XCTAssertThrowsError(try APNGImage(fileURL: url, scale: 1), "Loading normal image") { error in
             XCTAssertNotNil(error.apngError)
-            XCTAssertNotNil(error.apngError!.normalImage)
+            XCTAssertNotNil(error.apngError!.normalImageData)
         }
     }
 }

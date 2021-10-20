@@ -4,19 +4,11 @@
 //
 //  Created by Wang Wei on 2021/10/12.
 //
-
 #if canImport(UIKit)
 import UIKit
-public typealias APNGView = UIView
-typealias ImageView = UIImageView
-#elseif canImport(AppKit)
-import AppKit
-typealias APNGView = NSView
-typealias ImageView = NSImageView
-#endif
 import Delegate
 
-open class APNGImageView: APNGView {
+open class APNGImageView: UIView {
     
     /// Whether the animation should be played automatically when a valid `APNGImage` is set to the `image` property
     /// of `self`. Default is `true`.
@@ -69,7 +61,7 @@ open class APNGImageView: APNGView {
     
     private var displayLink: CADisplayLink?
     private var _image: APNGImage?
-    private let _imageView: ImageView = ImageView(frame: .zero)
+    private let _imageView: UIImageView = UIImageView(frame: .zero)
     
     // Number of played plays of the animated image.
     private var playedCount = 0
@@ -362,3 +354,13 @@ extension APNGImageView {
         public let canFallbackToDefaultImage: Bool
     }
 }
+
+extension APNGKitError {
+    public var normalImage: UIImage? {
+        guard let (data, scale) = self.normalImageData else {
+            return nil
+        }
+        return UIImage(data: data, scale: scale)
+    }
+}
+#endif

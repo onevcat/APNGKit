@@ -35,8 +35,8 @@ class SpecTestingExplanationViewController: UIViewController {
             apngImageView.image = image
         } catch {
             self.setError(error)
-            if case .imageError(.normalImageDataLoaded(let image)) = error.apngError {
-                apngImageView.staticImage = image
+            if let normalImage = error.apngError?.normalImage {
+                apngImageView.staticImage = normalImage
             } else {
                 apngImageView.staticImage = UIImage(named: "xmark.square")
                 print("Error: \(error) at index: \(data.index)")

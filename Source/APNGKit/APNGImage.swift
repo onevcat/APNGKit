@@ -2,7 +2,6 @@
 import Foundation
 import CoreGraphics
 import Delegate
-import UIKit
 
 /// Represents an APNG image object. This class loads an APNG file from disk or from some data object and provides a
 /// high level interface for you to set some animation properties. Once you get an `APNGImage` instance, you can set
@@ -88,7 +87,7 @@ public class APNGImage {
     // Holds the image owner view as weak, to prevent a single image held by multiple image views. The behavior of
     // this is not defined since it is not easy to determine if they should share the timing. If you need to display the
     // same image in different APNG image views, create multiple instance instead.
-    weak var owner: APNGImageView?
+    weak var owner: AnyObject?
     
     public convenience init(
         named name: String,
@@ -134,10 +133,7 @@ public class APNGImage {
             // Then try to load it as a normal image.
             if let apngError = error.apngError, apngError.shouldRevertToNormalImage {
                 let data = try Data(contentsOf: fileURL)
-                guard let image = UIImage(data: data, scale: self.scale) else {
-                    throw error
-                }
-                throw APNGKitError.imageError(.normalImageDataLoaded(image: image))
+                throw APNGKitError.imageError(.normalImageDataLoaded(data: data, scale: self.scale))
             } else {
                 throw error
             }
@@ -158,10 +154,7 @@ public class APNGImage {
             // Special case when the error is lack of acTL. It means this image is not an APNG at all.
             // Then try to load it as a normal image.
             if let apngError = error.apngError, apngError.shouldRevertToNormalImage {
-                guard let image = UIImage(data: data, scale: self.scale) else {
-                    throw error
-                }
-                throw APNGKitError.imageError(.normalImageDataLoaded(image: image))
+                throw APNGKitError.imageError(.normalImageDataLoaded(data: data, scale: self.scale))
             } else {
                 throw error
             }
