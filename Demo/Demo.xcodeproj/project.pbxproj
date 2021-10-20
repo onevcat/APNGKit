@@ -97,6 +97,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4BBB827A272065CB0035A3CA /* Demo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demo.entitlements; sourceTree = "<group>"; };
 		4BC3D8CE271C095D004DF785 /* elephant_apng@2x.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = "elephant_apng@2x.apng"; sourceTree = "<group>"; };
 		4BC3D8CF271C095D004DF785 /* APNG-4D.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = "APNG-4D.apng"; sourceTree = "<group>"; };
 		4BC3D8D0271C095D004DF785 /* spinfox.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = spinfox.apng; sourceTree = "<group>"; };
@@ -346,6 +347,7 @@
 		4BFF9509271C077D001645A7 /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				4BBB827A272065CB0035A3CA /* Demo.entitlements */,
 				4BC6DC9C271DB68200634A99 /* SampleImageScene */,
 				4BC6DC9B271DB66E00634A99 /* SpecTestingScene */,
 				4BC3D8CC271C095D004DF785 /* Resources */,
@@ -654,6 +656,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Demo/Demo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A4YJ9MRZ66;
@@ -671,6 +674,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.Demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -682,6 +687,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Demo/Demo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A4YJ9MRZ66;
@@ -699,6 +705,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.onevcat.Demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
