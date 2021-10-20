@@ -44,6 +44,15 @@ extension APNGKitError {
     
 }
 
+extension APNGKitError {
+    public var normalImage: UIImage? {
+        guard case .imageError(.normalImageDataLoaded(let image)) = self else {
+            return nil
+        }
+        return image
+    }
+}
+
 extension Error {
     public var apngError: APNGKitError? { self as? APNGKitError }
 }

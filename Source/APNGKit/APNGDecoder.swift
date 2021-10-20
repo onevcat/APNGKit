@@ -19,6 +19,7 @@ class APNGDecoder {
         let expectedSequenceNumber: Int
     }
     
+    // Called when the first pass is done.
     let onFirstPassDone = Delegate<(), Void>()
     
     // Only valid on main thread. Set the `output` to a `.failure` value would result the default image being rendered

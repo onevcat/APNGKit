@@ -9,19 +9,24 @@ import Foundation
 
 public typealias Byte = UInt8
 
-// Read some data
+// Read some data. A valid reader with enough performance should do these operation in O(1) time.
+// The decoder only cares about decoding some data, it does not know the source of the data (a preloaded data object or
+// from source or anywhere else). Update and conform to this is later we want to implement a network streaming decoder.
+//
 protocol Reader {
     // If the pointer is already at the end, returns nil.
-    //    Otherwise, if `upToCount` is a negative number, returns nil.
-    //        Otherwise, returns the read next `upToCount` bytes or bytes to the end.
+    //  |--- Otherwise, if `upToCount` is a negative number, returns nil.
+    //       |--- Otherwise, returns the read next `upToCount` bytes or bytes to the end.
     func read(upToCount: Int) throws -> Data?
     
-    // Move the pointer to the target offset. If `toOffset` is larger than the end, set it to the end.
+    // Moves the pointer to the target offset. If `toOffset` is larger than the end, set it to the end.
     func seek(toOffset: UInt64) throws
     
+    // Returns the current pointer offset for later use.
     func offset() throws -> UInt64
 }
 
+// Read data from a loaded data object.
 class DataReader: Reader {
 
     private var cursor: Int = 0
@@ -36,13 +41,19 @@ class DataReader: Reader {
     }
     
     func read(upToCount: Int) throws -> Data? {
-        // All bytes have beed already read.
-        guard cursor < data.count else { return nil }
-        let upper = min(cursor + upToCount, data.count)
-        guard upper >= cursor else {
+        guard upToCount >= 0 else {
             return nil
         }
+        // All bytes have beed already read.
+        guard cursor < data.count else { return nil }
+        
+        // At most read to `data.count`, even if `upToCount` would exceed.
+        let upper = min(cursor + upToCount, data.count)
+
+        // Set cursor after loading.
         defer { cursor = upper }
+        
+        // Create a new data instead of returning the data slice. So other 0-index based accessor can work.
         return Data(data[cursor ..< upper])
     }
     
@@ -55,6 +66,7 @@ class DataReader: Reader {
     }
 }
 
+// Read data from a file with `FileHandle`.
 class FileReader: Reader {
     private let handle: FileHandle
     
@@ -67,6 +79,8 @@ class FileReader: Reader {
     }
     
     func read(upToCount: Int) throws -> Data? {
+        // `FileHandle` will read a `nil` when given `upToCount: 0`.
+        // It does not what we want. Treat it as a special case to align the behavior to `DataReader`.
         if upToCount == 0 {
             return isFilePointerAtEnd ? nil : .init()
         }
@@ -129,13 +143,14 @@ class FileReader: Reader {
 }
 
 extension Reader {
-    /// Reads some bytes and try to convert then to an Int value
-    func readToInt(upToCount: Int) throws -> Int? {
-        (try read(upToCount: upToCount))?.intValue
+    /// Reads some bytes and try to convert them to an Int value
+    func readInt(upToCount: Int) throws -> Int? {
+        let data = try read(upToCount: upToCount)
+        return data?.intValue
     }
     
-    /// Reads the following chunk as a certain type. An error throws if the following data is not a valid chunk or is
-    /// not a chunk of desired type.
+    /// Reads the following chunk as a certain chunk type. An error throws if the following data is not a valid
+    /// chunk or is not a chunk of desired type.
     func readChunk<T: Chunk>(type: T.Type, skipChecksumVerify: Bool = false) throws -> ChunkResult<T> {
         let chunkData = try readGeneralChunk(type: T.self)
         let chunk = try T.init(data: chunkData.payload)

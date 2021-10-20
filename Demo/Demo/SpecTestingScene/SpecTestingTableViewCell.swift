@@ -37,8 +37,8 @@ class SpecTestingTableViewCell: UITableViewCell {
             let image = try APNGImage(named: data.imageName)
             animatedImageView.image = image
         } catch {
-            if case .imageError(.normalImageDataLoaded(let image)) = error.apngError {
-                animatedImageView.staticImage = image
+            if let normalImage = error.apngError?.normalImage {
+                animatedImageView.staticImage = normalImage
             } else {
                 animatedImageView.staticImage = UIImage(named: "xmark.square")
                 print("Error: \(error) at index: \(data.index)")

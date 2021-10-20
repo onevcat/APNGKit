@@ -22,16 +22,44 @@ class ChunkTests: XCTestCase {
         ]
         
         let data = Data(bytes)
-        let idhr = try IHDR(data: data)
-        XCTAssertEqual(idhr.width, 506)
-        XCTAssertEqual(idhr.height, 258)
-        XCTAssertEqual(idhr.bitDepth, 8)
-        XCTAssertEqual(idhr.colorType.rawValue, 6)
-        XCTAssertEqual(idhr.compression, 0)
-        XCTAssertEqual(idhr.filterMethod, 0)
-        XCTAssertEqual(idhr.interlaceMethod, 0)
+        let ihdr = try IHDR(data: data)
+        XCTAssertEqual(ihdr.width, 506)
+        XCTAssertEqual(ihdr.height, 258)
+        XCTAssertEqual(ihdr.bitDepth, 8)
+        XCTAssertEqual(ihdr.colorType.rawValue, 6)
+        XCTAssertEqual(ihdr.compression, 0)
+        XCTAssertEqual(ihdr.filterMethod, 0)
+        XCTAssertEqual(ihdr.interlaceMethod, 0)
         
-        try idhr.verifyCRC(payload: data, checksum: Data(crc))
+        try ihdr.verifyCRC(payload: data, checksum: Data(crc))
+    }
+    
+    func testIHDRChunkUpdateAndEncoding() throws {
+        let bytes: [UInt8] = [
+            0x00, 0x00, 0x01, 0xFA,
+            0x00, 0x00, 0x01, 0x02,
+            0x08, 0x06, 0x00, 0x00, 0x00
+        ]
+        
+        let data = Data(bytes)
+        let ihdr = try IHDR(data: data)
+        
+        XCTAssertEqual(ihdr.width, 506)
+        XCTAssertEqual(ihdr.height, 258)
+        
+        let updatedIHDR = ihdr.updated(width: 100, height: 300)
+        XCTAssertEqual(updatedIHDR.width, 100)
+        XCTAssertEqual(updatedIHDR.height, 300)
+        
+        let newData = try updatedIHDR.encode()
+        let correct = newData.bytes.dropLast(4) /* without crc */ == [
+            0x00, 0x00, 0x00, 0x0D,
+            0x49, 0x48, 0x44, 0x52,
+            0x00, 0x00, 0x00, 0x64,
+            0x00, 0x00, 0x01, 0x2C,
+            0x08, 0x06, 0x00, 0x00, 0x00
+        ]
+        XCTAssertTrue(correct)
     }
     
     func testWrongCRC() throws {
@@ -98,5 +126,14 @@ class ChunkTests: XCTestCase {
         XCTAssertEqual(fcTL.blendOp, .over)
         
         try fcTL.verifyCRC(payload: data, checksum: Data(crc))
+    }
+    
+    func testIENDChunk() throws {
+        let data = Data()
+        let iend = try IEND(data: data)
+        let correctChecksum = iend.verifyCRC(chunkData: data, checksum: Data([0xAE, 0x42, 0x60, 0x82]))
+        XCTAssertTrue(correctChecksum)
+        
+        XCTAssertThrowsError(try IEND(data: Data([0x00])))
     }
 }
