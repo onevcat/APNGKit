@@ -187,6 +187,11 @@ class APNGDecoder {
             while firstPass {
                 index = index + 1
                 let (frame, data) = try loadFrame()
+                
+                if options.contains(.preRenderAllFrames) {
+                    _ = try render(frame: frame, data: data, index: index)
+                }
+                
                 if foundMultipleAnimationControl {
                     throw APNGKitError.decoderError(.multipleAnimationControlChunk)
                 }
