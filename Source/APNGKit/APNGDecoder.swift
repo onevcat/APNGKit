@@ -44,6 +44,9 @@ class APNGDecoder {
     private var currentOutputImage: CGImage?
     private var previousOutputImage: CGImage?
     
+    // Used only when `cachePolicy` is `.cache`.
+    private var decodedImageCache: [CGImage?]?
+    
     private var canvasFullSize: CGSize { .init(width: imageHeader.width, height: imageHeader.height) }
     private var canvasFullRect: CGRect { .init(origin: .zero, size: canvasFullSize) }
     
@@ -56,6 +59,7 @@ class APNGDecoder {
     private var resetStatus: ResetStatus!
     
     private let options: APNGImage.DecodingOptions
+    let cachePolicy: APNGImage.CachePolicy
     
     convenience init(data: Data, options: APNGImage.DecodingOptions = []) throws {
         let reader = DataReader(data: data)
@@ -105,6 +109,30 @@ class APNGDecoder {
         }
         frames = [APNGFrame?](repeating: nil, count: acTLResult.chunk.numberOfFrames)
         
+        // Determine cache policy. When the policy is explicitly set, use that. Otherwise, choose a cache policy by
+        // image properties.
+        if options.contains(.cacheDecodedImages) { // The optional
+            cachePolicy = .cache
+        } else if options.contains(.notCacheDecodedImages) {
+            cachePolicy = .noCache
+        } else { // Optimization: Auto determine if we want to cache the image based on image information.
+            if acTLResult.chunk.numberOfPlays == 0 {
+                // Although it is not accurate enough, we only use the image header and animation control chunk to estimate.
+                let estimatedTotalBytes = imageHeader.height * imageHeader.bytesPerRow * numberOfFrames
+                // Cache images when it does not take too much memory.
+                cachePolicy = estimatedTotalBytes < APNGImage.maximumCacheSize ? .cache : .noCache
+            } else {
+                // If the animation is not played forever, it does not worth to cache.
+                cachePolicy = .noCache
+            }
+        }
+        
+        if cachePolicy == .cache {
+            decodedImageCache = [CGImage?](repeating: nil, count: acTLResult.chunk.numberOfFrames)
+        } else {
+            decodedImageCache = nil
+        }
+        
         sharedData = acTLResult.dataBeforeThunk
         animationControl = acTLResult.chunk
         
@@ -144,7 +172,8 @@ class APNGDecoder {
         // It is safe to set it here since this `setup()` method will be only called in init, before any chance to
         // make another call like `renderNext` to modify `output` at the same time.
         if !foundMultipleAnimationControl {
-            output = .success(try render(frame: firstFrame, data: firstFrameData, index: currentIndex))
+            let cgImage = try render(frame: firstFrame, data: firstFrameData, index: currentIndex)
+            output = .success(cgImage)
         } else {
             output = .failure(.decoderError(.multipleAnimationControlChunk))
         }
@@ -189,9 +218,14 @@ class APNGDecoder {
             expectedSequenceNumber = resetStatus.expectedSequenceNumber
         }
         
+        if cachePolicy == .cache, let cache = decodedImageCache, cache.contains(nil) {
+            // The cache is only still valid when all frames are in cache. If there is any `nil` in the cache, reset it.
+            // Otherwise, it is not easy to decide the partial drawing context.
+            decodedImageCache = [CGImage?](repeating: nil, count: animationControl.numberOfFrames)
+        }
+        
         currentIndex = 0
         output = .success(try render(frame: firstFrame!, data: firstFrameData!, index: 0))
-        
     }
 
     private func renderNextImpl() throws -> (CGImage, Int) {
@@ -254,6 +288,11 @@ class APNGDecoder {
     }
 
     private func render(frame: APNGFrame, data: Data, index: Int) throws -> CGImage {
+        // Shortcut for image cache.
+        if let cached = cachedImage(at: index) {
+            return cached
+        }
+        
         if index == 0 {
             // Reset for the first frame
             previousOutputImage = nil
@@ -308,6 +347,11 @@ class APNGDecoder {
         
         previousOutputImage = currentOutputImage
         currentOutputImage = nextOutputImage
+        
+        if cachePolicy == .cache {
+            decodedImageCache?[index] = nextOutputImage
+        }
+        
         return nextOutputImage
     }
     
@@ -316,8 +360,18 @@ class APNGDecoder {
             preconditionFailure("renderFrame cannot work until all frames are loaded.")
         }
         
+        if let cached = cachedImage(at: index) {
+            return cached
+        }
+        
         let data = try frame.loadData(with: reader)
         return try render(frame: frame, data: data, index: index)
+    }
+    
+    private func cachedImage(at index: Int) -> CGImage? {
+        guard cachePolicy == .cache else { return nil }
+        guard let cache = decodedImageCache else { return nil }
+        return cache[index]
     }
     
     private var loadedFrameCount: Int {

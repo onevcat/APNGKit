@@ -9,6 +9,13 @@ import UIKit
 /// it to an `APNGImageView` to display it on screen.
 public class APNGImage {
     
+    /// The maximum size in memory which determines whether the decoded images should be cached or not.
+    ///
+    /// If a cache policy is not specified in `DecodingOptions`, APNGKit will decide if the decoded images should be
+    /// cached or not by checking its loop number and the estimated size. Enlarge this number to allow bigger images
+    /// to be cached.
+    public static var maximumCacheSize = 50_000_000 // 50 MB
+    
     /// The MIME type represents an APNG data. Fixed to `image/apng` according to APNG specification 1.0.
     public static let MIMEType: String = "image/apng"
     
@@ -69,6 +76,15 @@ public class APNGImage {
         return decoder.firstPass ? .loadedPartial(knownDuration) : .full(knownDuration)
     }
     
+    /// The cache policy used by this image for the image data of decoded frames.
+    ///
+    /// By default, APNGKit can determine and pick a proper cache policy to trade off between CPU usage and memory
+    /// footprint. The basic principle is caching small and forever-looping animated images. You can change this
+    /// behavior by specifying an cache option in the `DecodingOptions`, to force it either `.cacheDecodedImages`
+    /// or `.notCacheDecodedImages`. You can also adjust `APNGImage.maximumCacheSize` to suggest APNGKit change its
+    /// cache policy to another image byte size.
+    public var cachePolicy: CachePolicy { decoder.cachePolicy }
+    
     // Holds the image owner view as weak, to prevent a single image held by multiple image views. The behavior of
     // this is not defined since it is not easy to determine if they should share the timing. If you need to display the
     // same image in different APNG image views, create multiple instance instead.
@@ -78,7 +94,7 @@ public class APNGImage {
         named name: String,
         decodingOptions: DecodingOptions = []
     ) throws {
-        try self.init(named: name, in: nil, subdirectory: nil)
+        try self.init(named: name, decodingOptions: decodingOptions, in: nil, subdirectory: nil)
     }
 
     public convenience init(
@@ -91,7 +107,7 @@ public class APNGImage {
         guard let resource = guessing.load(in: bundle, subpath: subpath) else {
             throw APNGKitError.imageError(.resourceNotFound(name: name, bundle: bundle ?? .main))
         }
-        try self.init(fileURL: resource.fileURL, scale: resource.scale)
+        try self.init(fileURL: resource.fileURL, scale: resource.scale, decodingOptions: decodingOptions)
     }
     
     public convenience init(
@@ -100,7 +116,7 @@ public class APNGImage {
         decodingOptions: DecodingOptions = []
     ) throws {
         let fileURL = URL(fileURLWithPath: filePath)
-        try self.init(fileURL: fileURL, scale: scale)
+        try self.init(fileURL: fileURL, scale: scale, decodingOptions: decodingOptions)
     }
 
     public init(
@@ -184,13 +200,27 @@ extension APNGImage {
         
         /// Holds the decoded image for each frame, so APNGKit will not render it again.
         ///
-        /// By default, APNGKit renders each frame when it is going to be displayed onto screen, and drops the image as
-        /// soon as the next frame is shown. The default behavior has the most efficient memory performance, but with
-        /// the cost of high CPU usage, since each frame will be decoded every time it is shown.
+        /// By default, APNGKit determines the cache policy by the image properties itself, if neither
+        /// `.cacheDecodedImages` nor `.notCacheDecodedImages` is set.
         ///
-        /// Enable this to ask APNGKit to create a memory cache for the decoded frames. Then when the same frame is
-        /// going to be shown again, it skips the whole rendering process and just load it from cache then show.
+        /// Enable this to forcibly ask APNGKit to create a memory cache for the decoded frames. Then when the same
+        /// frame is going to be shown again, it skips the whole rendering process and just load it from cache then
+        /// show. This trades for better CPU usage with the cost of memory.
+        ///
+        /// See ``APNGImage.CachePolicy`` for more.
         public static let cacheDecodedImages = DecodingOptions(rawValue: 1 << 2)
+        
+        /// Drops the decoded image for each frame, so APNGKit will render it again when next time it is needed.
+        ///
+        /// By default, APNGKit determines the cache policy by the image properties itself, if neither
+        /// `.cacheDecodedImages` nor `.notCacheDecodedImages` is set.
+        ///
+        /// Enable this to forcibly ask APNGKit to skip the memory cache for the decoded frames. Then when the same
+        /// frame is going to be shown again, it performs the rendering process and draw it again to the canvas.
+        /// This trades for smaller memory footprint with the cost of CPU usage.
+        ///
+        /// See ``APNGImage.CachePolicy`` for more.
+        public static let notCacheDecodedImages = DecodingOptions(rawValue: 1 << 3)
         
         /// Performs render for all frames before the APNG image finishes it initialization. This also enables
         /// `.fullFirstPass` and `.cacheDecodedImages` option.
@@ -209,7 +239,7 @@ extension APNGImage {
         /// If `fullFirstPass` and `cacheDecodedImages` are not set in the same decoding options, APNGKit adds them
         /// for you automatically, since only enabling `preRenderAllFrames` is meaningless.
         public static let preRenderAllFrames  = DecodingOptions(
-                                                       rawValue: 1 << 3 |
+                                                       rawValue: 1 << 4 |
                                                        fullFirstPass.rawValue |
                                                        cacheDecodedImages.rawValue
                                                   )
@@ -221,14 +251,29 @@ extension APNGImage {
         ///
         /// Enable this to ask APNGKit to skip this check. It improves the CPU performance a bit, but with the risk of
         /// reading and trust unchecked chunks. It is not recommended to skip the check.
-        public static let skipChecksumCheck   = DecodingOptions(rawValue: 1 << 4)
+        public static let skipChecksumCheck   = DecodingOptions(rawValue: 1 << 5)
         
         /// Unsets frame count limitation when reading an APNG image.
         ///
         /// By default, APNGKit applies a limit for frame count of the APNG image to 1024. It should be suitable for
         /// all expected use cases. Allowing more frame count or even unlimited frames may easily causes
         ///
-        public static let unlimitedFrameCount = DecodingOptions(rawValue: 1 << 5)
+        public static let unlimitedFrameCount = DecodingOptions(rawValue: 1 << 6)
+    }
+    
+    /// The cache policy APNGKit will use to determine whether cache the decoded frames or not.
+    ///
+    /// If not using cache (`.noCache` case), APNGKit renders each frame when it is going to be displayed onto screen, and drops the
+    /// image as soon as the next frame is shown. It has the most efficient memory performance, but with
+    /// the cost of high CPU usage, since each frame will be decoded every time it is shown.
+    ///
+    /// On the other hand, if using cache (`.cache` case), APNGKit caches the decoded images and prevent to draw it from
+    /// data again when displaying. It consumes more memory but you can get the least CPU usage.
+    public enum CachePolicy {
+        /// Does not cache the decoded frame images.
+        case noCache
+        /// Caches the decoded frame images.
+        case cache
     }
 }
 
