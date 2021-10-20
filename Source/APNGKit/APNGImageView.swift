@@ -315,8 +315,13 @@ open class APNGImageView: APNGView {
     }
     
     private enum RenderResult {
+        // The next frame is rendered without problem.
         case rendered(UIImage?)
+        // The image is rendered with the default image as a fallback, with an error indicates what is wrong when
+        // decoding the target (failing) frame.
         case fallbackToDefault(UIImage?, APNGKitError)
+        // The frame decoding is failing due to `frameError`, and the fallback default image is also failing,
+        // due to `defaultDecodingError`.
         case defaultDecodingError(frameError: APNGKitError, defaultDecodingError: APNGKitError)
         
         var hasError: Bool {
