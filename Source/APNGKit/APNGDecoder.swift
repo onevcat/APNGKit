@@ -402,7 +402,9 @@ class APNGDecoder {
             try reader.peek { info, action in
                 switch info.name.bytes {
                 case fdAT.nameBytes:
-                    let (chunk, data) = try action(.readIndexedfdAT()).fdAT
+                    let peekAction: PeekAction =
+                        options.contains(.loadFrameData) ? .read(type: fdAT.self) : .readIndexedfdAT()
+                    let (chunk, data) = try action(peekAction).fdAT
                     try checkSequenceNumber(chunk)
                     result.append(chunk)
                     allData.append(data)
@@ -429,7 +431,9 @@ class APNGDecoder {
             try reader.peek { info, action in
                 switch info.name.bytes {
                 case IDAT.nameBytes:
-                    let (chunk, data) = try action(.readIndexedIDAT()).IDAT
+                    let peekAction: PeekAction =
+                        options.contains(.loadFrameData) ? .read(type: IDAT.self) : .readIndexedIDAT()
+                    let (chunk, data) = try action(peekAction).IDAT
                     chunks.append(chunk)
                     allData.append(data)
                 case fcTL.nameBytes, IEND.nameBytes:

@@ -209,30 +209,6 @@ class APNGDecoderTests: XCTestCase {
             try decoder.reset()
         }
     }
-    
-    func testDecoderWithoutFullFirstPassOption() throws {
-        let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25))
-        XCTAssertEqual(decoder.currentIndex, 0)
-        XCTAssertEqual(decoder.frames.count, 4)
-        XCTAssertNotNil(decoder.frames[0])
-        XCTAssertNil(decoder.frames[1])
-        XCTAssertNil(decoder.frames[2])
-        XCTAssertNil(decoder.frames[3])
-        XCTAssertTrue(decoder.firstPass)
-    }
-    
-    func testDecoderWithFullFirstPassOption() throws {
-        let exp = expectation(description: "wait onFirstPassDone call")
-        let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25), options: [.fullFirstPass])
-        decoder.onFirstPassDone.delegate(on: self) { (self, _) in
-            exp.fulfill()
-        }
-        XCTAssertEqual(decoder.currentIndex, 0)
-        XCTAssertEqual(decoder.frames.count, 4)
-        XCTAssertTrue(decoder.frames.allSatisfy { $0 != nil })
-        XCTAssertFalse(decoder.firstPass)
-        waitForExpectations(timeout: 1.0, handler: nil)
-    }
 }
 
 extension APNGDecoder {
