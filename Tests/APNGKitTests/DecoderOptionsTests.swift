@@ -71,4 +71,101 @@ class DecoderOptionsTests: XCTestCase {
             XCTAssertTrue(allIsData)
         }
     }
+    
+    func testImageWithCache() throws {
+        let oldValue = APNGImage.maximumCacheSize
+        APNGImage.maximumCacheSize = .max
+        defer { APNGImage.maximumCacheSize = oldValue }
+        let apng = try APNGImage(named: "pyani.apng", in: .module, subdirectory: "General")
+        XCTAssertEqual(apng.cachePolicy, .cache)
+        XCTAssertNotNil(apng.decoder.decodedImageCache)
+        
+        // The first frame should be cached.
+        XCTAssertNotNil(apng.decoder.decodedImageCache![0])
+        
+        // The second frame should not be cached yet.
+        XCTAssertNil(apng.decoder.decodedImageCache![1])
+        
+        // Render and cache the next frame.
+        try apng.decoder.renderNextSync()
+        XCTAssertNotNil(apng.decoder.decodedImageCache![1])
+    }
+    
+    func testImageWithoutCache() throws {
+        let oldValue = APNGImage.maximumCacheSize
+        APNGImage.maximumCacheSize = 1
+        defer { APNGImage.maximumCacheSize = oldValue }
+        let apng = try APNGImage(named: "pyani.apng", in: .module, subdirectory: "General")
+        XCTAssertEqual(apng.cachePolicy, .noCache)
+        XCTAssertNil(apng.decoder.decodedImageCache)
+    }
+    
+    func testImageForceCache() throws {
+        let oldValue = APNGImage.maximumCacheSize
+        APNGImage.maximumCacheSize = 1
+        defer { APNGImage.maximumCacheSize = oldValue }
+        
+        let apng = try APNGImage(
+            named: "pyani.apng", decodingOptions: [.cacheDecodedImages], in: .module, subdirectory: "General"
+        )
+        XCTAssertEqual(apng.cachePolicy, .cache)
+    }
+    
+    func testImageForceWithoutCache() throws {
+        let oldValue = APNGImage.maximumCacheSize
+        APNGImage.maximumCacheSize = .max
+        defer { APNGImage.maximumCacheSize = oldValue }
+        
+        let apng = try APNGImage(
+            named: "pyani.apng", decodingOptions: [.notCacheDecodedImages], in: .module, subdirectory: "General"
+        )
+        XCTAssertEqual(apng.cachePolicy, .noCache)
+    }
+    
+    func testSmallForeverImageIsCached() throws {
+        let url = SpecTesting.specTestingURL(30) // num_of_plays = 0
+        let apng = try APNGImage(fileURL: url)
+        XCTAssertEqual(apng.cachePolicy, .cache)
+    }
+    
+    func testNonForeverImageIsNotCached() throws {
+        let url = SpecTesting.specTestingURL(31) // num_of_plays = 1
+        let apng = try APNGImage(fileURL: url)
+        XCTAssertEqual(apng.cachePolicy, .noCache)
+    }
+    
+    func testImageCacheReset() throws {
+        let apng = try APNGImage(named: "pyani.apng", in: .module, subdirectory: "General")
+        XCTAssertEqual(apng.cachePolicy, .cache)
+        XCTAssertNotNil(apng.decoder.decodedImageCache)
+        
+        XCTAssertNotNil(apng.decoder.decodedImageCache![0])
+        
+        XCTAssertNil(apng.decoder.decodedImageCache![1])
+        try apng.decoder.renderNextSync()
+        XCTAssertNotNil(apng.decoder.decodedImageCache![1])
+        
+        // When reset, a non-fully cached image should reset its cache too.
+        try apng.decoder.reset()
+        // Only the first frame is still in cache (since it is rendered again.)
+        XCTAssertNotNil(apng.decoder.decodedImageCache![0])
+        XCTAssertNil(apng.decoder.decodedImageCache![1])
+        XCTAssertNil(apng.decoder.decodedImageCache![2])
+        
+        while apng.decoder.firstPass {
+            try apng.decoder.renderNextSync()
+        }
+        
+        // All frame should be cached.
+        XCTAssertTrue(apng.decoder.decodedImageCache!.allSatisfy { $0 != nil })
+        
+        // Cache is not reset when all frames decoded.
+        try apng.reset()
+        XCTAssertTrue(apng.decoder.decodedImageCache!.allSatisfy { $0 != nil })
+        
+        // Cache is not reset when current index is 0.
+        XCTAssertEqual(apng.decoder.currentIndex, 0)
+        try apng.reset()
+        XCTAssertTrue(apng.decoder.decodedImageCache!.allSatisfy { $0 != nil })
+    }
 }

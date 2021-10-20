@@ -45,7 +45,7 @@ class APNGDecoder {
     private var previousOutputImage: CGImage?
     
     // Used only when `cachePolicy` is `.cache`.
-    private var decodedImageCache: [CGImage?]?
+    private(set) var decodedImageCache: [CGImage?]?
     
     private var canvasFullSize: CGSize { .init(width: imageHeader.width, height: imageHeader.height) }
     private var canvasFullRect: CGRect { .init(origin: .zero, size: canvasFullSize) }
