@@ -85,7 +85,7 @@ extension APNGImage {
         ///
         /// Enable this to ask APNGKit to skip this check. It improves the CPU performance a bit, but with the risk of
         /// reading and trust unchecked chunks. It is not recommended to skip the check.
-        public static let skipChecksumCheck   = DecodingOptions(rawValue: 1 << 5)
+        public static let skipChecksumVerify   = DecodingOptions(rawValue: 1 << 5)
         
         /// Unsets frame count limitation when reading an APNG image.
         ///

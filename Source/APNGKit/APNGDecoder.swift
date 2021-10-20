@@ -57,8 +57,8 @@ class APNGDecoder {
     private let reader: Reader
     
     private var resetStatus: ResetStatus!
-    
     private let options: APNGImage.DecodingOptions
+    
     let cachePolicy: APNGImage.CachePolicy
     
     convenience init(data: Data, options: APNGImage.DecodingOptions = []) throws {
@@ -76,18 +76,20 @@ class APNGDecoder {
         self.reader = reader
         self.options = options
         
+        let skipChecksumVerify = options.contains(.skipChecksumVerify)
+        
         // Decode and load the common part and at least make the first frame prepared.
         guard let signature = try reader.read(upToCount: 8),
               signature.bytes == Self.pngSignature
         else {
             throw APNGKitError.decoderError(.fileFormatError)
         }
-        let ihdr = try reader.readChunk(type: IHDR.self)
+        let ihdr = try reader.readChunk(type: IHDR.self, skipChecksumVerify: skipChecksumVerify)
         imageHeader = ihdr.chunk
         
         let acTLResult: UntilChunkResult<acTL>
         do {
-            acTLResult = try reader.readUntil(type: acTL.self)
+            acTLResult = try reader.readUntil(type: acTL.self, skipChecksumVerify: skipChecksumVerify)
         } catch { // Can not read a valid `acTL`. Should be treated as a normal PNG.
             throw APNGKitError.decoderError(.lackOfChunk(acTL.name))
         }
@@ -104,7 +106,7 @@ class APNGDecoder {
         //   alloc JIT.
         //
         // For now, just hard code a reasonable upper limitation.
-        if numberOfFrames >= 1024 {
+        if numberOfFrames >= 1024 && !options.contains(.unlimitedFrameCount) {
             throw APNGKitError.decoderError(.invalidNumberOfFrames(value: numberOfFrames))
         }
         frames = [APNGFrame?](repeating: nil, count: acTLResult.chunk.numberOfFrames)
@@ -200,7 +202,7 @@ class APNGDecoder {
         }
         
         if !firstPass { // Animation with only one frame,check IEND.
-            _ = try reader.readChunk(type: IEND.self)
+            _ = try reader.readChunk(type: IEND.self, skipChecksumVerify: skipChecksumVerify)
             
             // Dispatch to give the user a chance to setup delegate after they get the returned APNG image.
             DispatchQueue.main.async { self.onFirstPassDone() }
@@ -247,7 +249,7 @@ class APNGDecoder {
             
             image = try render(frame: frame, data: data, index: newIndex)
             if !firstPass {
-                _ = try reader.readChunk(type: IEND.self)
+                _ = try reader.readChunk(type: IEND.self, skipChecksumVerify: options.contains(.skipChecksumVerify))
                 DispatchQueue.main.asyncOrSyncIfMain {
                     self.onFirstPassDone()
                 }
@@ -456,13 +458,17 @@ class APNGDecoder {
         var result: [fdAT] = []
         var allData: Data = .init()
         
+        let skipChecksumVerify = options.contains(.skipChecksumVerify)
+        
         var frameDataEnd = false
         while !frameDataEnd {
             try reader.peek { info, action in
                 switch info.name.bytes {
                 case fdAT.nameBytes:
                     let peekAction: PeekAction =
-                        options.contains(.loadFrameData) ? .read(type: fdAT.self) : .readIndexedfdAT()
+                        options.contains(.loadFrameData) ?
+                            .read(type: fdAT.self, skipChecksumVerify: skipChecksumVerify) :
+                            .readIndexedfdAT(skipChecksumVerify: skipChecksumVerify)
                     let (chunk, data) = try action(peekAction).fdAT
                     try checkSequenceNumber(chunk)
                     result.append(chunk)
@@ -485,13 +491,17 @@ class APNGDecoder {
         var chunks: [IDAT] = []
         var allData: Data = .init()
         
+        let skipChecksumVerify = options.contains(.skipChecksumVerify)
+        
         var imageDataEnd = false
         while !imageDataEnd {
             try reader.peek { info, action in
                 switch info.name.bytes {
                 case IDAT.nameBytes:
                     let peekAction: PeekAction =
-                        options.contains(.loadFrameData) ? .read(type: IDAT.self) : .readIndexedIDAT()
+                    options.contains(.loadFrameData) ?
+                        .read(type: IDAT.self, skipChecksumVerify: skipChecksumVerify) :
+                        .readIndexedIDAT(skipChecksumVerify: skipChecksumVerify)
                     let (chunk, data) = try action(peekAction).IDAT
                     chunks.append(chunk)
                     allData.append(data)
