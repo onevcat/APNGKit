@@ -44,7 +44,8 @@ public class APNGImage {
     /// repeat count and the animation will be played in loop forever.
     public var numberOfPlays: Int?
     
-    /// The number of frames of the 
+    /// The number of frames in the image instance. It is the expected frame count in the image, which is defined by
+    /// the number in animation control chunk data.
     public var numberOfFrames: Int { decoder.animationControl.numberOfFrames }
     
     /// Duration of the loaded frames.
@@ -73,11 +74,19 @@ public class APNGImage {
     // same image in different APNG image views, create multiple instance instead.
     weak var owner: APNGImageView?
     
-    public convenience init(named name: String) throws {
+    public convenience init(
+        named name: String,
+        decodingOptions: DecodingOptions = []
+    ) throws {
         try self.init(named: name, in: nil, subdirectory: nil)
     }
 
-    public convenience init(named name: String, in bundle: Bundle?, subdirectory subpath: String? = nil) throws {
+    public convenience init(
+        named name: String,
+        decodingOptions: DecodingOptions = [],
+        in bundle: Bundle?,
+        subdirectory subpath: String? = nil
+    ) throws {
         let guessing = FileNameGuessing(name: name)
         guard let resource = guessing.load(in: bundle, subpath: subpath) else {
             throw APNGKitError.imageError(.resourceNotFound(name: name, bundle: bundle ?? .main))
@@ -85,15 +94,23 @@ public class APNGImage {
         try self.init(fileURL: resource.fileURL, scale: resource.scale)
     }
     
-    public convenience init(filePath: String, scale: CGFloat? = nil) throws {
+    public convenience init(
+        filePath: String,
+        scale: CGFloat? = nil,
+        decodingOptions: DecodingOptions = []
+    ) throws {
         let fileURL = URL(fileURLWithPath: filePath)
         try self.init(fileURL: fileURL, scale: scale)
     }
 
-    public init(fileURL: URL, scale: CGFloat? = nil) throws {
+    public init(
+        fileURL: URL,
+        scale: CGFloat? = nil,
+        decodingOptions: DecodingOptions = []
+    ) throws {
         self.scale = scale ?? fileURL.imageScale
         do {
-            decoder = try APNGDecoder(fileURL: fileURL)
+            decoder = try APNGDecoder(fileURL: fileURL, options: decodingOptions)
             let repeatCount = decoder.animationControl.numberOfPlays
             numberOfPlays = repeatCount == 0 ? nil : repeatCount
         } catch {
@@ -111,10 +128,14 @@ public class APNGImage {
         }
     }
 
-    public init(data: Data, scale: CGFloat = 1.0) throws {
+    public init(
+        data: Data,
+        scale: CGFloat = 1.0,
+        decodingOptions: DecodingOptions = []
+    ) throws {
         self.scale = scale
         do {
-            self.decoder = try APNGDecoder(data: data)
+            self.decoder = try APNGDecoder(data: data, options: decodingOptions)
             let repeatCount = decoder.animationControl.numberOfPlays
             numberOfPlays = repeatCount == 0 ? nil : repeatCount
         } catch {

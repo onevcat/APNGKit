@@ -55,19 +55,22 @@ class APNGDecoder {
     
     private var resetStatus: ResetStatus!
     
-    convenience init(data: Data) throws {
+    private let options: APNGImage.DecodingOptions
+    
+    convenience init(data: Data, options: APNGImage.DecodingOptions = []) throws {
         let reader = DataReader(data: data)
-        try self.init(reader: reader)
+        try self.init(reader: reader, options: options)
     }
     
-    convenience init(fileURL: URL) throws {
+    convenience init(fileURL: URL, options: APNGImage.DecodingOptions = []) throws {
         let reader = try FileReader(url: fileURL)
-        try self.init(reader: reader)
+        try self.init(reader: reader, options: options)
     }
     
-    private init(reader: Reader) throws {
+    private init(reader: Reader, options: APNGImage.DecodingOptions) throws {
     
         self.reader = reader
+        self.options = options
         
         // Decode and load the common part and at least make the first frame prepared.
         guard let signature = try reader.read(upToCount: 8),
@@ -149,6 +152,18 @@ class APNGDecoder {
         // Store the current reader offset. If later we need to reset the image loading state, we can start from here
         // to make the whole image back to the state of just initialized.
         resetStatus = ResetStatus(offset: try reader.offset(), expectedSequenceNumber: expectedSequenceNumber)
+        
+        if options.contains(.fullFirstPass) {
+            var index = currentIndex
+            while firstPass {
+                index = index + 1
+                let (frame, data) = try loadFrame()
+                if foundMultipleAnimationControl {
+                    throw APNGKitError.decoderError(.multipleAnimationControlChunk)
+                }
+                frames[index] = frame
+            }
+        }
         
         if !firstPass { // Animation with only one frame,check IEND.
             _ = try reader.readChunk(type: IEND.self)
