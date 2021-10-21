@@ -8,6 +8,7 @@
 import UIKit
 import Delegate
 
+/// A view object that displays an `APNGImage` and perform the animation.
 open class APNGImageView: UIView {
     
     /// Whether the animation should be played automatically when a valid `APNGImage` is set to the `image` property
@@ -50,6 +51,8 @@ open class APNGImageView: UIView {
     private var displayingFrameStarted: CFTimeInterval?
     // The current displaying frame index in its decoder.
     private var displayingFrameIndex = 0
+    // Returns the next frame to be rendered. If the current displaying frame is not the last, return index of the next
+    // frame. If the current displaying frame is the last one, returns 0 regardless whether there is another play or not.
     private var nextFrameIndex: Int {
         guard let image = _image else {
             return 0
@@ -60,22 +63,32 @@ open class APNGImageView: UIView {
     private var frameMissed: Bool = false
     
     private var displayLink: CADisplayLink?
+    
+    // Backing storage.
     private var _image: APNGImage?
-    private let _imageView: UIImageView = UIImageView(frame: .zero)
+    private let _imageView = UIImageView(frame: .zero)
     
     // Number of played plays of the animated image.
     private var playedCount = 0
     
+    /// Creates an APNG image view with the specified animated image.
+    /// - Parameter image: The initial image to display in the image view.
     public convenience init(image: APNGImage?) {
         self.init(frame: .zero)
         self.image = image
     }
-    
+
+    /// Creates an APNG image view with the specified normal image.
+    /// - Parameter image: The initial image to display in the image view.
+    ///
+    /// This method is provided as a fallback for setting a normal `UIImage`. This does not start the animation or
     public convenience init(image: UIImage?) {
         self.init(frame: .zero)
         self._imageView.image = image
     }
     
+    /// Creates an APNG image view with the specified frame.
+    /// - Parameter frame: The initial frame that this image view should be placed.
     public override init(frame: CGRect) {
         super.init(frame: frame)
         commonSetup()
@@ -103,35 +116,29 @@ open class APNGImageView: UIView {
             _imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
             _imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
-        
-        if let image = image, let output = image.decoder.output {
-            switch output {
-            case .success(let cgImage):
-                _imageView.image = UIImage(cgImage: cgImage, scale: image.scale, orientation: .up)
-            case .failure(let error):
-                print("[APNGKit] Encountered an error when decoding image frame: \(error). Trying to reverting to the default image.")
-                do {
-                    let data = try image.decoder.createDefaultImageData()
-                    _imageView.image = UIImage(data: data, scale: image.scale)
-                } catch {
-                    print("[APNGKit] Encountered an error when decoding the default image. \(error)")
-                    _imageView.image = nil
-                }
-            }
-        }
     }
     
+    /// A flag used to determine how a view lays out its content when its bounds change.
     open override var contentMode: UIView.ContentMode {
         get { _imageView.contentMode }
         set { _imageView.contentMode = newValue }
     }
     
+    /// The natural size for the receiving view, considering only properties of the view itself.
+    ///
+    /// For an APNGImageView, its intrinsic content size is the `size` property of its set `APNGImage` object.
     open override var intrinsicContentSize: CGSize {
         _image?.size ?? .zero
     }
     
-    open private(set) var isAnimating: Bool = false
+    /// Whether the image view is performing animation.
+    public private(set) var isAnimating: Bool = false
     
+    /// The run loop where the animation (or say, the display link) should be run on.
+    ///
+    /// By default, the animation will run on the `.common` runloop, which means the animation continues when user
+    /// perform other action such as scrolling. You are only allowed to set it once before the animation started.
+    /// Otherwise it causes an assertion or has no effect.
     open var runLoopMode: RunLoop.Mode? {
         didSet {
             if oldValue != nil {
@@ -140,6 +147,22 @@ open class APNGImageView: UIView {
         }
     }
     
+    /// Set a static image for the image view. This is useful when you need to set some fallback image if the decoding
+    /// of `APNGImage` results in a failure.
+    ///
+    /// A regular case is the input data is not a valid APNG image but a plain image, then you should revert to use the
+    /// normal format, aka, `UIImage` to represent the image. Creating an `APNGImage` with such data throws a
+    /// `APNGKitError.ImageError.normalImageDataLoaded` error. You can check the error's `normalImage` property and set
+    /// it to this property as a fallback for wrong APNG images:
+    ///
+    /// ```swift
+    /// do {
+    ///     animatedImageView.image = try APNGImage(named: "some_apng_image")
+    /// } catch {
+    ///     animatedImageView.staticImage = error.apngError?.normalImage
+    ///     print(error)
+    /// }
+    /// ```
     public var staticImage: UIImage? = nil {
         didSet { _imageView.image = staticImage }
     }
@@ -174,10 +197,13 @@ open class APNGImageView: UIView {
             }
             
             displayingFrameIndex = 0
+            playedCount = 0
+            _imageView.stopAnimating()
+            stopAnimating()
+            
             _image?.owner = nil
             nextImage.owner = self
             _image = nextImage
-            playedCount = 0
             
             let renderResult = renderCurrentDecoderOutput()
             switch renderResult {
@@ -203,6 +229,12 @@ open class APNGImageView: UIView {
     }
     
     open func startAnimating() {
+        
+        guard let _ = _image else {
+            _imageView.startAnimating()
+            return
+        }
+        
         guard !isAnimating else {
             return
         }
@@ -218,6 +250,10 @@ open class APNGImageView: UIView {
     }
     
     open func stopAnimating() {
+        if _imageView.isAnimating {
+            _imageView.stopAnimating()
+        }
+        
         guard isAnimating else {
             return
         }
@@ -301,6 +337,7 @@ open class APNGImageView: UIView {
         }
     }
     
+    // Invalid and reset the display link.
     private func cleanDisplayLink() {
         displayLink?.invalidate()
         displayLink = nil
