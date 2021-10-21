@@ -105,16 +105,21 @@ class APNGDecoderTests: XCTestCase {
         decoder.renderNext()
         XCTAssertEqual(decoder.currentIndex, 0)
         
-        Timer.scheduledTimer(withTimeInterval: 0.0001, repeats: true) { timer in
-            if decoder.output == nil {
-                XCTAssertEqual(decoder.currentIndex, 0)
-            } else {
-                let image = try? decoder.output?.get()
-                XCTAssertNotNil(image)
-                XCTAssertEqual(decoder.currentIndex, 1)
-                timer.invalidate()
-                expectation.fulfill()
+        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
+            Timer.scheduledTimer(withTimeInterval: 0.0001, repeats: true) { timer in
+                if decoder.output == nil {
+                    XCTAssertEqual(decoder.currentIndex, 0)
+                } else {
+                    let image = try? decoder.output?.get()
+                    XCTAssertNotNil(image)
+                    XCTAssertEqual(decoder.currentIndex, 1)
+                    timer.invalidate()
+                    expectation.fulfill()
+                }
             }
+        } else {
+            // Fallback on earlier versions
+            expectation.fulfill()
         }
         waitForExpectations(timeout: 1.0, handler: nil)
     }

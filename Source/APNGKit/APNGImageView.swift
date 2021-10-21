@@ -232,6 +232,10 @@ open class APNGImageView: UIView {
         displayingFrameStarted = nil
         
         isAnimating = true
+        
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(appMovedFromBackground), name: UIApplication.didBecomeActiveNotification, object: nil
+        )
     }
     
     open func stopAnimating() {
@@ -240,6 +244,8 @@ open class APNGImageView: UIView {
         }
         displayLink?.isPaused = true
         isAnimating = false
+        
+        NotificationCenter.default.removeObserver(self)
     }
     
     @objc private func step(displaylink: CADisplayLink) {
@@ -251,9 +257,8 @@ open class APNGImageView: UIView {
         guard let displayingFrame = image.decoder.frames[displayingFrameIndex] else {
             assertionFailure("Cannot get correct frame which is being displayed.")
             return
-        
         }
-        
+                
         if displayingFrameStarted == nil { // `step` is called by the first time after an animation.
             displayingFrameStarted = displaylink.timestamp
         }
@@ -317,6 +322,12 @@ open class APNGImageView: UIView {
             stopAnimating()
             onFallBackToDefaultImageFailed(defaultImageError)
         }
+    }
+    
+    @objc private func appMovedFromBackground() {
+        // Reset the current displaying frame when the app is active again.
+        // This prevents the animation being played faster due to the old timestamp.
+        displayingFrameStarted = displayLink?.timestamp
     }
     
     // Invalid and reset the display link.

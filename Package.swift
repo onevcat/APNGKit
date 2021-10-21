@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "APNGKit",
-    platforms: [.macOS(.v10_12), .iOS(.v10), .tvOS(.v10)],
+    platforms: [.macOS(.v10_11), .iOS(.v9), .tvOS(.v9)],
     products: [
         .library(name: "APNGKit", targets: ["APNGKit"])
     ],

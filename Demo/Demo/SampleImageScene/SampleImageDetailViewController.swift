@@ -34,12 +34,11 @@ class SampleImageDetailViewController: UIViewController {
                 print("Played Done!")
             }
             imageView.onFrameMissed.delegate(on: self) { (self, index) in
-                assertionFailure("Frame missed at index: \(index)")
+                print("Frame missed at index: \(index)")
             }
             
             let image = try APNGImage(named: imageName)
             imageView.image = image
-            
             imageViewHeightConstraint.constant = image.size.height
             imageViewWidthConstraint.constant = image.size.width
             
@@ -72,6 +71,10 @@ class SampleImageDetailViewController: UIViewController {
             self.imageViewWidthConstraint.constant = size.width
             self.imageViewHeightConstraint.constant = size.height
         }
+        
+        settingViewController.onBackgroundToggled.delegate(on: self) { (self, showBackground) in
+            self.imageView.backgroundColor = showBackground ? .yellow : .clear
+        }
     }
 }
 
@@ -92,11 +95,13 @@ class SampleImageDetailSettingViewController: UITableViewController {
     @IBOutlet weak var frameCountLabel: UILabel!
     @IBOutlet weak var repeatCountLabel: UILabel!
     @IBOutlet weak var durationLabel: UILabel!
+    @IBOutlet weak var cacheStatusLabel: UILabel!
     
     var setSizeWidth: CGFloat = 0.0
     var setSizeHeight: CGFloat = 0.0
     
     let onIntrinsicToggled = Delegate<Bool, Void>()
+    let onBackgroundToggled = Delegate<Bool, Void>()
     let onSetSizeChanged = Delegate<CGSize, Void>()
     
     func setup(with image: APNGImage) {
@@ -107,6 +112,7 @@ class SampleImageDetailSettingViewController: UITableViewController {
         imageSizeLabel.text = "\(Int(image.size.width)) x \(Int(image.size.height)) @\(Int(image.scale))x"
         setSizeWidthTextField.text = "\(Int(image.size.width))"
         setSizeHeightTextField.text = "\(Int(image.size.height))"
+        cacheStatusLabel.text = image.cachePolicy == .cache ? "Yes" : "No"
         
         frameCountLabel.text = String(image.numberOfFrames)
         if let num = image.numberOfPlays {
@@ -141,6 +147,10 @@ class SampleImageDetailSettingViewController: UITableViewController {
             setSizeHeightTextField.isEnabled = true
             setSizeView.alpha = 1.0
         }
+    }
+    
+    @IBAction func backgroundColorToggled(_ sender: UISwitch) {
+        onBackgroundToggled(sender.isOn)
     }
     
     @IBAction func sizeEditEnded(_ sender: Any) {
