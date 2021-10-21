@@ -66,7 +66,6 @@ open class APNGImageView: UIView {
     
     // Backing storage.
     private var _image: APNGImage?
-    private let _imageView = UIImageView(frame: .zero)
     
     // Number of played plays of the animated image.
     private var playedCount = 0
@@ -84,14 +83,14 @@ open class APNGImageView: UIView {
     /// This method is provided as a fallback for setting a normal `UIImage`. This does not start the animation or
     public convenience init(image: UIImage?) {
         self.init(frame: .zero)
-        self._imageView.image = image
+        layer.contentsScale = image?.scale ?? screenScale
+        layer.contents = image?.cgImage
     }
     
     /// Creates an APNG image view with the specified frame.
     /// - Parameter frame: The initial frame that this image view should be placed.
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        commonSetup()
     }
     
     // Stop the animation and free the display link when the image view is not yet on the view hierarchy anymore.
@@ -104,24 +103,6 @@ open class APNGImageView: UIView {
     
     required public init?(coder: NSCoder) {
         super.init(coder: coder)
-        commonSetup()
-    }
-    
-    private func commonSetup() {
-        _imageView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(_imageView)
-        NSLayoutConstraint.activate([
-            _imageView.topAnchor.constraint(equalTo: topAnchor),
-            _imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            _imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            _imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ])
-    }
-    
-    /// A flag used to determine how a view lays out its content when its bounds change.
-    open override var contentMode: UIView.ContentMode {
-        get { _imageView.contentMode }
-        set { _imageView.contentMode = newValue }
     }
     
     /// The natural size for the receiving view, considering only properties of the view itself.
@@ -164,18 +145,28 @@ open class APNGImageView: UIView {
     /// }
     /// ```
     public var staticImage: UIImage? = nil {
-        didSet { _imageView.image = staticImage }
+        didSet {
+            if let targetScale = staticImage?.scale {
+                layer.contentsScale = targetScale
+            }
+            layer.contents = staticImage?.cgImage
+        }
+    }
+    
+    private func unsetImage() {
+        _image?.owner = nil
+        stopAnimating()
+        _image = nil
+        layer.contents = nil
+        playedCount = 0
+        displayingFrameIndex = 0
     }
     
     public var image: APNGImage? {
         get { _image }
         set {
             guard let nextImage = newValue else {
-                _image?.owner = nil
-                stopAnimating()
-                _image = nil
-                _imageView.image = nil
-                playedCount = 0
+                unsetImage()
                 return
             }
             
@@ -196,27 +187,27 @@ open class APNGImageView: UIView {
                 assertionFailure("Error happened while reseting the image. Error: \(error)")
             }
             
-            displayingFrameIndex = 0
-            playedCount = 0
-            _imageView.stopAnimating()
-            stopAnimating()
+            unsetImage()
             
-            _image?.owner = nil
             nextImage.owner = self
             _image = nextImage
             
             let renderResult = renderCurrentDecoderOutput()
             switch renderResult {
             case .rendered(let initialImage):
-                _imageView.image = initialImage
+                layer.contentsScale = nextImage.scale
+                layer.contents = initialImage
             case .fallbackToDefault(let defaultImage, let error):
                 onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: true))
-                _imageView.image = defaultImage
+                if let targetScale = defaultImage?.scale {
+                    layer.contentsScale = targetScale
+                }
+                layer.contents = defaultImage?.cgImage
                 stopAnimating()
                 onFallBackToDefaultImage()
             case .defaultDecodingError(let error, let defaultImageError):
                 onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: false))
-                _imageView.image = nil
+                layer.contents = nil
                 stopAnimating()
                 onFallBackToDefaultImageFailed(defaultImageError)
             }
@@ -229,12 +220,6 @@ open class APNGImageView: UIView {
     }
     
     open func startAnimating() {
-        
-        guard let _ = _image else {
-            _imageView.startAnimating()
-            return
-        }
-        
         guard !isAnimating else {
             return
         }
@@ -250,10 +235,6 @@ open class APNGImageView: UIView {
     }
     
     open func stopAnimating() {
-        if _imageView.isAnimating {
-            _imageView.stopAnimating()
-        }
-        
         guard isAnimating else {
             return
         }
@@ -311,7 +292,8 @@ open class APNGImageView: UIView {
         switch renderCurrentDecoderOutput() {
         case .rendered(let renderedImage):
             // Show the next image.
-            _imageView.image = renderedImage
+            layer.contentsScale = image.scale
+            layer.contents = renderedImage
             
             // for a 60 FPS system, we only have a chance of replacing the content per 16.6ms.
             // To provide a more accurate animation we need the determine the frame starting
@@ -326,12 +308,12 @@ open class APNGImageView: UIView {
             
         case .fallbackToDefault(let defaultImage, let error):
             onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: true))
-            _imageView.image = defaultImage
+            layer.contents = defaultImage?.cgImage
             stopAnimating()
             onFallBackToDefaultImage()
         case .defaultDecodingError(let error, let defaultImageError):
             onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: false))
-            _imageView.image = nil
+            layer.contents = nil
             stopAnimating()
             onFallBackToDefaultImageFailed(defaultImageError)
         }
@@ -345,7 +327,7 @@ open class APNGImageView: UIView {
     
     private enum RenderResult {
         // The next frame is rendered without problem.
-        case rendered(UIImage?)
+        case rendered(CGImage?)
         // The image is rendered with the default image as a fallback, with an error indicates what is wrong when
         // decoding the target (failing) frame.
         case fallbackToDefault(UIImage?, APNGKitError)
@@ -368,7 +350,7 @@ open class APNGImageView: UIView {
         }
         switch output {
         case .success(let cgImage):
-            return .rendered(UIImage(cgImage: cgImage, scale: image.scale, orientation: .up))
+            return .rendered(cgImage)
         case .failure(let error):
             do {
                 print("[APNGKit] Encountered an error when decoding the next image frame, index: \(nextFrameIndex). Error: \(error). Trying to reverting to the default image.")
