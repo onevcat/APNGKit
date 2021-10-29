@@ -19,7 +19,8 @@ class SampleImageTableViewController: UITableViewController {
         "pia",
         "over_none",
         "over_background",
-        "over_previous"
+        "over_previous",
+        "minimal"
     ]
         
     override func viewDidLoad() {

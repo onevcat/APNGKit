@@ -11,7 +11,7 @@ import XCTest
 
 class APNGImageTests: XCTestCase {
     func testAPNGCreationFromName() throws {
-        let apng = try APNGImage(named: "ball", in: .module, subdirectory: "General")
+        let apng = createBallImage()
         XCTAssertEqual(apng.scale, 1)
         XCTAssertEqual(apng.size, .init(width: 100, height: 100))
         

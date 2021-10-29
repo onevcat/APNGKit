@@ -63,6 +63,10 @@ extension UnsignedInteger {
     }
 }
 
+func printLog(_ item: Any) {
+    print("[APNGKit] \(item)")
+}
+
 #if canImport(UIKit)
 import UIKit
 var screenScale: CGFloat { UIScreen.main.scale }

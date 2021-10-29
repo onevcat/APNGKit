@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B5ECBA9272C51C4003930D4 /* minimal.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B5ECBA8272C51C4003930D4 /* minimal.apng */; };
 		4BB97D95271C07E0006A2787 /* APNGKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4BB97D94271C07E0006A2787 /* APNGKit */; };
 		4BC3D919271C095D004DF785 /* elephant_apng@2x.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4BC3D8CE271C095D004DF785 /* elephant_apng@2x.apng */; };
 		4BC3D91A271C095D004DF785 /* APNG-4D.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4BC3D8CF271C095D004DF785 /* APNG-4D.apng */; };
@@ -97,6 +98,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4B5ECBA8272C51C4003930D4 /* minimal.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = minimal.apng; path = ../Tests/APNGKitTests/Resources/General/minimal.apng; sourceTree = "<group>"; };
 		4BBB827A272065CB0035A3CA /* Demo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demo.entitlements; sourceTree = "<group>"; };
 		4BC3D8CE271C095D004DF785 /* elephant_apng@2x.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = "elephant_apng@2x.apng"; sourceTree = "<group>"; };
 		4BC3D8CF271C095D004DF785 /* APNG-4D.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = "APNG-4D.apng"; sourceTree = "<group>"; };
@@ -329,6 +331,7 @@
 		4BFF94FE271C077D001645A7 = {
 			isa = PBXGroup;
 			children = (
+				4B5ECBA8272C51C4003930D4 /* minimal.apng */,
 				4BFF951E271C07AC001645A7 /* Packages */,
 				4BFF9509271C077D001645A7 /* Demo */,
 				4BFF9508271C077D001645A7 /* Products */,
@@ -435,6 +438,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BC3D945271C095D004DF785 /* 042.png in Resources */,
+				4B5ECBA9272C51C4003930D4 /* minimal.apng in Resources */,
 				4BC3D940271C095D004DF785 /* 054.png in Resources */,
 				4BC3D936271C095D004DF785 /* 007.png in Resources */,
 				4BC3D958271C095D004DF785 /* 009.png in Resources */,
