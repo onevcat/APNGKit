@@ -404,7 +404,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1300;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1310;
 				TargetAttributes = {
 					4BFF9506271C077D001645A7 = {
 						CreatedOnToolsVersion = 13.0;

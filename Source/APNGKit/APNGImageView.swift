@@ -59,6 +59,8 @@ open class APNGImageView: UIView {
     /// called.
     public let onDecodingFrameError = Delegate<DecodingErrorItem, Void>()
     
+    public var DrivingTimerType: DrivingTimer.Type = DisplayTimer.self
+    
     // When the current frame was started to be displayed on the screen. It is the base time to calculate the current
     // frame duration.
     private var displayingFrameStarted: CFTimeInterval?
@@ -77,7 +79,7 @@ open class APNGImageView: UIView {
     private var frameMissed: Bool = false
     
     // Backing timer for updating animation content.
-    private var displayTimer: DisplayTimer?
+    private var drivingTimer: DrivingTimer?
     
     // Backing storage.
     private var _image: APNGImage?
@@ -255,14 +257,14 @@ open class APNGImageView: UIView {
             return
         }
         
-        if displayTimer == nil {
-            displayTimer = DisplayTimer(
+        if drivingTimer == nil {
+            drivingTimer = DrivingTimerType.init(
                 mode: runLoopMode,
                 target: self,
                 action: { [weak self] timestamp in self?.step(timestamp: timestamp)
             })
         }
-        displayTimer?.isPaused = false
+        drivingTimer?.isPaused = false
         displayingFrameStarted = nil
         
         isAnimating = true
@@ -276,7 +278,7 @@ open class APNGImageView: UIView {
         guard isAnimating else {
             return
         }
-        displayTimer?.isPaused = true
+        drivingTimer?.isPaused = true
         isAnimating = false
         
         NotificationCenter.default.removeObserver(self)
@@ -361,13 +363,13 @@ open class APNGImageView: UIView {
     @objc private func appMovedFromBackground() {
         // Reset the current displaying frame when the app is active again.
         // This prevents the animation being played faster due to the old timestamp.
-        displayingFrameStarted = displayTimer?.timestamp
+        displayingFrameStarted = drivingTimer?.timestamp
     }
     
     // Invalid and reset the display link.
     private func cleanDisplayLink() {
-        displayTimer?.invalidate()
-        displayTimer = nil
+        drivingTimer?.invalidate()
+        drivingTimer = nil
     }
     
     private enum RenderResult {

@@ -154,7 +154,7 @@ class APNGImageViewTests: XCTestCase {
             XCTAssertEqual(imageView.image!.decoder.currentIndex, 0)
         }
         // Only ensure before the next frame. Display link requires synced with refresh rate...
-        .after(frameDuration * 0.75) {
+        .after(frameDuration * 0.7) {
             XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
         }
         .after(frameDuration) {
