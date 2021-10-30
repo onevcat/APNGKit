@@ -59,7 +59,14 @@ open class APNGImageView: UIView {
     /// called.
     public let onDecodingFrameError = Delegate<DecodingErrorItem, Void>()
     
+    /// The timer type which is used to drive the animation. By default, if `CADisplayLink` is available, a
+    /// `DisplayTimer` is used. On platforms that `CADisplayLink` is not available, a normal `Foundation.Timer` based
+    /// one is used.
+    #if canImport(UIKit)
     public var DrivingTimerType: DrivingTimer.Type = DisplayTimer.self
+    #else
+    public var DrivingTimerType: DrivingTimer.Type = NormalTimer.self
+    #endif
     
     // When the current frame was started to be displayed on the screen. It is the base time to calculate the current
     // frame duration.
@@ -123,7 +130,13 @@ open class APNGImageView: UIView {
     }
     
     /// Whether the image view is performing animation.
-    public private(set) var isAnimating: Bool = false
+    public var isAnimating: Bool {
+        if let timer = drivingTimer {
+            return !timer.isPaused
+        } else {
+            return false
+        }
+    }
     
     /// The run loop where the animation (or say, the display link) should be run on.
     ///
@@ -200,7 +213,14 @@ open class APNGImageView: UIView {
             guard nextImage.owner == nil else {
                 printLog("The image is already set to another image view. You cannot assign it to current image view before removing it from the previous one.")
                 printLog("Image: \(nextImage); Existing Owner: \(nextImage.owner!); Current Image View: \(self)")
-                printLog("Consider create a new image or set the `image` of the previous image view to `nil` first.")
+                printLog("Consider to create a new image or set the `image` of the previous image view to `nil` first.")
+                
+                #if DEBUG
+                // Do not trigger an assertion to let tests cover this situation.
+                if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+                    return
+                }
+                #endif
                 
                 assertionFailure("Cannot set the image to this image view because it is already set to another one.")
                 return
@@ -210,6 +230,7 @@ open class APNGImageView: UIView {
                 // In case this is a dirty image. Try reset to the initial state first.
                 try nextImage.reset()
             } catch {
+                printLog("Error happens while trying to reset the target image. Its behavior might be strange. \(error)")
                 assertionFailure("Error happened while reseting the image. Error: \(error)")
             }
             
@@ -267,19 +288,17 @@ open class APNGImageView: UIView {
         drivingTimer?.isPaused = false
         displayingFrameStarted = nil
         
-        isAnimating = true
-        
         NotificationCenter.default.addObserver(
             self, selector: #selector(appMovedFromBackground), name: UIApplication.didBecomeActiveNotification, object: nil
         )
     }
     
+    /// Stops the animation. Calling this method does nothing if the animation is not started or already stopped.
     open func stopAnimating() {
         guard isAnimating else {
             return
         }
         drivingTimer?.isPaused = true
-        isAnimating = false
         
         NotificationCenter.default.removeObserver(self)
     }

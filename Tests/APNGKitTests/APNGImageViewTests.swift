@@ -198,7 +198,7 @@ class APNGImageViewTests: XCTestCase {
         timeWrap {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
         }
-        .after(frameDuration * 0.75) {
+        .after(frameDuration * 0.7) {
             XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
         }
         .after(frameDuration) { // Animation is not started
@@ -209,7 +209,7 @@ class APNGImageViewTests: XCTestCase {
             imageView.startAnimating()
             XCTAssertTrue(imageView.isAnimating)
         }
-        .after(frameDuration * 0.75) { }
+        .after(frameDuration * 0.7) { }
         .after(frameDuration) { // Animation is going on...
             XCTAssertEqual(imageView.displayingFrameIndex, 1)
             XCTAssertEqual(imageView.image?.decoder.currentIndex, 2)
@@ -227,7 +227,7 @@ class APNGImageViewTests: XCTestCase {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
             XCTAssertEqual(imageView.image!.decoder.currentIndex, 0)
         }
-        .after(frameDuration * 0.75) {
+        .after(frameDuration * 0.7) {
             XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
         }
         .after(frameDuration) {
@@ -260,7 +260,7 @@ class APNGImageViewTests: XCTestCase {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
             XCTAssertEqual(imageView.image!.decoder.currentIndex, 0)
         }
-        .after(frameDuration * 0.75) {
+        .after(frameDuration * 0.7) {
             XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
         }
         .after(frameDuration * 3) {
@@ -274,6 +274,65 @@ class APNGImageViewTests: XCTestCase {
             XCTAssertEqual(imageView.displayingFrameIndex, 3)
             XCTAssertFalse(imageView.isAnimating)
             XCTAssertTrue(allDone)
+        }
+        .done()
+    }
+    
+    func testSettingImageWithOwner() throws {
+        let apng = createBallImage()
+        
+        let imageView1 = APNGImageView(image: apng)
+        let imageView2 = APNGImageView(image: apng)
+        let imageView3 = APNGImageView(image: createBallImage())
+        
+        XCTAssertNotNil(imageView1.image)
+        XCTAssertNil(imageView2.image)
+        XCTAssertNotNil(imageView3.image)
+    }
+    
+    func testSwitchingImage() throws {
+        let ballAPNG = createBallImage()
+        let minimalAPNG = createMinimalImage()
+        
+        let imageView = APNGImageView(image: ballAPNG)
+        XCTAssertTrue(imageView.isAnimating)
+        XCTAssertTrue(ballAPNG.owner === imageView)
+        XCTAssertNil(minimalAPNG.owner)
+
+        imageView.image = minimalAPNG
+        XCTAssertTrue(imageView.isAnimating)
+        XCTAssertNil(ballAPNG.owner)
+        XCTAssertTrue(minimalAPNG.owner === imageView)
+        
+        imageView.image = nil
+        XCTAssertFalse(imageView.isAnimating)
+        XCTAssertNil(ballAPNG.owner)
+        XCTAssertNil(minimalAPNG.owner)
+    }
+    
+    func testSwitchingImageReset() throws {
+        let minimalAPNG = createMinimalImage()
+        let imageView = APNGImageView(image: minimalAPNG)
+        
+        let firstFrame = imageView.image!.decoder.frames.first!
+        let frameDuration = firstFrame!.frameControl.duration
+        
+        timeWrap {}
+        .after(frameDuration * 0.7) {}
+        .after(frameDuration) {
+            XCTAssertEqual(imageView.displayingFrameIndex, 1)
+            XCTAssertEqual(minimalAPNG.decoder.currentIndex, 2)
+            imageView.image = nil
+            XCTAssertEqual(imageView.displayingFrameIndex, 0)
+            XCTAssertEqual(minimalAPNG.decoder.currentIndex, 2)
+        }
+        .after(frameDuration) {
+            XCTAssertEqual(imageView.displayingFrameIndex, 0)
+            XCTAssertEqual(minimalAPNG.decoder.currentIndex, 2)
+            imageView.image = minimalAPNG
+            // original image should be reset
+            XCTAssertEqual(imageView.displayingFrameIndex, 0)
+            XCTAssertEqual(minimalAPNG.decoder.currentIndex, 0)
         }
         .done()
     }
