@@ -75,6 +75,14 @@ class SampleImageDetailViewController: UIViewController {
         settingViewController.onBackgroundToggled.delegate(on: self) { (self, showBackground) in
             self.imageView.backgroundColor = showBackground ? .yellow : .clear
         }
+        
+        settingViewController.onResetAnimationClicked.delegate(on: self) { (self, _) in
+            do {
+                try self.imageView.reset()
+            } catch {
+                print("Error: \(error)")
+            }
+        }
     }
 }
 
@@ -103,6 +111,7 @@ class SampleImageDetailSettingViewController: UITableViewController {
     let onIntrinsicToggled = Delegate<Bool, Void>()
     let onBackgroundToggled = Delegate<Bool, Void>()
     let onSetSizeChanged = Delegate<CGSize, Void>()
+    let onResetAnimationClicked = Delegate<(), Void>()
     
     func setup(with image: APNGImage) {
         self.image = image
@@ -151,6 +160,10 @@ class SampleImageDetailSettingViewController: UITableViewController {
     
     @IBAction func backgroundColorToggled(_ sender: UISwitch) {
         onBackgroundToggled(sender.isOn)
+    }
+    
+    @IBAction func resetAnimation(_ sender: Any) {
+        onResetAnimationClicked()
     }
     
     @IBAction func sizeEditEnded(_ sender: Any) {

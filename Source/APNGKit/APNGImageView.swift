@@ -293,7 +293,21 @@ open class APNGImageView: UIView {
         )
     }
     
+    /// Resets the current image play status.
+    ///
+    /// It is identical to set the current `image` to `nil` and then set it again. If `autoStartAnimationWhenSetImage`
+    /// is `true`, the animation will be played from the first frame with a clean play status.
+    open func reset() throws {
+        guard let currentImage = _image else {
+            return
+        }
+        unsetImage()
+        image = currentImage
+    }
+    
     /// Stops the animation. Calling this method does nothing if the animation is not started or already stopped.
+    ///
+    /// When the animation stops, it stays in the last displayed frame. You can call `startAnimating` to start it again.
     open func stopAnimating() {
         guard isAnimating else {
             return

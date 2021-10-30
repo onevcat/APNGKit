@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Yfd-2I-8nz">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Yfd-2I-8nz">
     <device id="retina6_5" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -330,7 +330,7 @@
             <objects>
                 <tableViewController id="yZL-Zz-aEt" customClass="SampleImageDetailSettingViewController" customModule="Demo" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="insetGrouped" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="yxj-C7-62n">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <sections>
                             <tableViewSection headerTitle="Status" id="VD5-q9-NkN">
@@ -607,6 +607,28 @@
                                                 <constraint firstItem="4Op-pm-K77" firstAttribute="centerY" secondItem="Ljd-zn-wdH" secondAttribute="centerY" id="W8f-uq-wr9"/>
                                                 <constraint firstItem="TPa-cd-hV9" firstAttribute="centerY" secondItem="Ljd-zn-wdH" secondAttribute="centerY" id="dCe-qx-aJ2"/>
                                                 <constraint firstItem="4Op-pm-K77" firstAttribute="leading" secondItem="Ljd-zn-wdH" secondAttribute="leading" constant="25" id="zSK-6n-51R"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Le2-0X-9GZ">
+                                        <rect key="frame" x="20" y="491.66667747497559" width="374" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Le2-0X-9GZ" id="GoU-jB-eIa">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ECp-dX-4cT">
+                                                    <rect key="frame" x="122.66666666666669" y="6.3333333333333321" width="129" height="30.999999999999996"/>
+                                                    <state key="normal" title="Button"/>
+                                                    <buttonConfiguration key="configuration" style="plain" title="Reset Animation"/>
+                                                    <connections>
+                                                        <action selector="resetAnimation:" destination="yZL-Zz-aEt" eventType="touchUpInside" id="lbZ-XB-IfE"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="ECp-dX-4cT" firstAttribute="centerX" secondItem="GoU-jB-eIa" secondAttribute="centerX" id="YJJ-qc-yk9"/>
+                                                <constraint firstItem="ECp-dX-4cT" firstAttribute="centerY" secondItem="GoU-jB-eIa" secondAttribute="centerY" id="qeF-v4-ivb"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
