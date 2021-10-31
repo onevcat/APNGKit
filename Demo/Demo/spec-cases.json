@@ -157,35 +157,35 @@
     },
     {
         "title": "Missing acTL.",
-        "detail": ""
+        "detail": "This should be solid green or an error."
     },
     {
         "title": "Repeated acTL.",
-        "detail": ""
+        "detail": "This should be solid green or an error."
     },
     {
         "title": "acTL after IDAT.",
-        "detail": ""
+        "detail": "This should be solid green or an error."
     },
     {
         "title": "Missing fcTL.",
-        "detail": ""
+        "detail": "This should be solid green or an error."
     },
     {
         "title": "Repeated fcTL.",
-        "detail": ""
+        "detail": "This should be solid green or an error."
     },
     {
         "title": "Missing fdAT.",
-        "detail": ""
+        "detail": "This should be solid green or an error."
     },
     {
         "title": "num_frames = 0; no default image.",
-        "detail": "0 is not a valid value."
+        "detail": "0 is not a valid value. This should be solid green or an error."
     },
     {
         "title": "num_frames = 0; ignoring default image.",
-        "detail": "0 is not a valid value."
+        "detail": "0 is not a valid value. This should be solid green or an error."
     },
     {
         "title": "num_frames too low.",
@@ -205,42 +205,42 @@
     },
     {
         "title": "Not starting from 0.",
-        "detail": ""
+        "detail": "This should be solid green or an error."
     },
     {
         "title": "Gap in sequence.",
-        "detail": ""
+        "detail": "This should be solid green or an error."
     },
     {
         "title": "Duplicated sequence number.",
-        "detail": ""
+        "detail": "This should be solid green or an error."
     },
     {
         "title": "Duplicated chunk.",
-        "detail": ""
+        "detail": "This should be solid green or an error."
     },
     {
         "title": "Reordered fdAT chunks.",
-        "detail": ""
+        "detail": "This should be solid green or an error."
     },
     {
         "title": "Reordered sequence numbers.",
-        "detail": ""
+        "detail": "This should be solid green or an error."
     },
     {
         "title": "Separated fdAT and fcTL sequences.",
-        "detail": ""
+        "detail": "This should be solid green or an error."
     },
     {
         "title": "Default image's fcTL size not matching IHDR.",
-        "detail": ""
+        "detail": "This decodes as an error."
     },
     {
         "title": "fdAT too small.",
-        "detail": ""
+        "detail": "This decodes as an error."
     },
     {
         "title": "fdAT too large.",
-        "detail": ""
+        "detail": "This decodes as an error."
     }
 ]

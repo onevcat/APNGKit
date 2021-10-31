@@ -1201,6 +1201,10 @@
                                                             <rect key="frame" x="8" y="0.0" width="114" height="70"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
+                                                                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="o5h-EO-Fg4">
+                                                                    <rect key="frame" x="-7" y="3" width="128" height="64"/>
+                                                                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="transparent" id="oFG-g4-gzZ"/>
+                                                                </imageView>
                                                                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="JoT-vx-1ra" customClass="APNGImageView" customModule="APNGKit">
                                                                     <rect key="frame" x="-7" y="3" width="128" height="64"/>
                                                                     <constraints>
@@ -1210,8 +1214,12 @@
                                                                 </customView>
                                                             </subviews>
                                                             <constraints>
+                                                                <constraint firstItem="o5h-EO-Fg4" firstAttribute="trailing" secondItem="JoT-vx-1ra" secondAttribute="trailing" id="7GQ-v6-eoM"/>
+                                                                <constraint firstItem="o5h-EO-Fg4" firstAttribute="bottom" secondItem="JoT-vx-1ra" secondAttribute="bottom" id="FiX-ax-JTH"/>
                                                                 <constraint firstItem="JoT-vx-1ra" firstAttribute="centerX" secondItem="jVN-QP-uXa" secondAttribute="centerX" id="I7b-Zb-SX1"/>
                                                                 <constraint firstItem="JoT-vx-1ra" firstAttribute="centerY" secondItem="jVN-QP-uXa" secondAttribute="centerY" id="MgM-Yy-bf9"/>
+                                                                <constraint firstItem="o5h-EO-Fg4" firstAttribute="top" secondItem="JoT-vx-1ra" secondAttribute="top" id="TDQ-y3-3wJ"/>
+                                                                <constraint firstItem="o5h-EO-Fg4" firstAttribute="leading" secondItem="JoT-vx-1ra" secondAttribute="leading" id="Tas-Or-sB1"/>
                                                             </constraints>
                                                             <connections>
                                                                 <outlet property="animatedImageView" destination="JoT-vx-1ra" id="uHZ-Ek-cvH"/>
@@ -1291,5 +1299,6 @@
     </scenes>
     <resources>
         <image name="NSActionTemplate" width="15" height="15"/>
+        <image name="transparent" width="128" height="64"/>
     </resources>
 </document>

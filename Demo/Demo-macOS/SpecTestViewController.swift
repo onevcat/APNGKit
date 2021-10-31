@@ -42,10 +42,10 @@ class SpecTestImageCellView: NSTableCellView {
         animatedImageView.onDecodingFrameError.delegate(on: self) { (self, item) in
             if !item.canFallbackToDefaultImage {
                 print("Decoded Error: \(item.error)")
-                self.animatedImageView.staticImage = NSImage(systemSymbolName: "xmark.square", accessibilityDescription: "error")
+                self.animatedImageView.staticImage = NSImage(named: "xmark.square")
             }
         }
-        
+        animatedImageView.layer?.contentsGravity = .center
         do {
             let image = try APNGImage(named: data.imageName)
             animatedImageView.image = image
@@ -53,7 +53,7 @@ class SpecTestImageCellView: NSTableCellView {
             if let normalImage = error.apngError?.normalImage {
                 animatedImageView.staticImage = normalImage
             } else {
-                animatedImageView.staticImage = NSImage(systemSymbolName: "xmark.square", accessibilityDescription: "error")
+                animatedImageView.staticImage = NSImage(named: "xmark.square")
                 print("Error: \(error) at index: \(data.index)")
             }
         }
