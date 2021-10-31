@@ -9,6 +9,7 @@ import Foundation
 import XCTest
 import Delegate
 @testable import APNGKit
+
 #if canImport(UIKit)
 class ViewControllerStub {
     
@@ -34,7 +35,38 @@ class ViewControllerStub {
         window = nil
     }
 }
+#endif
 
+#if canImport(AppKit)
+
+class ViewController: NSViewController {
+    override func loadView() {
+        view = NSView(frame: .init(x: 0, y: 0, width: 100, height: 100))
+    }
+}
+
+class ViewControllerStub {
+    
+    var window: NSWindow!
+    
+    func setupViewController() -> NSViewController {
+        let rootViewController =  ViewController()
+        return setupViewController(rootViewController)
+    }
+    
+    func setupViewController(_ input: ViewController) -> NSViewController {
+
+        _ = input.view
+        window = NSWindow(contentRect: .init(x: 0, y: 0, width: 100, height: 100), styleMask: .borderless, backing: .buffered, defer: false)
+        window.contentViewController = input
+        return input
+    }
+    
+    func resetViewController() {
+        window = nil
+    }
+}
+#endif
 
 class APNGImageViewTests: XCTestCase {
     
@@ -74,7 +106,11 @@ class APNGImageViewTests: XCTestCase {
         ])
         
         XCTAssertEqual(imageView.bounds, .zero)
+        #if canImport(UIKit)
         vc.view.layoutIfNeeded()
+        #elseif canImport(AppKit)
+        vc.view.layoutSubtreeIfNeeded()
+        #endif
         XCTAssertEqual(imageView.bounds, .init(origin: .zero, size: apng.size))
     }
     
@@ -154,7 +190,7 @@ class APNGImageViewTests: XCTestCase {
             XCTAssertEqual(imageView.image!.decoder.currentIndex, 0)
         }
         // Only ensure before the next frame. Display link requires synced with refresh rate...
-        .after(frameDuration * 0.7) {
+        .after(frameDuration * 0.6) {
             XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
         }
         .after(frameDuration) {
@@ -345,4 +381,3 @@ class DeinitInspectableAPNGImageView: APNGImageView {
         onDeinit()
     }
 }
-#endif
