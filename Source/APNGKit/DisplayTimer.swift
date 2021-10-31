@@ -55,7 +55,7 @@ public class NormalTimer: DrivingTimer {
     public var timestamp: TimeInterval { CACurrentMediaTime() }
     public func invalidate() { timer.invalidate() }
     public var isPaused: Bool {
-        get { timer.isValid }
+        get { !timer.isValid }
         set {
             if newValue {
                 timer.invalidate()

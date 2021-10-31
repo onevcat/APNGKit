@@ -175,6 +175,10 @@
 		4BFC488E272E63C100033A77 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFC488D272E63C100033A77 /* SplitViewController.swift */; };
 		4BFC4890272E64AA00033A77 /* Delegate in Frameworks */ = {isa = PBXBuildFile; productRef = 4BFC488F272E64AA00033A77 /* Delegate */; };
 		4BFC4892272E71EB00033A77 /* APNGKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4BFC4891272E71EB00033A77 /* APNGKit */; };
+		4BFC4894272E88C900033A77 /* SpecTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFC4893272E88C900033A77 /* SpecTestViewController.swift */; };
+		4BFC4896272E890600033A77 /* SpecStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFC4895272E890600033A77 /* SpecStore.swift */; };
+		4BFC4897272E891100033A77 /* SpecStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFC4895272E890600033A77 /* SpecStore.swift */; };
+		4BFC4898272E892A00033A77 /* spec-cases.json in Resources */ = {isa = PBXBuildFile; fileRef = 4BC6DC99271D566000634A99 /* spec-cases.json */; };
 		4BFF950B271C077D001645A7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFF950A271C077D001645A7 /* AppDelegate.swift */; };
 		4BFF950F271C077D001645A7 /* TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFF950E271C077D001645A7 /* TopViewController.swift */; };
 		4BFF9514271C077F001645A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BFF9513271C077F001645A7 /* Assets.xcassets */; };
@@ -348,6 +352,8 @@
 		4BFC4889272E457600033A77 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		4BFC488B272E636600033A77 /* SidebarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewController.swift; sourceTree = "<group>"; };
 		4BFC488D272E63C100033A77 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
+		4BFC4893272E88C900033A77 /* SpecTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecTestViewController.swift; sourceTree = "<group>"; };
+		4BFC4895272E890600033A77 /* SpecStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecStore.swift; sourceTree = "<group>"; };
 		4BFF9507271C077D001645A7 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BFF950A271C077D001645A7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4BFF950E271C077D001645A7 /* TopViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopViewController.swift; sourceTree = "<group>"; };
@@ -384,6 +390,7 @@
 				4B5ECBD8272E29E8003930D4 /* Resources */,
 				4B5ECBCB272E29B9003930D4 /* AppDelegate.swift */,
 				4B5ECBCD272E29B9003930D4 /* SamplesViewController.swift */,
+				4BFC4893272E88C900033A77 /* SpecTestViewController.swift */,
 				4BFC488B272E636600033A77 /* SidebarViewController.swift */,
 				4BFC488D272E63C100033A77 /* SplitViewController.swift */,
 				4B5ECBCF272E29BA003930D4 /* Assets.xcassets */,
@@ -602,6 +609,7 @@
 			isa = PBXGroup;
 			children = (
 				4BC6DC95271D4EB600634A99 /* SpecTestingTableViewController.swift */,
+				4BFC4895272E890600033A77 /* SpecStore.swift */,
 				4BC6DC97271D4EC800634A99 /* SpecTestingTableViewCell.swift */,
 				4BC6DC9D271DB6A700634A99 /* SpecTestingExplanationViewController.swift */,
 			);
@@ -769,6 +777,7 @@
 				4B5ECC50272E29E8003930D4 /* 041.png in Resources */,
 				4B5ECC2D272E29E8003930D4 /* minimal.apng in Resources */,
 				4B5ECC39272E29E8003930D4 /* 015.png in Resources */,
+				4BFC4898272E892A00033A77 /* spec-cases.json in Resources */,
 				4B5ECC6F272E29E9003930D4 /* 033.png in Resources */,
 				4B5ECC63272E29E9003930D4 /* 020.png in Resources */,
 				4B5ECC61272E29E9003930D4 /* 008.png in Resources */,
@@ -926,7 +935,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BFC4897272E891100033A77 /* SpecStore.swift in Sources */,
 				4B5ECBCE272E29B9003930D4 /* SamplesViewController.swift in Sources */,
+				4BFC4894272E88C900033A77 /* SpecTestViewController.swift in Sources */,
 				4BFC488C272E636600033A77 /* SidebarViewController.swift in Sources */,
 				4B5ECBCC272E29B9003930D4 /* AppDelegate.swift in Sources */,
 				4BFC488E272E63C100033A77 /* SplitViewController.swift in Sources */,
@@ -939,6 +950,7 @@
 			files = (
 				4BC3D968271C759F004DF785 /* SampleImageTableViewController.swift in Sources */,
 				4BC6DC9E271DB6A700634A99 /* SpecTestingExplanationViewController.swift in Sources */,
+				4BFC4896272E890600033A77 /* SpecStore.swift in Sources */,
 				4BFF950F271C077D001645A7 /* TopViewController.swift in Sources */,
 				4BFF950B271C077D001645A7 /* AppDelegate.swift in Sources */,
 				4BC6DC98271D4EC800634A99 /* SpecTestingTableViewCell.swift in Sources */,
