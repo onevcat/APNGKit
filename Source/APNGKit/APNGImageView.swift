@@ -4,9 +4,9 @@
 //
 //  Created by Wang Wei on 2021/10/12.
 //
-#if canImport(UIKit)
-import UIKit
 import Delegate
+import Foundation
+import CoreGraphics
 
 /// A view object that displays an `APNGImage` and perform the animation.
 ///
@@ -15,7 +15,7 @@ import Delegate
 ///
 /// Similar to other UI components, it is your responsibility to access the UI related property or method in this class
 /// only in the main thread. Otherwise, it may cause unexpected behaviors.
-open class APNGImageView: UIView {
+open class APNGImageView: PlatformView {
     
     public typealias PlayedLoopCount = Int
     public typealias FrameIndex = Int
@@ -106,7 +106,7 @@ open class APNGImageView: UIView {
     /// - Parameter image: The initial image to display in the image view.
     ///
     /// This method is provided as a fallback for setting a normal `UIImage`. This does not start the animation or
-    public convenience init(image: UIImage?) {
+    public convenience init(image: PlatformImage?) {
         self.init(frame: .zero)
         layer.contentsScale = image?.scale ?? screenScale
         layer.contents = image?.cgImage
@@ -167,7 +167,7 @@ open class APNGImageView: UIView {
     ///     print(error)
     /// }
     /// ```
-    public var staticImage: UIImage? = nil {
+    public var staticImage: PlatformImage? = nil {
         didSet {
             if staticImage != nil {
                 self.image = nil
@@ -289,7 +289,7 @@ open class APNGImageView: UIView {
         displayingFrameStarted = nil
         
         NotificationCenter.default.addObserver(
-            self, selector: #selector(appMovedFromBackground), name: UIApplication.didBecomeActiveNotification, object: nil
+            self, selector: #selector(appMovedFromBackground), name: .applicationDidBecomeActive, object: nil
         )
     }
     
@@ -410,7 +410,7 @@ open class APNGImageView: UIView {
         case rendered(CGImage?)
         // The image is rendered with the default image as a fallback, with an error indicates what is wrong when
         // decoding the target (failing) frame.
-        case fallbackToDefault(UIImage?, APNGKitError)
+        case fallbackToDefault(PlatformImage?, APNGKitError)
         // The frame decoding is failing due to `frameError`, and the fallback default image is also failing,
         // due to `defaultDecodingError`.
         case defaultDecodingError(frameError: APNGKitError, defaultDecodingError: APNGKitError)
@@ -427,7 +427,7 @@ open class APNGImageView: UIView {
             do {
                 printLog("Encountered an error when decoding the next image frame, index: \(nextFrameIndex). Error: \(error). Trying to reverting to the default image.")
                 let data = try image.decoder.createDefaultImageData()
-                return .fallbackToDefault(UIImage(data: data, scale: image.scale), error.apngError ?? .internalError(error))
+                return .fallbackToDefault(PlatformImage(data: data, scale: image.scale), error.apngError ?? .internalError(error))
             } catch let defaultDecodingError {
                 printLog("Encountered an error when decoding the default image. \(error)")
                 return .defaultDecodingError(
@@ -447,11 +447,10 @@ extension APNGImageView {
 }
 
 extension APNGKitError {
-    public var normalImage: UIImage? {
+    public var normalImage: PlatformImage? {
         guard let (data, scale) = self.normalImageData else {
             return nil
         }
-        return UIImage(data: data, scale: scale)
+        return PlatformImage(data: data, scale: scale)
     }
 }
-#endif
