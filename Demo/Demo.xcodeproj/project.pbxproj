@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4B5ECBA9272C51C4003930D4 /* minimal.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B5ECBA8272C51C4003930D4 /* minimal.apng */; };
 		4B5ECBCC272E29B9003930D4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5ECBCB272E29B9003930D4 /* AppDelegate.swift */; };
 		4B5ECBCE272E29B9003930D4 /* SamplesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5ECBCD272E29B9003930D4 /* SamplesViewController.swift */; };
 		4B5ECBD0272E29BA003930D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B5ECBCF272E29BA003930D4 /* Assets.xcassets */; };
@@ -185,7 +184,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4B5ECBA8272C51C4003930D4 /* minimal.apng */ = {isa = PBXFileReference; lastKnownFileType = file; name = minimal.apng; path = ../Tests/APNGKitTests/Resources/General/minimal.apng; sourceTree = "<group>"; };
 		4B5ECBC9272E29B9003930D4 /* Demo-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Demo-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B5ECBCB272E29B9003930D4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4B5ECBCD272E29B9003930D4 /* SamplesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SamplesViewController.swift; sourceTree = "<group>"; };
@@ -628,7 +626,6 @@
 		4BFF94FE271C077D001645A7 = {
 			isa = PBXGroup;
 			children = (
-				4B5ECBA8272C51C4003930D4 /* minimal.apng */,
 				4BFF951E271C07AC001645A7 /* Packages */,
 				4BFF9509271C077D001645A7 /* Demo */,
 				4B5ECBCA272E29B9003930D4 /* Demo-macOS */,
@@ -847,7 +844,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BC3D945271C095D004DF785 /* 042.png in Resources */,
-				4B5ECBA9272C51C4003930D4 /* minimal.apng in Resources */,
 				4BC3D940271C095D004DF785 /* 054.png in Resources */,
 				4BC3D936271C095D004DF785 /* 007.png in Resources */,
 				4BC3D958271C095D004DF785 /* 009.png in Resources */,
