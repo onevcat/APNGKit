@@ -4,6 +4,7 @@
 //
 //  Created by Wang Wei on 2021/10/12.
 //
+#if canImport(UIKit) || canImport(AppKit)
 import Delegate
 import Foundation
 import CoreGraphics
@@ -108,8 +109,9 @@ open class APNGImageView: PlatformView {
     /// This method is provided as a fallback for setting a normal `UIImage`. This does not start the animation or
     public convenience init(image: PlatformImage?) {
         self.init(frame: .zero)
-        layer.contentsScale = image?.scale ?? screenScale
-        layer.contents = image?.cgImage
+        let contentScale = image?.recommendedLayerContentsScale(screenScale) ?? screenScale
+        backingLayer.contents = image?.layerContents(forContentsScale:contentScale)
+        backingLayer.contentsScale = contentScale
     }
     
     /// Creates an APNG image view with the specified frame.
@@ -172,10 +174,9 @@ open class APNGImageView: PlatformView {
             if staticImage != nil {
                 self.image = nil
             }
-            if let targetScale = staticImage?.scale {
-                layer.contentsScale = targetScale
-            }
-            layer.contents = staticImage?.cgImage
+            let targetScale = staticImage?.recommendedLayerContentsScale(screenScale) ?? screenScale
+            backingLayer.contentsScale = targetScale
+            backingLayer.contents = staticImage?.layerContents(forContentsScale: targetScale)
         }
     }
     
@@ -183,7 +184,7 @@ open class APNGImageView: PlatformView {
         _image?.owner = nil
         stopAnimating()
         _image = nil
-        layer.contents = nil
+        backingLayer.contents = nil
         playedCount = 0
         displayingFrameIndex = 0
     }
@@ -244,23 +245,22 @@ open class APNGImageView: PlatformView {
             let renderResult = renderCurrentDecoderOutput()
             switch renderResult {
             case .rendered(let initialImage):
-                layer.contentsScale = nextImage.scale
-                layer.contents = initialImage
+                backingLayer.contentsScale = nextImage.scale
+                backingLayer.contents = initialImage
                 if autoStartAnimationWhenSetImage {
                     startAnimating()
                 }
                 nextImage.decoder.renderNext()
             case .fallbackToDefault(let defaultImage, let error):
                 onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: true))
-                if let targetScale = defaultImage?.scale {
-                    layer.contentsScale = targetScale
-                }
-                layer.contents = defaultImage?.cgImage
+                let scale = defaultImage?.recommendedLayerContentsScale(nextImage.scale) ?? screenScale
+                backingLayer.contentsScale = scale
+                backingLayer.contents = defaultImage?.layerContents(forContentsScale:scale)
                 stopAnimating()
                 onFallBackToDefaultImage()
             case .defaultDecodingError(let error, let defaultImageError):
                 onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: false))
-                layer.contents = nil
+                backingLayer.contents = nil
                 stopAnimating()
                 onFallBackToDefaultImageFailed(defaultImageError)
             }
@@ -366,8 +366,8 @@ open class APNGImageView: PlatformView {
         switch renderCurrentDecoderOutput() {
         case .rendered(let renderedImage):
             // Show the next image.
-            layer.contentsScale = image.scale
-            layer.contents = renderedImage
+            backingLayer.contentsScale = image.scale
+            backingLayer.contents = renderedImage
             
             // for a 60 FPS system, we only have a chance of replacing the content per 16.6ms.
             // To provide a more accurate animation we need the determine the frame starting
@@ -382,12 +382,12 @@ open class APNGImageView: PlatformView {
             
         case .fallbackToDefault(let defaultImage, let error):
             onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: true))
-            layer.contents = defaultImage?.cgImage
+            backingLayer.contents = defaultImage?.layerContents(forContentsScale: image.scale)
             stopAnimating()
             onFallBackToDefaultImage()
         case .defaultDecodingError(let error, let defaultImageError):
             onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: false))
-            layer.contents = nil
+            backingLayer.contents = nil
             stopAnimating()
             onFallBackToDefaultImageFailed(defaultImageError)
         }
@@ -454,3 +454,4 @@ extension APNGKitError {
         return PlatformImage(data: data, scale: scale)
     }
 }
+#endif

@@ -15,6 +15,7 @@ public protocol DrivingTimer {
     init(mode: RunLoop.Mode?, target: AnyObject, action: @escaping (TimeInterval) -> Void)
 }
 
+#if canImport(UIKit)
 public class DisplayTimer: DrivingTimer {
     // Exposed properties
     public var timestamp: TimeInterval { displayLink.timestamp }
@@ -47,6 +48,7 @@ public class DisplayTimer: DrivingTimer {
         }
     }
 }
+#endif
 
 public class NormalTimer: DrivingTimer {
     

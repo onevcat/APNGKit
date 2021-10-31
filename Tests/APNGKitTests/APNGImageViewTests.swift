@@ -9,7 +9,7 @@ import Foundation
 import XCTest
 import Delegate
 @testable import APNGKit
-
+#if canImport(UIKit)
 class ViewControllerStub {
     
     var window: UIWindow!
@@ -345,3 +345,4 @@ class DeinitInspectableAPNGImageView: APNGImageView {
         onDeinit()
     }
 }
+#endif

@@ -18,12 +18,50 @@ extension Notification.Name {
     static var applicationDidBecomeActive = UIApplication.didBecomeActiveNotification
 }
 
+extension UIView {
+    var backingLayer: CALayer { layer }
+}
+
+extension UIImage {
+    func recommendedLayerContentsScale(_ preferredContentsScale: CGFloat) -> CGFloat {
+        scale
+    }
+    func layerContents(forContentsScale layerContentsScale: CGFloat) -> Any? {
+        cgImage
+    }
+}
+
 #elseif canImport(AppKit)
 import AppKit
+
 public typealias PlatformDrivingTimer = NormalTimer
-public typealias PlatformView = NSView
 public typealias PlatformImage = NSImage
 var screenScale: CGFloat { NSScreen.main?.backingScaleFactor ?? 1.0 }
+
+extension Notification.Name {
+    static var applicationDidBecomeActive = NSApplication.didBecomeActiveNotification
+}
+
+open class PlatformView: NSView {
+    
+    var backingLayer: CALayer { layer! }
+    
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        wantsLayer = true
+    }
+    
+    required public init?(coder: NSCoder) {
+        super.init(coder: coder)
+        wantsLayer = true
+    }
+}
+
+extension NSImage {
+    convenience init?(data: Data, scale: CGFloat) {
+        self.init(data: data)
+    }
+}
 
 #else
 public typealias PlatformDrivingTimer = NormalTimer
