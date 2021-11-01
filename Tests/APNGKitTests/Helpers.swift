@@ -45,6 +45,7 @@ class TimeWrap {
     private let expectation: XCTestExpectation
     
     private var items: [Item] = []
+    private var passed = 0.0
     
     init(testCase: XCTestCase) {
         self.testCase = testCase
@@ -58,24 +59,25 @@ class TimeWrap {
     }
     
     func done(){
-        var passed = 0.0
-        Timer.scheduledTimer(withTimeInterval: 0.0, repeats: true) { t in
-            passed = t.timeInterval + passed
-            if let first = self.items.first {
-                if passed >= first.timeInterval {
-                    first.block()
-                    self.items.removeFirst()
-                }
-            } else {
-                t.invalidate()
-                self.expectation.fulfill()
-            }
-        }
+        Timer.scheduledTimer(timeInterval: 0.0, target: self, selector: #selector(step), userInfo: nil, repeats: true)
         wait()
     }
     
+    @objc func step(t: Timer) {
+        passed = t.timeInterval + passed
+        if let first = self.items.first {
+            if passed >= first.timeInterval {
+                first.block()
+                self.items.removeFirst()
+            }
+        } else {
+            t.invalidate()
+            self.expectation.fulfill()
+        }
+    }
+    
     func wait() {
-        testCase.waitForExpectations(timeout: accumulated + 0.1, handler: nil)
+        testCase.waitForExpectations(timeout: accumulated + 1, handler: nil)
     }
 }
 
