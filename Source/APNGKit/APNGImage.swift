@@ -50,6 +50,8 @@ public class APNGImage {
     /// repeat count and the animation will be played in loop forever.
     public var numberOfPlays: Int?
     
+    var playForever: Bool { numberOfPlays == nil || numberOfPlays == 0 }
+    
     /// The number of frames in the image instance. It is the expected frame count in the image, which is defined by
     /// the number in animation control chunk data.
     public var numberOfFrames: Int { decoder.animationControl.numberOfFrames }

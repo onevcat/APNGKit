@@ -343,7 +343,7 @@ open class APNGImageView: PlatformView {
         }
         
         // Played enough count. Stop animating and stay at the last frame.
-        if playedCount == image.numberOfPlays {
+        if !image.playForever && playedCount >= (image.numberOfPlays ?? 0) {
             stopAnimating()
             onAllPlaysDone()
             return

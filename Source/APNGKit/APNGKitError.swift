@@ -61,7 +61,11 @@ extension APNGKitError {
         case .decoderError(let reason):
             switch reason {
             case .chunkNameNotMatched(let expected, let actual):
-                return expected == IHDR.name && actual == ["C", "g", "B", "I"]
+                let isCgBI = expected == IHDR.name && actual == ["C", "g", "B", "I"]
+                if isCgBI {
+                    printLog("`CgBI` chunk found. It seems that the input image is compressed by Xcode and not supported by APNGKit. Consider to rename it to `apng` to prevent compressing.")
+                }
+                return isCgBI
             case .lackOfChunk(let name):
                 return name == acTL.name
             default:
