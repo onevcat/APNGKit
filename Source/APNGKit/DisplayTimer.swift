@@ -82,11 +82,24 @@ public class NormalTimer: DrivingTimer {
     }
     
     private func createTimer() -> Timer {
-        // let displayMode = CGDisplayCopyDisplayMode(CGMainDisplayID())
-        // let refreshRate = max(displayMode?.refreshRate ?? 60.0, 60.0)
+        #if canImport(AppKit)
+        let displayMode = CGDisplayCopyDisplayMode(CGMainDisplayID())
+        let refreshRate = max(displayMode?.refreshRate ?? 60.0, 60.0)
+        #else
         let refreshRate = 60.0
-        let interval = 1 / refreshRate
+        #endif
         
+        let interval: TimeInterval
+        #if DEBUG
+        // For testing, make the timer fire as soon as possible to get accurate result.
+        if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+            interval = 0.0
+        } else {
+            interval = 1 / refreshRate
+        }
+        #else
+        interval = 1 / refreshRate
+        #endif
         let timer = Timer(timeInterval: interval, target: self, selector: #selector(step), userInfo: nil, repeats: true)
         RunLoop.main.add(timer, forMode: mode)
         return timer
@@ -101,6 +114,4 @@ public class NormalTimer: DrivingTimer {
             action(timestamp)
         }
     }
-    
-    
 }

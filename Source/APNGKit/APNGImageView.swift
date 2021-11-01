@@ -64,9 +64,9 @@ open class APNGImageView: PlatformView {
     /// `DisplayTimer` is used. On platforms that `CADisplayLink` is not available, a normal `Foundation.Timer` based
     /// one is used.
     #if canImport(UIKit)
-    public var DrivingTimerType: DrivingTimer.Type = DisplayTimer.self
+    public var DrivingTimerType: DrivingTimer.Type { NormalTimer.self }
     #else
-    public var DrivingTimerType: DrivingTimer.Type = NormalTimer.self
+    public var DrivingTimerType: DrivingTimer.Type { NormalTimer.self }
     #endif
     
     // When the current frame was started to be displayed on the screen. It is the base time to calculate the current
@@ -87,7 +87,7 @@ open class APNGImageView: PlatformView {
     private var frameMissed: Bool = false
     
     // Backing timer for updating animation content.
-    private var drivingTimer: DrivingTimer?
+    private(set) var drivingTimer: DrivingTimer?
     
     // Backing storage.
     private var _image: APNGImage?
