@@ -1,12 +1,11 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/onevcat/APNGKit/master/images/logo.png" alt="APNGKit" title="APNGKit" width="1000"/>
+<img src="https://user-images.githubusercontent.com/1019875/139699505-811dc243-878a-482a-b222-f3123082f062.png" alt="APNGKit" title="APNGKit"/>
 </p>
 
 <p align="center">
 <a href="https://swift.org/package-manager/"><img src="https://img.shields.io/badge/SPM-supported-DE5C43.svg?style=flat"></a>
 <a href="http://cocoadocs.org/docsets/APNGKit"><img src="https://img.shields.io/cocoapods/v/APNGKit.svg?style=flat"></a>
-<a href="https://github.com/Carthage/Carthage/"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat"></a>
-<br />
+<a href="https://github.com/Carthage/Carthage/"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat"></a
 <a href="https://raw.githubusercontent.com/onevcat/APNGKit/master/LICENSE"><img src="https://img.shields.io/cocoapods/l/APNGKit.svg?style=flat"></a>
 <a href="#"><img src="https://img.shields.io/cocoapods/p/APNGKit.svg?style=flat"></a>
 <img src="https://img.shields.io/badge/made%20with-%3C3-blue.svg">
