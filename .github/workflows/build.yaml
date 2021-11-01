@@ -26,5 +26,7 @@ jobs:
           key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
           restore-keys: |
             ${{ runner.os }}-spm-
+      - name: Remove timing tests
+        run: rm Tests/APNGKitTests/APNGImageViewTimingTests.swift
       - name: Run tests
         run: bundle exec fastlane test_${{ matrix.destination }}
