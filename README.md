@@ -59,7 +59,7 @@ iOS 9.0+ / macOS 10.11+ / tvOS 9.0+
 
 ### Swift Package Manager
 
-The recommended way to install APNGKit is to use Swift Package Manager. Adding it to your project with Xcode:
+The **recommended way** to install APNGKit is to use Swift Package Manager. Adding it to your project with Xcode:
 
 - File > Swift Packages > Add Package Dependency
 - Add https://github.com/onevcat/APNGKit.git
@@ -94,45 +94,6 @@ $ pod install
 You should open the `{Project}.xcworkspace` instead of the `{Project}.xcodeproj` after you installed anything from CocoaPods.
 
 For more information about how to use CocoaPods, I suggest [this tutorial](http://www.raywenderlich.com/64546/introduction-to-cocoapods-2).
-
-### Carthage
-
-[Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager for Cocoa application. To install the carthage tool, you can use [Homebrew](http://brew.sh).
-
-```bash
-$ brew update
-$ brew install carthage
-```
-
-To integrate APNGKit into your Xcode project using Carthage, specify it in your `Cartfile`:
-
-```ogdl
-github "onevcat/APNGKit" ~> 2.0
-```
-
-Then, run the following command to build the APNGKit framework:
-
-```bash
-$ carthage update
-```
-
-At last, you need to set up your Xcode project manually to add the APNGKit framework.
-
-On your application targets’ “General” settings tab, in the “Linked Frameworks and Libraries” section, drag and drop each framework you want to use from the Carthage/Build folder on disk.
-
-On your application targets’ “Build Phases” settings tab, click the “+” icon and choose “New Run Script Phase”. Create a Run Script with the following content:
-
-```bash
-/usr/local/bin/carthage copy-frameworks
-```
-
-and add the paths to the frameworks you want to use under “Input Files”:
-
-```bash
-$(SRCROOT)/Carthage/Build/iOS/APNGKit.framework
-```
-
-For more information about how to use Carthage, please see its [project page](https://github.com/Carthage/Carthage).
 
 ## Usage
 

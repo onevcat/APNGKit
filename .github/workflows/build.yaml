@@ -1,0 +1,30 @@
+name: build
+
+on: [push, pull_request]
+
+jobs:
+  run-test:
+    runs-on: macOS-latest
+    strategy:
+      matrix:
+        destination: [
+          'macOS', 
+          'iOS', 
+          'tvOS'
+        ]
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/cache@v1
+        id: bundler-cache
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      - name: Bundle setup
+        run: bundle config path vendor/bundle
+      - name: Bundle install
+        if: steps.bundler-cache.outputs.cache-hit != 'true'
+        run: bundle install --jobs 4 --retry 3
+      - name: Run tests
+        run: bundle exec fastlane test_${{ matrix.destination }}
