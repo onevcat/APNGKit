@@ -1,0 +1,39 @@
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Perform tests"
+  lane :test do
+    test_macOS
+    test_iOS  
+    test_tvOS
+  end
+
+  lane :test_macOS do |options|
+    scan( 
+      package_path: "./",
+      scheme: "APNGKit",
+      clean: true, 
+      destination: "platform=macOS"
+    )
+  end
+
+  lane :test_iOS do |options|
+    scan(
+      package_path: "./",
+      scheme: "APNGKit",
+      clean: true, 
+      destination: "platform=iOS Simulator,name=iPhone 12"
+    )
+  end
+
+  lane :test_tvOS do |options|
+    scan(
+      package_path: "./",
+      scheme: "APNGKit",
+      clean: true, 
+      destination: "platform=tvOS Simulator,name=Apple TV"
+    )
+  end
+  
+end
