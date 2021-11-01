@@ -13,18 +13,18 @@ jobs:
           'tvOS'
         ]
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/cache@v1
-        id: bundler-cache
+      - uses: actions/checkout@v2
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          lfs: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.4
+          bundler-cache: true
+      - uses: actions/cache@v2
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
           restore-keys: |
-            ${{ runner.os }}-gems-
-      - name: Bundle setup
-        run: bundle config path vendor/bundle
-      - name: Bundle install
-        if: steps.bundler-cache.outputs.cache-hit != 'true'
-        run: bundle install --jobs 4 --retry 3
+            ${{ runner.os }}-spm-
       - name: Run tests
         run: bundle exec fastlane test_${{ matrix.destination }}
