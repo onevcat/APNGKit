@@ -252,21 +252,29 @@ open class APNGImageView: PlatformView {
                 }
                 nextImage.decoder.renderNext()
             case .fallbackToDefault(let defaultImage, let error):
-                onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: true))
-                let scale = defaultImage?.recommendedLayerContentsScale(nextImage.scale) ?? screenScale
-                backingLayer.contentsScale = scale
-                backingLayer.contents = defaultImage?.layerContents(forContentsScale:scale)
-                stopAnimating()
-                onFallBackToDefaultImage()
+                fallbackTo(defaultImage, referenceScale: nextImage.scale, error: error)
             case .defaultDecodingError(let error, let defaultImageError):
-                onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: false))
-                backingLayer.contents = nil
-                stopAnimating()
-                onFallBackToDefaultImageFailed(defaultImageError)
+                defaultDecodingErrored(frameError: error, defaultImageError: defaultImageError)
             }
 
             invalidateIntrinsicContentSize()
         }
+    }
+    
+    private func fallbackTo(_ defaultImage: PlatformImage?, referenceScale: CGFloat, error: APNGKitError) {
+        onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: true))
+        let scale = defaultImage?.recommendedLayerContentsScale(referenceScale) ?? screenScale
+        backingLayer.contentsScale = scale
+        backingLayer.contents = defaultImage?.layerContents(forContentsScale:scale)
+        stopAnimating()
+        onFallBackToDefaultImage()
+    }
+    
+    private func defaultDecodingErrored(frameError: APNGKitError, defaultImageError: APNGKitError) {
+        onDecodingFrameError(.init(error: frameError, canFallbackToDefaultImage: false))
+        backingLayer.contents = nil
+        stopAnimating()
+        onFallBackToDefaultImageFailed(defaultImageError)
     }
     
     /// Starts the animation. Calling this method does nothing if the animation is already running.
@@ -381,15 +389,9 @@ open class APNGImageView: PlatformView {
             image.decoder.renderNext()
             
         case .fallbackToDefault(let defaultImage, let error):
-            onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: true))
-            backingLayer.contents = defaultImage?.layerContents(forContentsScale: image.scale)
-            stopAnimating()
-            onFallBackToDefaultImage()
+            fallbackTo(defaultImage, referenceScale: image.scale, error: error)
         case .defaultDecodingError(let error, let defaultImageError):
-            onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: false))
-            backingLayer.contents = nil
-            stopAnimating()
-            onFallBackToDefaultImageFailed(defaultImageError)
+            defaultDecodingErrored(frameError: error, defaultImageError: defaultImageError)
         }
     }
     
@@ -447,6 +449,13 @@ extension APNGImageView {
 }
 
 extension APNGKitError {
+    
+    /// Treat the error as a recoverable one. Try to extract the normal version of image and return it is can be created
+    /// as a normal image.
+    ///
+    /// When you get an error while initializing an `APNGImage`, you can try to access this property of the `APNGKitError`
+    /// to check if it is not an APNG image but a normal images supported on the platform. You can choose to set the
+    /// returned value to `APNGImageView.staticImage` to let the view displays a static normal image as a fallback.
     public var normalImage: PlatformImage? {
         guard let (data, scale) = self.normalImageData else {
             return nil

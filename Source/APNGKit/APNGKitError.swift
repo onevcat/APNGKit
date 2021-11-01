@@ -8,14 +8,23 @@
 import Foundation
 import ImageIO
 
+/// The errors can be thrown or returned by APIs in APNGKit.
+///
+/// Each member in this type represents a type of reason for error during different image decoding or displaying phase.
+/// Check the detail reason to know the details. In most cases, you are only care about one or two types of error, and
+/// leave others falling to a default handling.
 public enum APNGKitError: Error {
+    /// Errors happening during decoding the image data.
     case decoderError(DecoderError)
+    /// Errors happening during creating the image.
     case imageError(ImageError)
-    
+    /// Other errors happening inside system and not directly related to APNGKit.
     case internalError(Error)
 }
 
 extension APNGKitError {
+    
+    /// Errors happening during decoding the image data.
     public enum DecoderError {
         case fileHandleCreatingFailed(URL, Error)
         case fileHandleOperationFailed(FileHandle, Error)
@@ -36,6 +45,7 @@ extension APNGKitError {
         case multipleAnimationControlChunk
     }
     
+    /// Errors happening during creating the image.
     public enum ImageError {
         case resourceNotFound(name: String, bundle: Bundle)
         case normalImageDataLoaded(data: Data, scale: CGFloat)
@@ -43,6 +53,11 @@ extension APNGKitError {
 }
 
 extension APNGKitError {
+    
+    /// Returns the image data as a normal image if the error happens during creating image object.
+    ///
+    /// When the image cannot be loaded as an APNG, but can be represented as a normal image, this returns its data and
+    /// a scale for the image.
     public var normalImageData: (Data, CGFloat)? {
         guard case .imageError(.normalImageDataLoaded(let data, let scale)) = self else {
             return nil
@@ -52,6 +67,9 @@ extension APNGKitError {
 }
 
 extension Error {
+    /// Converts `self` to an `APNGKitError` if it is.
+    ///
+    /// This is identical as `self as? APNGKitError`.
     public var apngError: APNGKitError? { self as? APNGKitError }
 }
 

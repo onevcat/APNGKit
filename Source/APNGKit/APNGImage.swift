@@ -6,6 +6,30 @@ import Delegate
 /// Represents an APNG image object. This class loads an APNG file from disk or from some data object and provides a
 /// high level interface for you to set some animation properties. Once you get an `APNGImage` instance, you can set
 /// it to an `APNGImageView` to display it on screen.
+///
+/// ```swift
+/// let image = try APNGImage(named: "your_image")
+/// let imageView = APNGImageView(image: image)
+/// view.addSubview(imageView)
+/// ```
+///
+/// All the initializers throw an `APNGKitError` value if the image cannot be created. Check the error value to know the
+/// detail. In some cases, it is possible to render the image as a static one. You can check the error's `normalImage`
+/// for this case:
+///
+/// ```swift
+/// do {
+///   let image = try APNGImage(named: "my_image")
+///   animatedImageView.image = image
+/// } catch {
+///   if let normalImage = error.apngError?.normalImage {
+///     animatedImageView.staticImage = normalImage
+///   } else {
+///     animatedImageView.staticImage = nil
+///     print("Error: \(error)")
+///   }
+/// }
+/// ```
 public class APNGImage {
     
     /// The maximum size in memory which determines whether the decoded images should be cached or not.
@@ -20,10 +44,13 @@ public class APNGImage {
     
     /// The duration of current loaded frames.
     public enum Duration {
+        /// The loaded duration of current image, when the image frames are not yet fully decoded.
         case loadedPartial(TimeInterval)
+        /// The full duration of the current image.
         case full(TimeInterval)
     }
     
+    // Internal decoder. It decodes the image file or data, and render each frame when required.
     let decoder: APNGDecoder
     
     /// A delegate called when all the image related information is prepared.
@@ -50,6 +77,7 @@ public class APNGImage {
     /// repeat count and the animation will be played in loop forever.
     public var numberOfPlays: Int?
     
+    // `numberOfPlays` == 0 also means loop forever.
     var playForever: Bool { numberOfPlays == nil || numberOfPlays == 0 }
     
     /// The number of frames in the image instance. It is the expected frame count in the image, which is defined by
@@ -91,13 +119,31 @@ public class APNGImage {
     // same image in different APNG image views, create multiple instance instead.
     weak var owner: AnyObject?
     
+    /// Creates an APNG image object using the named image file in the main bundle.
+    /// - Parameters:
+    ///   - name: The name of the image file in the main bundle.
+    ///   - decodingOptions: The decoding options being used while decoding the image data.
+    /// - Returns: The image object that best matches the given name.
+    ///
+    /// This method guesses what is the image you want to load based on the given `name`. It searches the possible
+    /// combinations of file name, extensions and image scales in the bundle.
     public convenience init(
         named name: String,
         decodingOptions: DecodingOptions = []
     ) throws {
         try self.init(named: name, decodingOptions: decodingOptions, in: nil, subdirectory: nil)
     }
-
+    
+    /// Creates an APNG image object using the named image file in the specified bundle and subdirectory.
+    /// - Parameters:
+    ///   - name: The name of the image file in the specified bundle.
+    ///   - decodingOptions: The decoding options being used while decoding the image data.
+    ///   - bundle: The bundle in which APNGKit should search in for the image.
+    ///   - subpath: The subdirectory path in the bundle where the image is put.
+    /// - Returns: The image object that best matches the given name, bundle and subpath.
+    ///
+    /// This method guesses what is the image you want to load based on the given `name`. It searches the possible
+    /// combinations of file name, extensions and image scales in the bundle and subpath.
     public convenience init(
         named name: String,
         decodingOptions: DecodingOptions = [],
@@ -111,6 +157,12 @@ public class APNGImage {
         try self.init(fileURL: resource.fileURL, scale: resource.scale, decodingOptions: decodingOptions)
     }
     
+    /// Creates an APNG image object using the file path.
+    /// - Parameters:
+    ///   - filePath: The path of APNG file.
+    ///   - scale: The desired image scale. If not set, APNGKit will guess from the file name.
+    ///   - decodingOptions: The decoding options being used while decoding the image data.
+    /// - Returns: The image object that loaded from the given file path.
     public convenience init(
         filePath: String,
         scale: CGFloat? = nil,
@@ -119,7 +171,13 @@ public class APNGImage {
         let fileURL = URL(fileURLWithPath: filePath)
         try self.init(fileURL: fileURL, scale: scale, decodingOptions: decodingOptions)
     }
-
+    
+    /// Creates an APNG image object using the file URL.
+    /// - Parameters:
+    ///   - fileURL: The URL of APNG file on disk.
+    ///   - scale: The desired image scale. If not set, APNGKit will guess from the file name.
+    ///   - decodingOptions: The decoding options being used while decoding the image data.
+    /// - Returns: The image object that loaded from the given file URL.
     public init(
         fileURL: URL,
         scale: CGFloat? = nil,
@@ -142,6 +200,12 @@ public class APNGImage {
         }
     }
 
+    /// Creates an APNG image object using the give data object.
+    /// - Parameters:
+    ///   - data: The data containing APNG information and frames.
+    ///   - scale: The desired image scale. If not set, `1.0` is used.
+    ///   - decodingOptions: The decoding options being used while decoding the image data.
+    /// - Returns: The image object that loaded from the given data.
     public init(
         data: Data,
         scale: CGFloat = 1.0,
