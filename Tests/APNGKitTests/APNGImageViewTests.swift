@@ -190,7 +190,7 @@ class APNGImageViewTests: XCTestCase {
             XCTAssertEqual(imageView.image!.decoder.currentIndex, 0)
         }
         // Only ensure before the next frame. Display link requires synced with refresh rate...
-        .after(frameDuration * 0.6) {
+        .after(frameDuration * 0.5) {
             XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
         }
         .after(frameDuration) {
@@ -234,7 +234,7 @@ class APNGImageViewTests: XCTestCase {
         timeWrap {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
         }
-        .after(frameDuration * 0.7) {
+        .after(frameDuration * 0.5) {
             XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
         }
         .after(frameDuration) { // Animation is not started
@@ -245,7 +245,7 @@ class APNGImageViewTests: XCTestCase {
             imageView.startAnimating()
             XCTAssertTrue(imageView.isAnimating)
         }
-        .after(frameDuration * 0.7) { }
+        .after(frameDuration * 0.5) { }
         .after(frameDuration) { // Animation is going on...
             XCTAssertEqual(imageView.displayingFrameIndex, 1)
             XCTAssertEqual(imageView.image?.decoder.currentIndex, 2)
@@ -263,7 +263,7 @@ class APNGImageViewTests: XCTestCase {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
             XCTAssertEqual(imageView.image!.decoder.currentIndex, 0)
         }
-        .after(frameDuration * 0.7) {
+        .after(frameDuration * 0.5) {
             XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
         }
         .after(frameDuration) {
@@ -296,7 +296,7 @@ class APNGImageViewTests: XCTestCase {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
             XCTAssertEqual(imageView.image!.decoder.currentIndex, 0)
         }
-        .after(frameDuration * 0.7) {
+        .after(frameDuration * 0.5) {
             XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
         }
         .after(frameDuration * 3) {
@@ -354,7 +354,7 @@ class APNGImageViewTests: XCTestCase {
         let frameDuration = firstFrame!.frameControl.duration
         
         timeWrap {}
-        .after(frameDuration * 0.7) {}
+        .after(frameDuration * 0.5) {}
         .after(frameDuration) {
             XCTAssertEqual(imageView.displayingFrameIndex, 1)
             XCTAssertEqual(minimalAPNG.decoder.currentIndex, 2)
