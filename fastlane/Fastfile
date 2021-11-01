@@ -36,4 +36,44 @@ platform :ios do
     )
   end
   
+  lane :release do |options|
+    target_version = options[:version]
+    raise "The version is missed. Use `fastlane release version:{version_number}`.`" if target_version.nil?
+    
+    ensure_git_branch
+    ensure_git_status_clean
+    
+    skip_tests =  options[:skip_tests]
+    test unless skip_tests
+    
+    lint
+
+    increment_version_number(version_number: target_version)
+    version_bump_podspec(path: "APNGKit.podspec", version_number: target_version)
+    
+    release_content = read_changelog(excluded_markdown_elements: [])
+    change_log(version: target_version)
+
+    git_commit_all(message: "Bump version to #{target_version}")
+    
+    Actions.sh("git tag -s #{target_version} -m ''")
+    
+    push_to_git_remote
+    
+    set_github_release(
+      repository_name: "onevcat/APNGKit",
+      api_token: ENV['GITHUB_TOKEN'],
+      name: target_version,
+      tag_name: target_version,
+      description: release_content
+    )
+    
+    pod_push
+  end
+
+  desc "Lint"
+  lane :lint do
+    pod_lib_lint
+    spm
+  end
 end

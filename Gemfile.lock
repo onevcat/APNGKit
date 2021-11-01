@@ -101,6 +101,7 @@ GEM
       xcodeproj (>= 1.13.0, < 2.0.0)
       xcpretty (~> 0.3.0)
       xcpretty-travis-formatter (>= 0.0.3)
+    fastlane-plugin-changelog (0.16.0)
     gh_inspector (1.1.3)
     google-apis-androidpublisher_v3 (0.13.0)
       google-apis-core (>= 0.4, < 2.a)
@@ -209,6 +210,7 @@ PLATFORMS
 
 DEPENDENCIES
   fastlane
+  fastlane-plugin-changelog
 
 BUNDLED WITH
    2.1.4

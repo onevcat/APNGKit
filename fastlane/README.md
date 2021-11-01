@@ -36,6 +36,16 @@ fastlane ios test_iOS
 fastlane ios test_tvOS
 ```
 
+### ios release
+```
+fastlane ios release
+```
+
+### ios lint
+```
+fastlane ios lint
+```
+Lint
 
 ----
 
