@@ -299,11 +299,7 @@ which will be detected and handled by APNGKit seamlessly.
 
 ## Acknowledgement
 
-APNGKit is built on top of a [modified version of libpng](https://github.com/onevcat/libpng). The original libpng could be found [here](http://www.libpng.org/pub/png/libpng.html). I patched it for APNG supporting based on code in [this project](http://sourceforge.net/p/libpng-apng/code/ci/master/tree/).
-
-The demo images in README file is stolen from ICS Lab, you can find the original post [here](http://ics-web.jp/lab/archives/2441).
-
-The logo of this APNGKit is designed by [Rain (yuchen liu)](https://dribbble.com/yuchenliu), who is a brilliant designer as well as a skillful coder.
+The demo elephant image in README file is stolen from ICS Lab, you can find the original post [here](http://ics-web.jp/lab/archives/2441).
 
 ## Reference
 
