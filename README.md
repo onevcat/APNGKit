@@ -64,13 +64,6 @@ The **recommended way** to install APNGKit is to use Swift Package Manager. Addi
 - Add https://github.com/onevcat/APNGKit.git
 - Select "Up to Next Major" with "2.0.0"
 
-Since Xcode uses its own tools to handle swift packages, git-lfs might not be picked up if it is installed via Homebrew.
-Run the following command to create a symbolic link if Xcode fails to fetch the package:
-
-```sh
-ln -s /usr/local/bin/git-lfs $(xcode-select -p)/usr/bin/git-lfs
-```
-
 ### CocoaPods
 
 [CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects.
