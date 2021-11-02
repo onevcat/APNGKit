@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
                    DESC
 
   s.homepage     = "https://github.com/onevcat/APNGKit"
-  s.screenshots  = "https://raw.githubusercontent.com/onevcat/APNGKit/master/images/logo.png"
+  s.screenshots  = "https://user-images.githubusercontent.com/1019875/139699505-811dc243-878a-482a-b222-f3123082f062.png"
   
   s.license      = { :type => "MIT", :file => "LICENSE" }
 
