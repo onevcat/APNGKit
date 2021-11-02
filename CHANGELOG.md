@@ -15,5 +15,5 @@ All notable changes to this project will be documented in this file.
 Version 2.0.0. This is not a compatible version compared to version 1.x. All code is rewritten from scratch so you may
 need also check the README to do a re-implement.
 
-[2.0.0]: https://github.com/onevcat/APNGKit/compare/1.3.2...2.0.0
+[2.0.0]: https://github.com/onevcat/APNGKit/compare/1.2.3...2.0.0
 [2.0.1]: https://github.com/onevcat/APNGKit/compare/2.0.0...2.0.1
