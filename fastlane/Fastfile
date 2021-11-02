@@ -74,6 +74,12 @@ platform :ios do
     pod_push
   end
 
+  lane :change_log do |options|
+    target_version = options[:version]
+    raise "The version is missed. You need to specify a version parameter." if target_version.nil?
+    stamp_changelog(section_identifier: target_version, git_tag: target_version)
+  end
+
   desc "Lint"
   lane :lint do
     pod_lib_lint
