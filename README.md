@@ -1,21 +1,26 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/onevcat/APNGKit/master/images/logo.png" alt="APNGKit" title="APNGKit" width="1000"/>
+<img src="https://user-images.githubusercontent.com/1019875/139699505-811dc243-878a-482a-b222-f3123082f062.png" alt="APNGKit" title="APNGKit"/>
 </p>
 
 <p align="center">
-<a href="https://travis-ci.org/onevcat/APNGKit"><img src="https://img.shields.io/travis/onevcat/APNGKit/master.svg"></a>
-<a href="https://github.com/Carthage/Carthage/"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat"></a>
+<a href="https://swift.org/package-manager/"><img src="https://img.shields.io/badge/SPM-supported-DE5C43.svg?style=flat"></a>
 <a href="http://cocoadocs.org/docsets/APNGKit"><img src="https://img.shields.io/cocoapods/v/APNGKit.svg?style=flat"></a>
+<a href="https://github.com/Carthage/Carthage/"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat"></a
 <a href="https://raw.githubusercontent.com/onevcat/APNGKit/master/LICENSE"><img src="https://img.shields.io/cocoapods/l/APNGKit.svg?style=flat"></a>
-<a href="http://cocoadocs.org/docsets/APNGKit"><img src="https://img.shields.io/cocoapods/p/APNGKit.svg?style=flat"></a>
+<a href="#"><img src="https://img.shields.io/cocoapods/p/APNGKit.svg?style=flat"></a>
 <img src="https://img.shields.io/badge/made%20with-%3C3-blue.svg">
 </p>
 
-APNGKit is a high performance framework for loading and displaying APNG images in iOS and macOS. It's built on top of a [modified version of libpng](https://github.com/onevcat/libpng) with APNG support and written in Swift. High-level abstractions of Cocoa Touch is used for a delightful API. Since be that, you will feel at home and joy when using APNGKit to play with images in APNG format.
+APNGKit is a high performance framework for loading and displaying APNG images in iOS and macOS. It's built with 
+high-level abstractions and brings a delightful API. Since be that, you will feel at home and joy when using APNGKit to 
+play with images in APNG format.
 
 ## APNG, what and why?
 
-The [Animated Portable Network Graphics (APNG)](https://en.wikipedia.org/wiki/APNG) is a file format extending the well-known PNG format. It allows for animated PNG files that work similarly to animated GIF files, while supporting 24-bit images and 8-bit transparency not available for GIFs. This means much better quality of animation. At the same time, the file size is comparable to or even less than, if created carefully, GIFs.
+The [Animated Portable Network Graphics (APNG)](https://en.wikipedia.org/wiki/APNG) is a file format extending the 
+well-known PNG format. It allows for animated PNG files that work similarly to animated GIF files, while supporting 
+24-bit images and 8-bit transparency not available for GIFs. This means much better quality of animation. At the same 
+time, the file size is comparable to or even less than, if created carefully, GIFs.
 
 Talk is cheap; show me the image. You can click on the image to see how it looks like when animating.
 
@@ -23,29 +28,45 @@ Talk is cheap; show me the image. You can click on the image to see how it looks
 <a href="http://apng.onevcat.com/demo" target="_blank"><img src="https://raw.githubusercontent.com/onevcat/APNGKit/master/images/demo.png" alt="APNGKit Demo" title="APNGKit Demo"/></a>
 </p>
 
-That's cool. APNG is much better! But wait...why haven't I heard about APNG before? It is not a popular format, so why should I use it in my next great iOS/macOS app?
+That's cool. APNG is much better! But wait...why haven't I heard about APNG before? It is not a popular format, so why 
+should I use it in my next great iOS/macOS app?
 
-Good question! APNG is an excellent extension for regular PNG, and it is also very simple to use and not conflicting with current PNG standard (It consists a standard PNG header, so if your platform does not support APNG, it will be recognized as a normal PNG with its first frame being displayed as a static image). But unfortunately, it is a rebel format so that it is not accepted by the PNG group. However, it is accepted by many vendors and is even mentioned in [W3C Standards](http://www.w3.org/TR/html5/embedded-content-0.html#the-img-element). There is another format called MNG (Multiple-image Network Graphics), which is created by the same team as PNG. It is a comprehensive format, but very very very (重要的事要说三遍) complex. It is so complex that despite being a "standard", it was almost universally rejected. There is only one "popular" browser called [Konqueror](https://konqueror.org)(at least I have used it before when I was in high school) that supports MNG, which is really a sad but reasonable story.
+Good question! APNG is an excellent extension for regular PNG, and it is also very simple to use and not conflicting 
+with current PNG standard (It consists a standard PNG header, so if your platform does not support APNG, it will be 
+recognized as a normal PNG with its first frame being displayed as a static image). But unfortunately, it is a rebel 
+format so that it is not accepted by the PNG group. However, it is accepted by many vendors and is even mentioned in 
+[W3C Standards](http://www.w3.org/TR/html5/embedded-content-0.html#the-img-element). There is another format called 
+MNG (Multiple-image Network Graphics), which is created by the same team as PNG. It is a comprehensive format, but very 
+very very (重要的事要说三遍) complex. It is so complex that despite being a "standard", it was almost universally rejected.
+There is only one "popular" browser called [Konqueror](https://konqueror.org)(at least I have used it before when I was 
+in high school) that supports MNG, which is really a sad but reasonable story.
 
-Even though APNG is not accepted currently, we continue to see the widespread implementation of it. Apple recently supported APNG in both [desktop and mobile Safari](http://www.macrumors.com/2014/09/28/ios-8-safari-supports-animated-png-images/). [Microsoft Edge](https://wpdev.uservoice.com/forums/257854-microsoft-edge-developer/suggestions/6513393-apng-animated-png-images-support-firefox-and-sa) and [Chrome](https://code.google.com/p/chromium/issues/detail?id=437662) are also considering adding APNG support since it is already officially added in [WebKit core](https://bugs.webkit.org/show_bug.cgi?id=17022).
+Even though APNG is not accepted currently, we continue to see the widespread implementation of it. Apple recently 
+supported APNG in both [desktop and mobile Safari](http://www.macrumors.com/2014/09/28/ios-8-safari-supports-animated-png-images/). 
+Microsoft Edge and Chrome are also considering adding APNG support since it is already officially added in 
+[WebKit core](https://bugs.webkit.org/show_bug.cgi?id=17022).
 
-APNG is such a nice format to bring users much better experience of animating images. The more APNG is used, the more recognition and support it will get. Not only in the browsers world, but also in the apps we always love. That's why I created this framework.
+APNG is such a nice format to bring users much better experience of animating images. The more APNG is used, the more 
+recognition and support it will get. Not only in the browsers world, but also in the apps we always love. That's why 
+I created this framework.
 
 ## Installation
 
 ### Requirement
 
-iOS 8.0+ / macOS 10.10+
+iOS 9.0+ / macOS 10.11+ / tvOS 9.0+
 
-Although it is written in Swift, the compatibility with Objective-C is also considered.
+### Swift Package Manager
 
-The latest versions (1.x) supports from Xcode 9 (Swift 3.2 or Swift 4). If you are still using Xcode 8, try [version 0.6.4](https://github.com/onevcat/APNGKit/releases/tag/0.6.4) instead.
+The **recommended way** to install APNGKit is to use Swift Package Manager. Adding it to your project with Xcode:
+
+- File > Swift Packages > Add Package Dependency
+- Add https://github.com/onevcat/APNGKit.git
+- Select "Up to Next Major" with "2.0.0"
 
 ### CocoaPods
 
 [CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects.
-
-CocoaPods 0.36 adds supports for Swift and embedded frameworks. You can install it with the following command:
 
 ```bash
 $ gem install cocoapods
@@ -55,11 +76,11 @@ To integrate APNGKit into your Xcode project using CocoaPods, specify it in your
 
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '8.0'
+platform :ios, '9.0'
 use_frameworks!
 
 target 'your_app' do
-  pod 'APNGKit', '~> 1.0'
+  pod 'APNGKit', '~> 2.0'
 end
 ```
 
@@ -73,77 +94,7 @@ You should open the `{Project}.xcworkspace` instead of the `{Project}.xcodeproj`
 
 For more information about how to use CocoaPods, I suggest [this tutorial](http://www.raywenderlich.com/64546/introduction-to-cocoapods-2).
 
-### Carthage
-
-[Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager for Cocoa application. To install the carthage tool, you can use [Homebrew](http://brew.sh).
-
-```bash
-$ brew update
-$ brew install carthage
-```
-
-To integrate APNGKit into your Xcode project using Carthage, specify it in your `Cartfile`:
-
-```ogdl
-github "onevcat/APNGKit" ~> 1.0
-```
-
-Then, run the following command to build the APNGKit framework:
-
-```bash
-$ carthage update
-```
-
-At last, you need to set up your Xcode project manually to add the APNGKit framework.
-
-On your application targets’ “General” settings tab, in the “Linked Frameworks and Libraries” section, drag and drop each framework you want to use from the Carthage/Build folder on disk.
-
-On your application targets’ “Build Phases” settings tab, click the “+” icon and choose “New Run Script Phase”. Create a Run Script with the following content:
-
-```bash
-/usr/local/bin/carthage copy-frameworks
-```
-
-and add the paths to the frameworks you want to use under “Input Files”:
-
-```bash
-$(SRCROOT)/Carthage/Build/iOS/APNGKit.framework
-```
-
-For more information about how to use Carthage, please see its [project page](https://github.com/Carthage/Carthage).
-
-### Manually
-
-It is not recommended to install the framework manually, but it could let you use APNGKit for a deploy target as low as 7.0. You can just download the latest package from the [release page](https://github.com/onevcat/APNGKit/releases) and drag all things under "APNGKit" folder into your project. Then you need to create a bridging header file and add this into it: 
-
-```c
-#import "png.h"
-```
-
-You can find more information about how to add a bridging header [here](http://www.learnswiftonline.com/getting-started/adding-swift-bridging-header/).
-
-Then you need to add "libz.tbd" in the "Link Binary With Libraries" section in Build Phases. Now APNGKit should compile without issue with your project.
-
-If you are using Swift, fine, just skip the content below to "Usage". If you want to use APNGKit in Objective-C code, you have to check these settings of your project as well:
-
-* Product Module Name: Should be your app target's name
-* Defines Module: YES
-* Embedded Content Contains Swift: YES
-* Install Objective-C Compatibility Header: YES
-
-At last, import the umbrella header file in the .m files you want to use APNGKit:
-
-```c
-#import "{YOUR_APP_MODULE_NAME}-Swift.h"
-```
-
-Now you can use APNGKit with Objective-C. Ummm...a bit complicated, isn't it? Life is short, let's Swift!
-
-For more information about working with Swift mixing Objective-C/C or vice versa, you could find some useful information from [Apple's documentation on it](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/MixandMatch.html).
-
 ## Usage
-
-You can find the full API documentation at [CocoaDocs](http://cocoadocs.org/docsets/APNGKit/).
 
 ### Basic
 
@@ -153,36 +104,31 @@ Import APNGKit into your source files in which you want to use the framework.
 import APNGKit
 ```
 
-APNGKit is using the similar APIs as `UIImage` and `UIImageView`. Generally speaking, you can just follow the way you do with images in Cocoa Touch to use this framework. The only difference is the name is changed to `APNGImage` and `APNGImageView`.
-
 #### Load an APNG Image
 
 ```swift
 // Load an APNG image from file in main bundle
-var image = APNGImage(named: "your_image")
+var image = try APNGImage(named: "your_image")
 
 // Or
 // Load an APNG image from file at specified path
-var path = NSBundle.mainBundle().pathForResource("your_image", ofType: "apng")
-if let path = path {
-  image = APNGImage(contentsOfFile: path)  
+if let url = Bundle.main.url(forResource: "your_image", withExtension: "apng") {
+    image = try APNGImage(fileURL: path)
 }
 
 // Or
 // Load an APNG image from data
-let data: NSData = ... // From disk or network or anywhere else.
-image = APNGImage(data: data)
+let data: Data = ... // From disk or network or anywhere else.
+image = try APNGImage(data: data)
 ```
 
-APNGKit will try to load all data in the image by one time, so you could play the animation smoothly later. However, if you are trying to load a large APNG file, you may want to keep the memory footprint as small as possible. For this case, you could use a progressive way to load the image. It will only load the frame needed to be display currently. This would save a lot of memory, but take more performance as a trade-off. To enable the progressive way, just pass in an option to the initializer:
-
-```swift
-let image = APNGImage(data: data, progressive: true)
-```
+You may notice that all initializers are throwable. If anything is wrong during creating the image, it let you know the 
+error explicitly and you have a chance to handle it. We will cover the error handling soon later.
 
 #### Display an APNG Image
 
-When you have an `APNGImage` object, you can use it to initialize an image view and display it on screen with `APNGImageView`, which is a subclass of `UIView`:
+When you have an `APNGImage` object, you can use it to initialize an image view and display it on screen with an 
+`APNGImageView`, which is a subclass of `UIView` or `NSView`:
 
 ```swift
 let image: APNGImage = ... // You already have an APNG image object.
@@ -191,37 +137,165 @@ let imageView = APNGImageView(image: image)
 view.addSubview(imageView)
 ```
 
-And play the animation:
+#### Start animation
+
+The animation will be played automatically as soon as the image view is created with a valid APNG image. If you do not
+want the animation to be played automatically, set the `autoStartAnimationWhenSetImage` property to `false` before you 
+assign an image:
 
 ```swift
+let imageView = APNGImageView(frame: .zero)
+imageView.autoStartAnimationWhenSetImage = false
+imageView.image = image
+
+// Start the animation manually:
 imageView.startAnimating()
 ```
 
-If you are an Interface Builder lover, drag a `UIView` (Please note, not a `UIImageView`) to the canvas, and modify its class to `APNGImageView`. Then, you can drag an `IBOutlet` and play with it as usual.
+#### Image owner
 
-### Caches
-
-APNGKit is using memory cache to improve performance when loading an image. If you use `initWithName:` or `initWithContentsOfFile:saveToCache:` with `true`, the APNGKit will cache the result for later use. Normally, you have no need to take care of the caches. APNGKit will manage it and release the caches when a memory warning is received or your app switched to background.
-
-If you need a huge chunk of memory to do an operation, you can call this to force APNGKit to clear the memory cache:
+DO NOT set the same image to multiple image views, which is not allowed in APNGKit. Every created `APNGImage` has an 
+owner, you cannot set multiple owners to it, otherwise it confuses how to sync with the screen. To display the same 
+image, create a new one:
 
 ```swift
-APNGCache.defaultCache.clearMemoryCache()
+let image = try APNGImage(named: "image")
+imageView.image = image
+
+// You cannot set the same image to another image view.
+// This causes an error.
+anotherImageView.image = image
+
+// You can create another one and set it.
+// This works.
+let anotherImage = try APNGImage(named: "image")
+anotherImageView.image = anotherImage
+
+// Or first remove the original owner.
+// This works
+imageView.image = nil
+anotherImageView.image = image
 ```
 
-It will be useful sometimes since there is a chance that your app will crash before a memory warning could be received when you alloc a huge amount of memory. But it should be rare, so if you are not sure about it, just leave APNGKit to manage the cache itself.
+#### XIB or Storyboard
 
-### PNG Compression
+If you are an Interface Builder lover, drag a `UIView` (or `NSView`) (Please note, not a `UIImageView` or `NSImageView`) 
+to the canvas, and modify its class to `APNGImageView`. Then, you can drag an `IBOutlet` and play with it as usual, such
+as setting its `image` property.
 
-Xcode will compress all PNG files in your app bundle when you build the project. Since APNG is an extension format of PNG, Xcode will think there are redundancy data in that file and compress it into a single static image. This is not what you want. You can disable the PNG compression by setting "COMPRESS_PNG_FILES" to NO in the build settings of your app target. However, it will also prevent Xcode to optimize your other regular PNGs. 
 
-A better approach would be renaming your APNG files with an extension besides of "png". If you do so, Xcode will stop recognizing your APNG files as PNG format, and will not apply compression on them. A suggested extension is "apng", which will be detected and handled by APNGKit seamlessly.
+### Delegates
 
-## TODO
+APNG defines the play loop count as `numberOfPlays` in `APNGImage`, and APNGKit respects it by default. To inspect the 
+end of each loop, register yourself as a delegate of `APNGImageView.onOnePlayDone`:
 
-Currently APNGKit can only load and display APNG files or data. There is a plan to extend this framework to export and write APNG files from separated PNG files as frames.
+```swift
+class ViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-And maybe some callbacks of APNG animation playing or even more controlling of playing will be added later as well. IBDesignable support is also in plan.
+        let imageView = APNGImageView(image: image)
+        imageView.onOnePlayDone.delegate(on: self) { (self, count) in
+            print("Played: \(count)")
+        }
+    }
+}
+```
+
+When `numberOfPlays` is `nil`, the animation will be played forever. If it is a limited non-zero value, the animation 
+will be stopped at the final frame when the loop count reaches the limit. To inspect the whole animation is done, 
+use `onAllPlaysDone`:
+
+```swift
+imageView.onAllPlaysDone.delegate(on: self) { (self, _) in
+    print("All done.")
+}
+```
+
+APNGKit loads the data in a streaming way by default, it reads the frame information while playing the animation. Since
+APNG encodes the duration in each frame, it is not possible to get the whole animation duration before loading all frames 
+information. Before the first reading pass finishes, you can only get a partial duration for loaded frames. To get the
+full duration, use `APNGImage.onFramesInformationPrepared`:
+
+```swift
+let image = try APNGImage(named: "image")
+image.onFramesInformationPrepared.delegate(on: self) { (self, _) in
+    switch image.duration {
+        case .full(let duration):
+            print("Full duration: \(duration)")
+        case .partial:
+            print("This should not happen.")
+    }
+}
+
+imageView.image = image
+```
+
+Or, you can specify the `.fullFirstPass` option while creating the `APNGImage`. It reads all frames before starting 
+rendering and animating the image:
+
+```swift
+let image = try APNGImage(named: "image", options: [.fullFirstPass])
+print(image.duration) // .full(duration)
+```
+
+APNGKit provides a few other reading options. Please let me skip it for now and you can check them in documentation.
+
+### Error handling
+
+#### While creating image
+
+Creating an `APNGImage` can throw an error if anything goes wrong. All possible errors while decoding are defined as an
+`APNGKitError.decoderError`. When an error happens while creating the image, you are expected to check if it should be 
+treated as a normal static image. If so, try to set it as the static image:
+
+```swift
+do {
+    let image = try APNGImage(named: data.imageName)
+    imageView.image = image
+} catch {
+    if let normalImage = error.apngError?.normalImage {
+        imageView.staticImage = normalImage
+    } else {
+        print("Error: \(error)")
+    }
+}
+```
+
+#### While playing animation
+
+If some frames are broken, the default image defined in APNG should be displayed as a fallback. You can get this in 
+APNGKit for free. To get notified when this happens, listen to `APNGImageView.onFallBackToDefaultImage`:
+
+```swift
+imageView.onDecodingFrameError.delegate(on: self) { (self, error) in
+    print("A frame cannot be decoded. After this, either onFallBackToDefaultImage or onFallBackToDefaultImageFailed happens.")
+}
+
+imageView.onFallBackToDefaultImage.delegate(on: self) { (self, _) in
+    print("Fall back to default image.")
+}
+imageView.onFallBackToDefaultImageFailed.delegate(on: self) { (self, error) in
+    print("Tried to fall back to default image, but it fails: \(error)")
+}
+```
+
+### PNG compression
+
+Xcode will compress all PNG files in your app bundle when you build the project. Since APNG is an extension format of 
+PNG, Xcode will think there are redundancy data in that file and compress it into a single static image. When this happens,
+you may inspect a log message from APNGKit:
+
+> `CgBI` chunk found. It seems that the input image is compressed by Xcode and not supported by APNGKit. 
+> Consider to rename it to `apng` to prevent compressing.
+
+Usually this is not what you want when working with APNG. You can disable the PNG compression by setting 
+"COMPRESS_PNG_FILES" to NO in the build settings of your app target. However, it will also prevent Xcode to optimize 
+your other regular PNGs. 
+
+A better approach would be renaming your APNG files with an extension besides of "png". If you do so, Xcode will stop 
+recognizing your APNG files as PNG format, and will not apply compression on them. A suggested extension is "apng", 
+which will be detected and handled by APNGKit seamlessly.
 
 ## Acknowledgement
 

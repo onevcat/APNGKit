@@ -1,29 +1,20 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.3
 import PackageDescription
 
 let package = Package(
     name: "APNGKit",
-    platforms: [.macOS(.v10_10), .iOS(.v8)],
+    platforms: [.macOS(.v10_11), .iOS(.v9), .tvOS(.v9)],
     products: [
-        .library(
-            name: "APNGKit",
-            targets: ["APNGKit"]),
-        .library(
-            name: "Clibpng",
-            targets: ["Clibpng"]),
+        .library(name: "APNGKit", targets: ["APNGKit"])
+    ],
+    dependencies: [
+        .package(name: "Delegate", url: "https://github.com/onevcat/Delegate.git", .upToNextMajor(from: "1.1.1"))
     ],
     targets: [
-        .target(
-            name: "APNGKit",
-            dependencies: [
-                "Clibpng",
-            ],
-            path: "APNGKit",
-            exclude: ["libpng-apng"]
-        ),
-        .target(
-            name: "Clibpng",
-            path: "APNGKit/libpng-apng"),
-    ],
-    swiftLanguageVersions: [.v4_2]
+        .target(name: "APNGKit", dependencies: ["Delegate"]),
+        .testTarget(name: "APNGKitTests", dependencies: ["APNGKit"], resources: [
+            .copy("Resources/SpecTesting"),
+            .copy("Resources/General")
+        ])
+    ]
 )

@@ -1,0 +1,32 @@
+name: build
+
+on: [push, pull_request]
+
+jobs:
+  run-test:
+    runs-on: macos-11
+    strategy:
+      matrix:
+        destination: [
+          'macOS', 
+          'iOS', 
+          'tvOS'
+        ]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.4
+          bundler-cache: true
+      - uses: actions/cache@v2
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+      - name: Remove timing tests
+        run: rm Tests/APNGKitTests/APNGImageViewTimingTests.swift
+      - name: Run tests
+        run: bundle exec fastlane test_${{ matrix.destination }}
