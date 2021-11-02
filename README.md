@@ -25,7 +25,7 @@ time, the file size is comparable to or even less than, if created carefully, GI
 Talk is cheap; show me the image. You can click on the image to see how it looks like when animating.
 
 <p align="center">
-<a href="http://apng.onevcat.com/demo" target="_blank"><img src="https://raw.githubusercontent.com/onevcat/APNGKit/master/images/demo.png" alt="APNGKit Demo" title="APNGKit Demo"/></a>
+<a href="http://apng.onevcat.com/demo" target="_blank"><img src="https://github.com/onevcat/APNGKit/blob/dcc79f3f5f0e06bf571b88b8078017693d7a16ac/images/demo.png?raw=true" alt="APNGKit Demo" title="APNGKit Demo"/></a>
 </p>
 
 That's cool. APNG is much better! But wait...why haven't I heard about APNG before? It is not a popular format, so why 
