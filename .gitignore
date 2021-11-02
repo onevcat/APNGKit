@@ -152,3 +152,4 @@ Carthage/Build
 Reference/
 test_output
 fastlane/report.xml
+fastlane/.env
