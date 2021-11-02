@@ -48,7 +48,10 @@ platform :ios do
     
     lint
 
-    increment_version_number(version_number: target_version)
+    increment_version_number(
+        version_number: target_version,
+        xcodeproj: "Demo/Demo.xcodeproj"
+    )
     version_bump_podspec(path: "APNGKit.podspec", version_number: target_version)
     
     release_content = read_changelog(excluded_markdown_elements: [])
