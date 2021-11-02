@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.0.1] - 2021-11-02
+
 ### Fix
 
 - Swift Package Manager now can resolve this package in Xcode. [#112](https://github.com/onevcat/APNGKit/pull/112)
@@ -14,3 +16,4 @@ Version 2.0.0. This is not a compatible version compared to version 1.x. All cod
 need also check the README to do a re-implement.
 
 [2.0.0]: https://github.com/onevcat/APNGKit/compare/1.3.2...2.0.0
+[2.0.1]: https://github.com/onevcat/APNGKit/compare/2.0.0...2.0.1
