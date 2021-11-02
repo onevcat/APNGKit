@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://user-images.githubusercontent.com/1019875/139699505-811dc243-878a-482a-b222-f3123082f062.png" alt="APNGKit" title="APNGKit"/>
+<img src="https://user-images.githubusercontent.com/1019875/139824016-a8e99a7e-e0be-4e6a-b4f4-11b40a262290.png" alt="APNGKit" title="APNGKit"/>
 </p>
 
 <p align="center">
