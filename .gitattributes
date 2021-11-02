@@ -1,3 +1,0 @@
-APNGKit/libpng-apng/* linguist-vendored=true
-*.png filter=lfs diff=lfs merge=lfs -text
-*.apng filter=lfs diff=lfs merge=lfs -text
