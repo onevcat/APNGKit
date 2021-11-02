@@ -5,7 +5,7 @@
 <p align="center">
 <a href="https://swift.org/package-manager/"><img src="https://img.shields.io/badge/SPM-supported-DE5C43.svg?style=flat"></a>
 <a href="http://cocoadocs.org/docsets/APNGKit"><img src="https://img.shields.io/cocoapods/v/APNGKit.svg?style=flat"></a>
-<a href="https://github.com/Carthage/Carthage/"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat"></a
+<a href="https://github.com/Carthage/Carthage/"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat"></a>
 <a href="https://raw.githubusercontent.com/onevcat/APNGKit/master/LICENSE"><img src="https://img.shields.io/cocoapods/l/APNGKit.svg?style=flat"></a>
 <a href="#"><img src="https://img.shields.io/cocoapods/p/APNGKit.svg?style=flat"></a>
 <img src="https://img.shields.io/badge/made%20with-%3C3-blue.svg">
@@ -63,6 +63,13 @@ The **recommended way** to install APNGKit is to use Swift Package Manager. Addi
 - File > Swift Packages > Add Package Dependency
 - Add https://github.com/onevcat/APNGKit.git
 - Select "Up to Next Major" with "2.0.0"
+
+Since Xcode uses its own tools to handle swift packages, git-lfs might not be picked up if it is installed via Homebrew.
+Run the following command to create a symbolic link if Xcode fails to fetch the package:
+
+```sh
+ln -s /usr/local/bin/git-lfs $(xcode-select -p)/usr/bin/git-lfs
+```
 
 ### CocoaPods
 
