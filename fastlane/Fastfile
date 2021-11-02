@@ -57,7 +57,8 @@ platform :ios do
     release_content = read_changelog(excluded_markdown_elements: [])
     change_log(version: target_version)
 
-    git_commit_all(message: "Bump version to #{target_version}")
+    Action.sh "git add -A"
+    Actions.sh "git commit -am \"Bump version to #{target_version}\""
     
     Actions.sh("git tag -s #{target_version} -m ''")
     
@@ -77,7 +78,7 @@ platform :ios do
   lane :change_log do |options|
     target_version = options[:version]
     raise "The version is missed. You need to specify a version parameter." if target_version.nil?
-    stamp_changelog(section_identifier: target_version, git_tag: target_version)
+    stamp_changelog(section_identifier: target_version, git_tag: target_version, stamp_datetime_format: "%F")
   end
 
   desc "Lint"
