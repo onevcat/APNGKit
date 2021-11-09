@@ -20,7 +20,7 @@ open class APNGImageView: PlatformView {
     
     public typealias PlayedLoopCount = Int
     public typealias FrameIndex = Int
-    
+        
     /// Whether the animation should be played automatically when a valid `APNGImage` is set to the `image` property
     /// of `self`. Default is `true`.
     open var autoStartAnimationWhenSetImage = true
@@ -64,9 +64,9 @@ open class APNGImageView: PlatformView {
     /// `DisplayTimer` is used. On platforms that `CADisplayLink` is not available, a normal `Foundation.Timer` based
     /// one is used.
     #if canImport(UIKit)
-    public var DrivingTimerType: DrivingTimer.Type { NormalTimer.self }
+    open var DrivingTimerType: DrivingTimer.Type { NormalTimer.self }
     #else
-    public var DrivingTimerType: DrivingTimer.Type { NormalTimer.self }
+    open var DrivingTimerType: DrivingTimer.Type { NormalTimer.self }
     #endif
     
     // When the current frame was started to be displayed on the screen. It is the base time to calculate the current
