@@ -14,6 +14,13 @@ import Delegate
 // Decodes an APNG to necessary information.
 class APNGDecoder {
     
+    struct FirstFrameResult {
+        let frame: APNGFrame
+        let frameImageData: Data
+        let defaultImageChunks: [IDAT]
+        let dataBeforeFirstFrame: Data // This can be empty if there is no other data between acTL and first frame chunk
+    }
+    
     struct ResetStatus {
         let offset: UInt64
         let expectedSequenceNumber: Int
@@ -52,7 +59,7 @@ class APNGDecoder {
     
     // The data chunks shared by all frames: after IHDR and before the actual IDAT or fdAT chunk.
     // Use this to revert to a valid PNG for creating a CG data provider.
-    private let sharedData: Data
+    private var sharedData = Data()
     private let outputBuffer: CGContext
     private let reader: Reader
     
@@ -135,7 +142,8 @@ class APNGDecoder {
             decodedImageCache = nil
         }
         
-        sharedData = acTLResult.dataBeforeThunk
+        sharedData.append(acTLResult.dataBeforeThunk)
+        
         animationControl = acTLResult.chunk
         
         guard let outputBuffer = CGContext(
@@ -151,10 +159,6 @@ class APNGDecoder {
         }
         self.outputBuffer = outputBuffer
         
-        // Decode the first frame, so the image view has the initial image to show from the very beginning.
-        var firstFrameData: Data
-        let firstFrame: APNGFrame
-        
         // fcTL and acTL order can be changed in APNG spec.
         // Try to check if the first `fcTL` is already existing before `acTL`. If there is already a valid `fcTL`, use
         // it as the first frame control to extract the default image.
@@ -166,8 +170,13 @@ class APNGDecoder {
         } catch {
             firstFCTL = nil
         }
-        
-        (firstFrame, firstFrameData, defaultImageChunks) = try loadFirstFrameAndDefaultImage(firstFCTL: firstFCTL)
+
+        // Decode the first frame, so the image view has the initial image to show from the very beginning.
+        let firstFrameResult = try loadFirstFrameAndDefaultImage(firstFCTL: firstFCTL)
+        let firstFrame = firstFrameResult.frame
+        let firstFrameData = firstFrameResult.frameImageData
+        self.defaultImageChunks = firstFrameResult.defaultImageChunks
+        sharedData.append(firstFrameResult.dataBeforeFirstFrame)
         self.frames[currentIndex] = firstFrame
         
         // Render the first frame.
@@ -389,8 +398,9 @@ class APNGDecoder {
         loadedFrameCount < frames.count
     }
     
-    private func loadFirstFrameAndDefaultImage(firstFCTL: fcTL?) throws -> (APNGFrame, Data, [IDAT]) {
-        var result: (APNGFrame, Data, [IDAT])?
+    private func loadFirstFrameAndDefaultImage(firstFCTL: fcTL?) throws -> FirstFrameResult {
+        var result: FirstFrameResult?
+        var prefixedData = Data() // It is possible there are more shared data between acTL and first frame.
         while result == nil {
             try reader.peek { info, action in
                 // Start to load the first frame and default image. There are two possible options.
@@ -403,7 +413,13 @@ class APNGDecoder {
                     let frameControl = try action(.read(type: fcTL.self)).fcTL
                     try checkSequenceNumber(frameControl)
                     let (chunks, data) = try loadImageData()
-                    result = (APNGFrame(frameControl: frameControl, data: chunks), data, chunks)
+                    let firstFrame = APNGFrame(frameControl: frameControl, data: chunks)
+                    result = FirstFrameResult(
+                        frame: firstFrame,
+                        frameImageData: data,
+                        defaultImageChunks: chunks,
+                        dataBeforeFirstFrame: prefixedData
+                    )
                 case IDAT.nameBytes:
                     // Sequence number    Chunk
                     // (none)             `acTL`
@@ -415,17 +431,30 @@ class APNGDecoder {
                     if let firstFCTL = firstFCTL {
                         try checkSequenceNumber(firstFCTL)
                         let (chunks, data) = try loadImageData()
-                        result = (APNGFrame(frameControl: firstFCTL, data: chunks), data, chunks)
+                        let firstFrame = APNGFrame(frameControl: firstFCTL, data: chunks)
+                        result = FirstFrameResult(
+                            frame: firstFrame,
+                            frameImageData: data,
+                            defaultImageChunks: chunks,
+                            dataBeforeFirstFrame: prefixedData
+                        )
                     } else {
                         let (defaultImageChunks, _) = try loadImageData()
                         let (frame, frameData) = try loadFrame()
-                        result = (frame, frameData, defaultImageChunks)
+                        result = FirstFrameResult(
+                            frame: frame,
+                            frameImageData: frameData,
+                            defaultImageChunks: defaultImageChunks,
+                            dataBeforeFirstFrame: prefixedData
+                        )
                     }
                 case acTL.nameBytes:
                     self.foundMultipleAnimationControl = true
                     _ = try action(.read())
                 default:
-                    _ = try action(.read())
+                    if case .rawData(let data) = try action(.read()) {
+                        prefixedData.append(data)
+                    }
                 }
             }
         }

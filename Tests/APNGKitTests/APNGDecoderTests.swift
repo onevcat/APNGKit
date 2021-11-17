@@ -214,6 +214,11 @@ class APNGDecoderTests: XCTestCase {
             try decoder.reset()
         }
     }
+    
+    func testDecoderHandlePTLEAfterACTL() throws {
+        let decoder = try APNGDecoder(fileURL: SampleTesting.sampleTestingURL(name: "maneki-neko"))
+        XCTAssertEqual(decoder.frames.count, 3)
+    }
 }
 
 extension APNGDecoder {

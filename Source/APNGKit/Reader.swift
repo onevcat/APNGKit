@@ -260,7 +260,10 @@ extension Reader {
                 let payload = try readData(length)
                 let crc = try readCRC()
                 // The position is important. We need to read necessary data (move the pointer to correct location) before return.
-                guard let C = T else { return .none }
+                guard let C = T else {
+                    let fullData = lengthData + name + payload + crc
+                    return .rawData(fullData)
+                }
                 let chunk = try C.init(data: payload)
                 if !skipChecksumVerify {
                     try chunk.verifyCRC(payload: payload, checksum: crc)
@@ -347,11 +350,13 @@ enum PeekAction {
 
 enum ChunkReadResult {
     case chunk(Chunk, Data)
+    case rawData(Data)
     case none
     
     var fcTL: fcTL {
         switch self {
         case .chunk(let c, _): return c as! fcTL
+        case .rawData: fatalError()
         case .none: fatalError()
         }
     }
@@ -359,6 +364,7 @@ enum ChunkReadResult {
     var IDAT: (IDAT, Data) {
         switch self {
         case .chunk(let c, let data): return (c as! IDAT, data)
+        case .rawData: fatalError()
         case .none: fatalError()
         }
     }
@@ -366,6 +372,7 @@ enum ChunkReadResult {
     var fdAT: (fdAT, Data) {
         switch self {
         case .chunk(let c, let data): return (c as! fdAT, data)
+        case .rawData: fatalError()
         case .none: fatalError()
         }
     }
