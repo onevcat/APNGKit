@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fix
+
+- An issue that the PNG decoder would fail to render frames when there are image shared chunks between `acTL` and the first actual image frame. [#114](https://github.com/onevcat/APNGKit/pull/114) @onevcat
+
 ## [2.0.1] - 2021-11-02
 
 ### Fix
