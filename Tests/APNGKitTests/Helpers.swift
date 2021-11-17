@@ -20,6 +20,12 @@ struct SpecTesting {
     }
 }
 
+struct SampleTesting {
+    static func sampleTestingURL(name: String, fileExtension: String = "apng") -> URL {
+        Bundle.module.url(forResource: name, withExtension: fileExtension, subdirectory: "General")!
+    }
+}
+
 func sampleImage(name: String) throws -> APNGImage {
     try APNGImage(named: name, in: .module, subdirectory: "General")
 }

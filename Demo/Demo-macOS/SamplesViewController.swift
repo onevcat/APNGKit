@@ -9,21 +9,6 @@ import Cocoa
 import APNGKit
 
 class SamplesViewController: NSViewController, NSTableViewDataSource, NSTableViewDelegate {
-
-    static let images: [String] = [
-        "elephant_apng@2x",
-        "elephant_apng",
-        "APNG-4D",
-        "spinfox",
-        "ball",
-        "APNG-cube",
-        "pyani",
-        "pia",
-        "over_none",
-        "over_background",
-        "over_previous",
-        "minimal"
-    ]
     
     @IBOutlet weak var imageView: APNGImageView!
     @IBOutlet weak var tableView: NSTableView!
@@ -52,19 +37,19 @@ class SamplesViewController: NSViewController, NSTableViewDataSource, NSTableVie
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("SampleImageTableCell"), owner: self) as! NSTableCellView
-        cell.textField?.stringValue = Self.images[row]
+        cell.textField?.stringValue = sampleImages[row]
         
-        if let url = Bundle.main.url(forResource: Self.images[row], withExtension: "apng") {
+        if let url = Bundle.main.url(forResource: sampleImages[row], withExtension: "apng") {
             cell.imageView?.image = NSImage(contentsOf: url)
         } else {
-            cell.imageView?.image = NSImage(named: Self.images[row])
+            cell.imageView?.image = NSImage(named: sampleImages[row])
         }
         
         return cell
     }
     
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return Self.images.count
+        return sampleImages.count
     }
     
     func tableViewSelectionDidChange(_ notification: Notification) {
@@ -72,7 +57,7 @@ class SamplesViewController: NSViewController, NSTableViewDataSource, NSTableVie
         infoView.isHidden = false
         previewLabel.isHidden = true
         
-        let name = Self.images[tableView.selectedRow]
+        let name = sampleImages[tableView.selectedRow]
         do {
             let image = try APNGImage(named: name)
             
@@ -100,6 +85,7 @@ class SamplesViewController: NSViewController, NSTableViewDataSource, NSTableVie
             if let i = error.apngError?.normalImage {
                 imageView.staticImage = i
             }
+            print(error)
         }
     }
 }
