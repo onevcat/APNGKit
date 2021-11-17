@@ -8,20 +8,6 @@
 import UIKit
 
 class SampleImageTableViewController: UITableViewController {
-    static let images: [String] = [
-        "elephant_apng@2x",
-        "elephant_apng",
-        "APNG-4D",
-        "spinfox",
-        "ball",
-        "APNG-cube",
-        "pyani",
-        "pia",
-        "over_none",
-        "over_background",
-        "over_previous",
-        "minimal"
-    ]
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,19 +15,19 @@ class SampleImageTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Self.images.count
+        return sampleImages.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SampleImageTableViewCell", for: indexPath)
-        cell.textLabel?.text = Self.images[indexPath.row]
+        cell.textLabel?.text = sampleImages[indexPath.row]
         return cell
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
             let detailViewController = segue.destination as! SampleImageDetailViewController
-            detailViewController.imageName = Self.images[tableView.indexPathForSelectedRow!.row]
+            detailViewController.imageName = sampleImages[tableView.indexPathForSelectedRow!.row]
         }
     }
 }
