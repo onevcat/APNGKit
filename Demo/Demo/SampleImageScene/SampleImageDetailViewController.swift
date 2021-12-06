@@ -44,6 +44,7 @@ class SampleImageDetailViewController: UIViewController {
             
             wrapSetting()
         } catch {
+            imageView.staticImage = error.apngError?.normalImage
             print("Error: \(error)")
         }
     }
