@@ -22,7 +22,7 @@ class SampleImageFrameViewController: UIViewController, UITableViewDataSource, U
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SampleImageFrameTableViewCell", for: indexPath) as! SampleImageFrameTableViewCell
-        cell.set(frame: frames[indexPath.row].frameControl, image: image?.cachedFrameImage(at: indexPath.row), scale: image!.scale)
+        cell.set(frame: frames[indexPath.row].frameControl, image: image?.cachedFrameImage(at: indexPath.row), index: indexPath.row, scale: image!.scale)
         return cell
     }
     
@@ -45,7 +45,11 @@ class SampleImageFrameTableViewCell: UITableViewCell {
     @IBOutlet weak var overlayTop: NSLayoutConstraint!
     @IBOutlet weak var overlayLeading: NSLayoutConstraint!
     
-    func set(frame: fcTL, image: CGImage?, scale: CGFloat) {
+    @IBOutlet weak var frameCountLabel: UILabel!
+    
+    func set(frame: fcTL, image: CGImage?, index: Int, scale: CGFloat) {
+        frameCountLabel.text = "#\(index)"
+        
         offsetLabel.text = "{\(frame.xOffset), \(frame.yOffset)}"
         sizeLabel.text = "\(frame.width) x \(frame.height)"
         durationLabel.text = String(format: "%.3f", frame.duration) + " s"
