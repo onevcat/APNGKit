@@ -59,6 +59,15 @@ public class APNGImage {
     /// is correct, all frames information is loaded, and the total `duration` returns a `.full` duration to you.
     public var onFramesInformationPrepared: Delegate<(), Void> { decoder.onFirstPassDone }
     
+    public var loadedFrames: [APNGFrame] { decoder.frames.compactMap { $0 } }
+    
+    public func cachedFrameImage(at index: Int) -> CGImage? {
+        guard let cachedImages = decoder.decodedImageCache, index < cachedImages.count else {
+            return nil
+        }
+        return cachedImages[index]
+    }
+    
     /// The scale of this image instance.
     public let scale: CGFloat
     

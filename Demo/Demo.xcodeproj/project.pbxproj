@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B158A1E275E37AE0085A53D /* SampleImageFrameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B158A1D275E37AE0085A53D /* SampleImageFrameViewController.swift */; };
 		4B5B97392744831600431356 /* maneki-neko.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4B5B97382744831600431356 /* maneki-neko.apng */; };
 		4B5B973B2744834700431356 /* elephant_apng.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4BC3D8D1271C095D004DF785 /* elephant_apng.apng */; };
 		4B5B973C2744834700431356 /* over_background.apng in Resources */ = {isa = PBXBuildFile; fileRef = 4BC3D8D5271C095D004DF785 /* over_background.apng */; };
@@ -187,6 +188,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4B158A1D275E37AE0085A53D /* SampleImageFrameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleImageFrameViewController.swift; sourceTree = "<group>"; };
 		4B5B97382744831600431356 /* maneki-neko.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = "maneki-neko.apng"; sourceTree = "<group>"; };
 		4B5B9786274483F200431356 /* SampleImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleImages.swift; sourceTree = "<group>"; };
 		4B5ECBC9272E29B9003930D4 /* Demo-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Demo-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -450,6 +452,7 @@
 			children = (
 				4BC3D967271C759F004DF785 /* SampleImageTableViewController.swift */,
 				4BC3D969271C7934004DF785 /* SampleImageDetailViewController.swift */,
+				4B158A1D275E37AE0085A53D /* SampleImageFrameViewController.swift */,
 				4B5B9786274483F200431356 /* SampleImages.swift */,
 			);
 			path = SampleImageScene;
@@ -786,6 +789,7 @@
 				4BC6DC98271D4EC800634A99 /* SpecTestingTableViewCell.swift in Sources */,
 				4B5B9787274483F200431356 /* SampleImages.swift in Sources */,
 				4BC6DC96271D4EB600634A99 /* SpecTestingTableViewController.swift in Sources */,
+				4B158A1E275E37AE0085A53D /* SampleImageFrameViewController.swift in Sources */,
 				4BC3D96A271C7934004DF785 /* SampleImageDetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

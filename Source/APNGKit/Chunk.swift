@@ -209,7 +209,7 @@ enum ImageDataPresentation {
  25    blend_op              (byte)           Type of frame area rendering for this frame
  */
 
-struct fcTL: Chunk {
+public struct fcTL: Chunk {
     
     /*
      `dispose_op` specifies how the output buffer should be changed at the end of the delay
@@ -220,7 +220,7 @@ struct fcTL: Chunk {
      1           APNG_DISPOSE_OP_BACKGROUND
      2           APNG_DISPOSE_OP_PREVIOUS
      */
-    enum DisposeOp: Byte {
+    public enum DisposeOp: Byte {
         case none = 0
         case background = 1
         case previous = 2
@@ -234,7 +234,7 @@ struct fcTL: Chunk {
      0       APNG_BLEND_OP_SOURCE
      1       APNG_BLEND_OP_OVER
      */
-    enum BlendOp: Byte {
+    public enum BlendOp: Byte {
         case source = 0
         case over = 1
     }
@@ -247,19 +247,19 @@ struct fcTL: Chunk {
     //
     // The first `fcTL` chunk must contain sequence number 0, and the sequence numbers in the remaining `fcTL` and `fdAT`
     // chunks must be in order, with no gaps or duplicates.
-    let sequenceNumber: Int
+    public let sequenceNumber: Int
     
     /// Width of the frame by pixel.
-    let width: Int
+    public let width: Int
     
     /// Height of the frame by pixel.
-    let height: Int
+    public let height: Int
     
     /// X offset of the frame on the canvas by pixel. From left edge.
-    let xOffset: Int
+    public let xOffset: Int
     
     /// Y offset of the frame on the canvas by pixel. From top edge.
-    let yOffset: Int
+    public let yOffset: Int
     
     // The `delay_num` and `delay_den` parameters together specify a fraction indicating the time to display the current
     // frame, in seconds. If the denominator is 0, it is to be treated as if it were 100 (that is, `delay_num` then
@@ -268,16 +268,16 @@ struct fcTL: Chunk {
     
     /// Numerator part of the frame delay. If 0, this frame should be skipped if possible and the next frame should be
     /// rendered as quickly as possible.
-    let delayNumerator: Int
+    public let delayNumerator: Int
     /// Denominator part of the frame delay. If 0, use 100.
-    let delayDenominator: Int
+    public let delayDenominator: Int
     
     /// Specifies how the output buffer should be changed at the end of the delay.
-    let disposeOp: DisposeOp
+    public let disposeOp: DisposeOp
     
     /// Specifies whether the frame is to be alpha blended into the current output buffer
     /// content, or whether it should completely replace its region in the output buffer.
-    let blendOp: BlendOp
+    public let blendOp: BlendOp
     
     init(data: Data) throws {
         guard data.count == 26 else {
@@ -294,7 +294,7 @@ struct fcTL: Chunk {
         self.blendOp = BlendOp(rawValue: data[25]) ?? .source
     }
     
-    var duration: TimeInterval {
+    public var duration: TimeInterval {
         if delayDenominator == 0 {
             return TimeInterval(delayNumerator) / 100
         } else {

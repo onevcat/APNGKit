@@ -603,8 +603,8 @@ extension APNGDecoder {
     }
 }
 
-struct APNGFrame {
-    let frameControl: fcTL
+public struct APNGFrame {
+    public let frameControl: fcTL
     let data: [DataChunk]
     
     func loadData(with reader: Reader) throws -> Data {

@@ -85,6 +85,13 @@ class SampleImageDetailViewController: UIViewController {
             }
         }
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showFrames" {
+            let dest = segue.destination as! SampleImageFrameViewController
+            dest.image = imageView.image
+        }
+    }
 }
 
 class SampleImageDetailSettingViewController: UITableViewController {
