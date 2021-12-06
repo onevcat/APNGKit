@@ -44,6 +44,7 @@ class SampleImageDetailViewController: UIViewController {
             
             wrapSetting()
         } catch {
+            imageView.staticImage = error.apngError?.normalImage
             print("Error: \(error)")
         }
     }
@@ -82,6 +83,13 @@ class SampleImageDetailViewController: UIViewController {
             } catch {
                 print("Error: \(error)")
             }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showFrames" {
+            let dest = segue.destination as! SampleImageFrameViewController
+            dest.image = imageView.image
         }
     }
 }

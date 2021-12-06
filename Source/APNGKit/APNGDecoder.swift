@@ -338,8 +338,9 @@ class APNGDecoder {
                 outputBuffer.clear(currentRegion)
             case .previous:
                 if let previousOutputImage = previousOutputImage {
-                    outputBuffer.clear(canvasFullRect)
-                    outputBuffer.draw(previousOutputImage, in: canvasFullRect)
+                    if let cropped = previousOutputImage.cropping(to: currentFrame.frameControl.cgRect) {
+                        outputBuffer.draw(cropped, in: currentRegion)
+                    }
                 } else {
                     // Current Frame is the first frame. `.previous` should be treated as `.background`
                     outputBuffer.clear(currentRegion)
@@ -353,7 +354,6 @@ class APNGDecoder {
             outputBuffer.clear(frame.normalizedRect(fullHeight: imageHeader.height))
             outputBuffer.draw(nextFrameImage, in: frame.normalizedRect(fullHeight: imageHeader.height))
         case .over:
-            // Temp
             outputBuffer.draw(nextFrameImage, in: frame.normalizedRect(fullHeight: imageHeader.height))
         }
         
@@ -603,8 +603,8 @@ extension APNGDecoder {
     }
 }
 
-struct APNGFrame {
-    let frameControl: fcTL
+public struct APNGFrame {
+    public let frameControl: fcTL
     let data: [DataChunk]
     
     func loadData(with reader: Reader) throws -> Data {
@@ -664,6 +664,10 @@ extension IHDR {
 extension fcTL {
     func normalizedRect(fullHeight: Int) -> CGRect {
         .init(x: xOffset, y: fullHeight - yOffset - height, width: width, height: height)
+    }
+    
+    var cgRect: CGRect {
+        .init(x: xOffset, y: yOffset, width: width, height: height)
     }
 }
 
