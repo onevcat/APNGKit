@@ -603,8 +603,12 @@ extension APNGDecoder {
     }
 }
 
+/// A frame data of an APNG image. It contains a frame control chunk.
 public struct APNGFrame {
+    
+    /// The frame control chunk of this frame.
     public let frameControl: fcTL
+    
     let data: [DataChunk]
     
     func loadData(with reader: Reader) throws -> Data {

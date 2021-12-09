@@ -59,8 +59,17 @@ public class APNGImage {
     /// is correct, all frames information is loaded, and the total `duration` returns a `.full` duration to you.
     public var onFramesInformationPrepared: Delegate<(), Void> { decoder.onFirstPassDone }
     
+    /// The loaded frames of current image. This returns the current state of loaded frames with its information.
+    /// Be notice that only loaded frames are returned before `onFramesInformationPrepared` happens. If you need to
+    /// access all the frames from the very beginning, use `APNGImage.DecodingOptions.fullFirstPass` when creating the
+    /// image.
     public var loadedFrames: [APNGFrame] { decoder.frames.compactMap { $0 } }
     
+    /// The cached CGImage object at a given frame. Only when `self.cachePolicy` is `.cache` and the corresponding frame
+    /// is loaded, an image will be returned. Otherwise, `nil` is returned.
+    ///
+    /// - Parameter index: The index of the requested image in the animation.
+    /// - Returns: The cached image.
     public func cachedFrameImage(at index: Int) -> CGImage? {
         guard let cachedImages = decoder.decodedImageCache, index < cachedImages.count else {
             return nil

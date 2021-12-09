@@ -193,7 +193,7 @@ enum ImageDataPresentation {
     case position(offset: UInt64, length: Int)
 }
 
-/*
+/**
  The `fcTL` chunk is an ancillary chunk as defined in the PNG Specification. It must appear before the `IDAT` or
  `fdAT` chunks of the frame to which it applies.
  
@@ -208,10 +208,9 @@ enum ImageDataPresentation {
  24    dispose_op            (byte)           Type of frame area disposal to be done after rendering this frame
  25    blend_op              (byte)           Type of frame area rendering for this frame
  */
-
 public struct fcTL: Chunk {
     
-    /*
+    /**
      `dispose_op` specifies how the output buffer should be changed at the end of the delay
      (before rendering the next frame).
      
@@ -226,7 +225,7 @@ public struct fcTL: Chunk {
         case previous = 2
     }
     
-    /*
+    /**
      `blend_op` specifies whether the frame is to be alpha blended into the current output buffer
      content, or whether it should completely replace its region in the output buffer.
      
@@ -241,12 +240,12 @@ public struct fcTL: Chunk {
     
     static let name: [Character] = ["f", "c", "T", "L"]
     
-    // The `fcTL` and `fdAT` chunks have a 4 byte sequence number. Both chunk types share the sequence. The purpose of
-    // this number is to detect (and optionally correct) sequence errors in an Animated PNG, since the PNG specification
-    // does not impose ordering restrictions on ancillary chunks.
-    //
-    // The first `fcTL` chunk must contain sequence number 0, and the sequence numbers in the remaining `fcTL` and `fdAT`
-    // chunks must be in order, with no gaps or duplicates.
+    /// The `fcTL` and `fdAT` chunks have a 4 byte sequence number. Both chunk types share the sequence. The purpose of
+    /// this number is to detect (and optionally correct) sequence errors in an Animated PNG, since the PNG specification
+    /// does not impose ordering restrictions on ancillary chunks.
+    ///
+    /// The first `fcTL` chunk must contain sequence number 0, and the sequence numbers in the remaining `fcTL` and `fdAT`
+    /// chunks must be in order, with no gaps or duplicates.
     public let sequenceNumber: Int
     
     /// Width of the frame by pixel.
@@ -294,6 +293,7 @@ public struct fcTL: Chunk {
         self.blendOp = BlendOp(rawValue: data[25]) ?? .source
     }
     
+    /// Duration of this frame, by seconds.
     public var duration: TimeInterval {
         if delayDenominator == 0 {
             return TimeInterval(delayNumerator) / 100
