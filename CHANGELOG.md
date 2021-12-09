@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.1.0] - 2021-12-09
+
 ### Add
 
 - Expose the `APNGFrame` type and related properties in `APNGImage` to allow getting some basic information by frame. [#117](https://github.com/onevcat/APNGKit/pull/117) @onevcat
@@ -32,3 +34,4 @@ need also check the README to do a re-implement.
 [2.0.0]: https://github.com/onevcat/APNGKit/compare/1.2.3...2.0.0
 [2.0.1]: https://github.com/onevcat/APNGKit/compare/2.0.0...2.0.1
 [2.0.2]: https://github.com/onevcat/APNGKit/compare/2.0.1...2.0.2
+[2.1.0]: https://github.com/onevcat/APNGKit/compare/2.0.2...2.1.0
