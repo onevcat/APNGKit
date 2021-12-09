@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Add
+
+- Expose the `APNGFrame` type and related properties in `APNGImage` to allow getting some basic information by frame. [#117](https://github.com/onevcat/APNGKit/pull/117) @onevcat
+
+### Fix
+
+- An issue that wrong area is reverted when `dispose_op` is set to `previous` and the render area is not the full canvas. [#117](https://github.com/onevcat/APNGKit/pull/117) @onevcat
+
 ## [2.0.2] - 2021-11-17
 
 ### Fix
