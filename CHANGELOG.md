@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fix
+
+- An issue introduced in 2.1.0 that the background was not clear before rendering the next frame when `dispose_op` is `previous`. [#118](https://github.com/onevcat/APNGKit/pull/118) @onevcat
+
 ## [2.1.0] - 2021-12-09
 
 ### Add
