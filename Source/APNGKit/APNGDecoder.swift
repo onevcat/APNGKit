@@ -339,7 +339,10 @@ class APNGDecoder {
             case .previous:
                 if let previousOutputImage = previousOutputImage {
                     if let cropped = previousOutputImage.cropping(to: currentFrame.frameControl.cgRect) {
+                        outputBuffer.clear(currentRegion)
                         outputBuffer.draw(cropped, in: currentRegion)
+                    } else {
+                        printLog("The previous image cannot be restored to target size. Something goes wrong.")
                     }
                 } else {
                     // Current Frame is the first frame. `.previous` should be treated as `.background`
