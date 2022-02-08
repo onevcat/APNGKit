@@ -315,7 +315,7 @@ open class APNGImageView: APNGView {
                 currentFrameIndex = 0
                 repeated = repeated + 1
                 
-                if image.repeatCount != RepeatForever && repeated >= image.repeatCount {
+                if image.repeatCount != RepeatForever && repeated > image.repeatCount {
                     stopAnimating()
                     // Stop in the last frame
                     return
