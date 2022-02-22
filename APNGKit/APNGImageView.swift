@@ -88,6 +88,14 @@ open class APNGImageView: APNGView {
             }
         }
     }
+
+    /// A Bool value indicating whether the animation should be stopped automatically before app resign active.
+    /// Default is true.
+    open var autoStopAnimationBeforeResignActive: Bool = true
+
+    /// A Bool value indicating whether the animation should be started automatically after app resume active.
+    /// Default is true.
+    open var autoStartAnimationAfterResumeActive: Bool = true
     
     /// If true runs animation timer with option `NSRunLoopCommonModes`.
     /// ScrollView(CollectionView, TableView) items with Animated APNGImageView will not freeze during scrolling
@@ -150,7 +158,7 @@ open class APNGImageView: APNGView {
         
         addObservers()
     }
-    
+
     deinit {
         stopAnimating()
         
@@ -258,6 +266,8 @@ open class APNGImageView: APNGView {
      Stop animation when app send to background.
      */
     @objc private func appWillResignActive() {
+        guard autoStopAnimationBeforeResignActive else { return }
+
         wasAnimating = isAnimating
         stopAnimating()
     }
@@ -266,6 +276,8 @@ open class APNGImageView: APNGView {
      Start animation when app become active.
      */
     @objc func appDidBecomeActive() {
+        guard autoStartAnimationAfterResumeActive else { return }
+
         if wasAnimating {
             startAnimating()
         }
