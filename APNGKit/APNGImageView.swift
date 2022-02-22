@@ -89,10 +89,6 @@ open class APNGImageView: APNGView {
         }
     }
 
-    /// A Bool value indicating whether the animation should be stopped automatically before app resign active.
-    /// Default is true.
-    open var autoStopAnimationBeforeResignActive: Bool = true
-
     /// A Bool value indicating whether the animation should be started automatically after app resume active.
     /// Default is true.
     open var autoStartAnimationAfterResumeActive: Bool = true
@@ -266,8 +262,6 @@ open class APNGImageView: APNGView {
      Stop animation when app send to background.
      */
     @objc private func appWillResignActive() {
-        guard autoStopAnimationBeforeResignActive else { return }
-
         wasAnimating = isAnimating
         stopAnimating()
     }
