@@ -88,6 +88,10 @@ open class APNGImageView: APNGView {
             }
         }
     }
+
+    /// A Bool value indicating whether the animation should be started automatically after app resume active.
+    /// Default is true.
+    open var autoStartAnimationAfterResumeActive: Bool = true
     
     /// If true runs animation timer with option `NSRunLoopCommonModes`.
     /// ScrollView(CollectionView, TableView) items with Animated APNGImageView will not freeze during scrolling
@@ -150,7 +154,7 @@ open class APNGImageView: APNGView {
         
         addObservers()
     }
-    
+
     deinit {
         stopAnimating()
         
@@ -266,6 +270,8 @@ open class APNGImageView: APNGView {
      Start animation when app become active.
      */
     @objc func appDidBecomeActive() {
+        guard autoStartAnimationAfterResumeActive else { return }
+
         if wasAnimating {
             startAnimating()
         }
