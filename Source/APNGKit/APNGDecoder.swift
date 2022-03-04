@@ -333,9 +333,10 @@ class APNGDecoder {
             let currentRegion = currentFrame.normalizedRect(fullHeight: imageHeader.height)
             switch currentFrame.frameControl.disposeOp {
             case .none:
-                break
+                previousOutputImage = currentOutputImage
             case .background:
                 outputBuffer.clear(currentRegion)
+                previousOutputImage = outputBuffer.makeImage()
             case .previous:
                 if let previousOutputImage = previousOutputImage {
                     if let cropped = previousOutputImage.cropping(to: currentFrame.frameControl.cgRect) {
@@ -364,7 +365,6 @@ class APNGDecoder {
             throw APNGKitError.decoderError(.outputImageCreatingFailed(frameIndex: index))
         }
         
-        previousOutputImage = currentOutputImage
         currentOutputImage = nextOutputImage
         
         if cachePolicy == .cache {
