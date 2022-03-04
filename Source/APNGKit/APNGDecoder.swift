@@ -326,33 +326,33 @@ class APNGDecoder {
         }
         
         // Dispose
-        if index == 0 { // Next frame (rendering frame) is the first frame
+        if index == 0 { // New frame (rendering frame) is the first frame
             outputBuffer.clear(canvasFullRect)
         } else {
-            let currentFrame = frames[index - 1]!
-            let currentRegion = currentFrame.normalizedRect(fullHeight: imageHeader.height)
-            switch currentFrame.frameControl.disposeOp {
+            let displayingFrame = frames[index - 1]!
+            let displayingRegion = displayingFrame.normalizedRect(fullHeight: imageHeader.height)
+            switch displayingFrame.frameControl.disposeOp {
             case .none:
                 previousOutputImage = currentOutputImage
             case .background:
-                outputBuffer.clear(currentRegion)
+                outputBuffer.clear(displayingRegion)
                 previousOutputImage = outputBuffer.makeImage()
             case .previous:
                 if let previousOutputImage = previousOutputImage {
-                    if let cropped = previousOutputImage.cropping(to: currentFrame.frameControl.cgRect) {
-                        outputBuffer.clear(currentRegion)
-                        outputBuffer.draw(cropped, in: currentRegion)
+                    if let cropped = previousOutputImage.cropping(to: displayingFrame.frameControl.cgRect) {
+                        outputBuffer.clear(displayingRegion)
+                        outputBuffer.draw(cropped, in: displayingRegion)
                     } else {
                         printLog("The previous image cannot be restored to target size. Something goes wrong.")
                     }
                 } else {
                     // Current Frame is the first frame. `.previous` should be treated as `.background`
-                    outputBuffer.clear(currentRegion)
+                    outputBuffer.clear(displayingRegion)
                 }
             }
         }
         
-        // Blend & Draw
+        // Blend & Draw the new frame
         switch frame.frameControl.blendOp {
         case .source:
             outputBuffer.clear(frame.normalizedRect(fullHeight: imageHeader.height))
