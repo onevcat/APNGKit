@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fix
+
+- An issue that when the frame contains `APNG_DISPOSE_OP_PREVIOUS` or `APNG_DISPOSE_OP_BACKGROUND`, the output buffer does not reset in some cases. [#122](https://github.com/onevcat/APNGKit/pull/122) @onevcat
+
 ## [2.1.1] - 2021-12-15
 
 ### Fix
