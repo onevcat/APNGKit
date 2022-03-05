@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.1.2] - 2022-03-05
+
 ### Fix
 
 - An issue that when the frame contains `APNG_DISPOSE_OP_PREVIOUS` or `APNG_DISPOSE_OP_BACKGROUND`, the output buffer does not reset in some cases. [#122](https://github.com/onevcat/APNGKit/pull/122) @onevcat
@@ -46,3 +48,4 @@ need also check the README to do a re-implement.
 [2.0.2]: https://github.com/onevcat/APNGKit/compare/2.0.1...2.0.2
 [2.1.0]: https://github.com/onevcat/APNGKit/compare/2.0.2...2.1.0
 [2.1.1]: https://github.com/onevcat/APNGKit/compare/2.1.0...2.1.1
+[2.1.2]: https://github.com/onevcat/APNGKit/compare/2.1.1...2.1.2
