@@ -217,12 +217,21 @@ open class APNGImageView: PlatformView {
                 printLog("Consider to create a new image or set the `image` of the previous image view to `nil` first.")
                 
                 #if DEBUG
+                let env = ProcessInfo.processInfo.environment
                 // Do not trigger an assertion to let tests cover this situation.
-                if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+                // XCTest env, for example inside Xcode.
+                if env["XCTestConfigurationFilePath"] != nil {
+                    return
+                }
+                // swift command line tool. `swift test`
+                if let runner = env["_"], runner.contains("swift") {
+                    return
+                }
+                // Running inside VSCode with CodeLLDB.
+                if env["VSCODE_CLI"] != nil { //
                     return
                 }
                 #endif
-                
                 assertionFailure("Cannot set the image to this image view because it is already set to another one.")
                 return
             }
