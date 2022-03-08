@@ -24,10 +24,13 @@ protocol Reader {
     
     // Returns the current pointer offset for later use.
     func offset() throws -> UInt64
+    
+    // Returns a clone of current reader.
+    func clone() throws -> Self
 }
 
 // Read data from a loaded data object.
-class DataReader: Reader {
+final class DataReader: Reader {
 
     private var cursor: Int = 0
     private let data: Data
@@ -64,14 +67,22 @@ class DataReader: Reader {
     func offset() throws -> UInt64 {
         UInt64(cursor)
     }
+    
+    func clone() throws -> DataReader {
+        let reader = DataReader(data: data)
+        try reader.seek(toOffset: offset())
+        return reader
+    }
 }
 
 // Read data from a file with `FileHandle`.
-class FileReader: Reader {
+final class FileReader: Reader {
     private let handle: FileHandle
+    private let url: URL
     
     init(url: URL) throws {
         do {
+            self.url = url
             self.handle = try FileHandle(forReadingFrom: url)
         } catch {
             throw APNGKitError.decoderError(.fileHandleCreatingFailed(url, error))
@@ -139,6 +150,12 @@ class FileReader: Reader {
         } catch {
             return false
         }
+    }
+    
+    func clone() throws -> FileReader {
+        let reader = try FileReader(url: url)
+        try reader.seek(toOffset: offset())
+        return reader
     }
 }
 
