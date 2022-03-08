@@ -280,9 +280,12 @@ class APNGDecoder {
     func renderNextSync() throws {
         output = nil
         do {
-            let (image, index) = try renderNextImpl()
-            self.output = .success(image)
-            self.currentIndex = index
+            var result: (CGImage, Int)!
+            try renderingQueue.sync {
+                result = try renderNextImpl()
+            }
+            self.output = .success(result.0)
+            self.currentIndex = result.1
         } catch {
             self.output = .failure(error as? APNGKitError ?? .internalError(error))
         }
