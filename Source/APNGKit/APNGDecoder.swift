@@ -44,7 +44,8 @@ class APNGDecoder {
     
     private(set) var frames: [APNGFrame?] = []
     
-    private(set) var defaultImageChunks: [IDAT] = []
+    var defaultImageChunks: [IDAT] { firstFrameResult?.defaultImageChunks ?? [] }
+    private(set) var firstFrameResult: FirstFrameResult?
     
     private var expectedSequenceNumber = 0
     
@@ -175,7 +176,7 @@ class APNGDecoder {
         let firstFrameResult = try loadFirstFrameAndDefaultImage(firstFCTL: firstFCTL)
         let firstFrame = firstFrameResult.frame
         let firstFrameData = firstFrameResult.frameImageData
-        self.defaultImageChunks = firstFrameResult.defaultImageChunks
+        self.firstFrameResult = firstFrameResult
         sharedData.append(firstFrameResult.dataBeforeFirstFrame)
         self.frames[currentIndex] = firstFrame
         
