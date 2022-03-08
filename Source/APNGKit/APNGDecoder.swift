@@ -174,17 +174,13 @@ class APNGDecoder {
 
         // Decode the first frame, so the image view has the initial image to show from the very beginning.
         let firstFrameResult = try loadFirstFrameAndDefaultImage(firstFCTL: firstFCTL)
-        let firstFrame = firstFrameResult.frame
-        let firstFrameData = firstFrameResult.frameImageData
-        self.firstFrameResult = firstFrameResult
-        sharedData.append(firstFrameResult.dataBeforeFirstFrame)
-        self.frames[currentIndex] = firstFrame
+        setFirstFrameLoaded(frameResult: firstFrameResult)
         
         // Render the first frame.
         // It is safe to set it here since this `setup()` method will be only called in init, before any chance to
         // make another call like `renderNext` to modify `output` at the same time.
         if !foundMultipleAnimationControl {
-            let cgImage = try render(frame: firstFrame, data: firstFrameData, index: currentIndex)
+            let cgImage = try render(frame: firstFrameResult.frame, data: firstFrameResult.frameImageData, index: currentIndex)
             output = .success(cgImage)
         } else {
             output = .failure(.decoderError(.multipleAnimationControlChunk))
@@ -217,6 +213,12 @@ class APNGDecoder {
             // Dispatch to give the user a chance to setup delegate after they get the returned APNG image.
             DispatchQueue.main.async { self.onFirstPassDone() }
         }
+    }
+    
+    func setFirstFrameLoaded(frameResult: FirstFrameResult) {
+        firstFrameResult = frameResult
+        sharedData.append(contentsOf: frameResult.dataBeforeFirstFrame)
+        self.frames[0] = frameResult.frame
     }
     
     func reset() throws {
