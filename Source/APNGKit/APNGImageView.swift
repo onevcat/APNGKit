@@ -81,7 +81,7 @@ open class APNGImageView: PlatformView {
         guard let image = _image else {
             return 0
         }
-        return displayingFrameIndex + 1 >= image.decoder.frames.count ? 0 : displayingFrameIndex + 1
+        return displayingFrameIndex + 1 >= image.decoder.framesCount ? 0 : displayingFrameIndex + 1
     }
     // Whether the next displaying frame missed its target.
     private var frameMissed: Bool = false
@@ -340,7 +340,7 @@ open class APNGImageView: PlatformView {
             return
         }
         
-        guard let displayingFrame = image.decoder.frames[displayingFrameIndex] else {
+        guard let displayingFrame = image.decoder.frame(at: displayingFrameIndex) else {
             assertionFailure("Cannot get correct frame which is being displayed.")
             return
         }
@@ -354,7 +354,7 @@ open class APNGImageView: PlatformView {
             return
         }
         // The final of last frame in one play.
-        if displayingFrameIndex == image.decoder.frames.count - 1 {
+        if displayingFrameIndex == image.decoder.framesCount - 1 {
             playedCount = playedCount + 1
             onOnePlayDone(playedCount)
         }

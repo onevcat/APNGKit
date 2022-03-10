@@ -16,11 +16,11 @@ class DecoderOptionsTests: XCTestCase {
     func testDecoderWithoutFullFirstPassOption() throws {
         let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25))
         XCTAssertEqual(decoder.currentIndex, 0)
-        XCTAssertEqual(decoder.frames.count, 4)
-        XCTAssertNotNil(decoder.frames[0])
-        XCTAssertNil(decoder.frames[1])
-        XCTAssertNil(decoder.frames[2])
-        XCTAssertNil(decoder.frames[3])
+        XCTAssertEqual(decoder.framesCount, 4)
+        XCTAssertNotNil(decoder.frame(at: 0))
+        XCTAssertNil(decoder.frame(at: 1))
+        XCTAssertNil(decoder.frame(at: 2))
+        XCTAssertNil(decoder.frame(at: 3))
         XCTAssertTrue(decoder.firstPass)
     }
 
@@ -31,17 +31,17 @@ class DecoderOptionsTests: XCTestCase {
             exp.fulfill()
         }
         XCTAssertEqual(decoder.currentIndex, 0)
-        XCTAssertEqual(decoder.frames.count, 4)
-        XCTAssertTrue(decoder.frames.allSatisfy { $0 != nil })
+        XCTAssertEqual(decoder.framesCount, 4)
+        XCTAssertEqual(decoder.framesCount, decoder.loadedFrames.count)
         XCTAssertFalse(decoder.firstPass)
         waitForExpectations(timeout: 1.0, handler: nil)
     }
 
     func testDecoderWithoutLoadingFrameData() throws {
         let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25), options: [.fullFirstPass])
-        decoder.frames.forEach { frame in
+        decoder.loadedFrames.forEach { frame in
             XCTAssertNotNil(frame)
-            let dataChunks = frame!.data
+            let dataChunks = frame.data
             XCTAssertFalse(dataChunks.isEmpty)
             let allIsOffset = dataChunks.allSatisfy { chunk in
                 if case .position(_, _) = chunk.dataPresentation {
@@ -56,9 +56,9 @@ class DecoderOptionsTests: XCTestCase {
     
     func testDecoderWithLoadingFrameData() throws {
         let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25), options: [.fullFirstPass, .loadFrameData])
-        decoder.frames.forEach { frame in
+        decoder.loadedFrames.forEach { frame in
             XCTAssertNotNil(frame)
-            let dataChunks = frame!.data
+            let dataChunks = frame.data
             XCTAssertFalse(dataChunks.isEmpty)
             let allIsData = dataChunks.allSatisfy { chunk in
                 if case .data(let d) = chunk.dataPresentation {

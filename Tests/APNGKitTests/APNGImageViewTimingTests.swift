@@ -24,11 +24,11 @@ class APNGImageViewTimingTests: XCTestCase {
             XCTFail("Frame missed, index: \(index). CI node performance is not enough.")
         }
         
-        let firstFrame = imageView.image!.decoder.frames.first!
+        let firstFrame = imageView.image!.decoder.loadedFrames.first!
         XCTAssertNotNil(firstFrame)
         
         // The minimal animation has identical frame duration for each frame.
-        let frameDuration = firstFrame!.frameControl.duration
+        let frameDuration = firstFrame.frameControl.duration
         timeWrap {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
             XCTAssertEqual(imageView.image!.decoder.currentIndex, 0)
@@ -72,8 +72,8 @@ class APNGImageViewTimingTests: XCTestCase {
 
         XCTAssertFalse(imageView.isAnimating)
 
-        let firstFrame = imageView.image!.decoder.frames.first!
-        let frameDuration = firstFrame!.frameControl.duration
+        let firstFrame = imageView.image!.decoder.loadedFrames.first!
+        let frameDuration = firstFrame.frameControl.duration
         
         timeWrap {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
@@ -101,8 +101,8 @@ class APNGImageViewTimingTests: XCTestCase {
     func testAnimatingStop() throws {
         let imageView = APNGImageView(image: createMinimalImage())
         XCTAssertTrue(imageView.isAnimating)
-        let firstFrame = imageView.image!.decoder.frames.first!
-        let frameDuration = firstFrame!.frameControl.duration
+        let firstFrame = imageView.image!.decoder.loadedFrames.first!
+        let frameDuration = firstFrame.frameControl.duration
         timeWrap {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
             XCTAssertEqual(imageView.image!.decoder.currentIndex, 0)
@@ -129,8 +129,8 @@ class APNGImageViewTimingTests: XCTestCase {
         apng.numberOfPlays = 1
         let imageView = APNGImageView(image: apng)
         
-        let firstFrame = imageView.image!.decoder.frames.first!
-        let frameDuration = firstFrame!.frameControl.duration
+        let firstFrame = imageView.image!.decoder.loadedFrames.first!
+        let frameDuration = firstFrame.frameControl.duration
         
         var allDone = false
         imageView.onAllPlaysDone.delegate(on: self) { (self, _) in
@@ -164,8 +164,8 @@ class APNGImageViewTimingTests: XCTestCase {
         let minimalAPNG = createMinimalImage()
         let imageView = APNGImageView(image: minimalAPNG)
         
-        let firstFrame = imageView.image!.decoder.frames.first!
-        let frameDuration = firstFrame!.frameControl.duration
+        let firstFrame = imageView.image!.decoder.loadedFrames.first!
+        let frameDuration = firstFrame.frameControl.duration
         
         timeWrap {}
         .after(frameDuration * 0.5) {}

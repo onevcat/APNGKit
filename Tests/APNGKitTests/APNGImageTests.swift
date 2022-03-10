@@ -16,7 +16,7 @@ class APNGImageTests: XCTestCase {
         XCTAssertEqual(apng.size, .init(width: 100, height: 100))
         
         if case .loadedPartial(let duration) = apng.duration {
-            XCTAssertEqual(duration, apng.decoder.frames[0]!.frameControl.duration)
+            XCTAssertEqual(duration, apng.decoder.frame(at: 0)!.frameControl.duration)
         } else {
             XCTFail("Wrong duration.")
         }
@@ -78,7 +78,7 @@ class APNGImageTests: XCTestCase {
     func testAPNGDuration() throws {
         let apng = try APNGImage(fileURL: pyaniURL)
         if case .loadedPartial(let duration) = apng.duration {
-            XCTAssertEqual(duration, apng.decoder.frames[0]!.frameControl.duration)
+            XCTAssertEqual(duration, apng.decoder.frame(at: 0)!.frameControl.duration)
         } else {
             XCTFail("Wrong duration.")
         }

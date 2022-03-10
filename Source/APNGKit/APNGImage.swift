@@ -63,7 +63,7 @@ public class APNGImage {
     /// Be notice that only loaded frames are returned before `onFramesInformationPrepared` happens. If you need to
     /// access all the frames from the very beginning, use `APNGImage.DecodingOptions.fullFirstPass` when creating the
     /// image.
-    public var loadedFrames: [APNGFrame] { decoder.frames.compactMap { $0 } }
+    public var loadedFrames: [APNGFrame] { decoder.loadedFrames }
     
     /// The cached CGImage object at a given frame. Only when `self.cachePolicy` is `.cache` and the corresponding frame
     /// is loaded, an image will be returned. Otherwise, `nil` is returned.
@@ -119,7 +119,7 @@ public class APNGImage {
         //
         // If you need to know the full duration before the first pass, use `DecodingOptions.fullFirstPass` to
         // initialize the image object.
-        let knownDuration = decoder.frames.reduce(0.0) { $0 + ($1?.frameControl.duration ?? 0) }
+        let knownDuration = decoder.loadedFrames.reduce(0.0) { $0 + ($1.frameControl.duration) }
         return decoder.firstPass ? .loadedPartial(knownDuration) : .full(knownDuration)
     }
     

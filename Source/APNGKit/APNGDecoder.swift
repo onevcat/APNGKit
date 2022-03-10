@@ -41,8 +41,9 @@ class APNGDecoder {
     private var foundMultipleAnimationControl = false
     
     private let renderingQueue = DispatchQueue(label: "com.onevcat.apngkit.renderingQueue", qos: .userInteractive)
+    private let decodingQueue = DispatchQueue(label: "com.onevcat.apngkit.decodingQueue", qos: .userInteractive)
     
-    private(set) var frames: [APNGFrame?] = []
+    private var frames: [APNGFrame?] = []
     
     var defaultImageChunks: [IDAT] { firstFrameResult?.defaultImageChunks ?? [] }
     private(set) var firstFrameResult: FirstFrameResult?
@@ -203,7 +204,7 @@ class APNGDecoder {
                 if foundMultipleAnimationControl {
                     throw APNGKitError.decoderError(.multipleAnimationControlChunk)
                 }
-                frames[index] = frame
+                set(frame: frame, at: index)
             }
         }
         
@@ -216,9 +217,46 @@ class APNGDecoder {
     }
     
     func setFirstFrameLoaded(frameResult: FirstFrameResult) {
+        guard firstFrameResult == nil else {
+            return
+        }
+        
         firstFrameResult = frameResult
         sharedData.append(contentsOf: frameResult.dataBeforeFirstFrame)
-        self.frames[0] = frameResult.frame
+        set(frame: frameResult.frame, at: 0)
+    }
+    
+    func setResetStatus(offset: UInt64, expectedSequenceNumber: Int) {
+        guard resetStatus == nil else {
+            return
+        }
+        resetStatus = ResetStatus(offset: offset, expectedSequenceNumber: expectedSequenceNumber)
+    }
+    
+    func set(frame: APNGFrame, at index: Int) {
+        decodingQueue.sync { frames[index] = frame }
+    }
+    
+    func frame(at index: Int) -> APNGFrame? {
+        return decodingQueue.sync { frames[index] }
+    }
+    
+    var loadedFrames: [APNGFrame] {
+        decodingQueue.sync { frames.compactMap { $0 } }
+    }
+    
+    var framesCount: Int { frames.count }
+    
+    func setDecodedImageCache(image: CGImage, at index: Int) {
+        decodingQueue.sync {
+            if cachePolicy == .cache {
+                decodedImageCache?[index] = image
+            }
+        }
+    }
+    
+    var isFirstFrameLoaded: Bool {
+        return decodingQueue.sync { frames[0] != nil }
     }
     
     func reset() throws {
@@ -393,10 +431,12 @@ class APNGDecoder {
         return try render(frame: frame, data: data, index: index)
     }
     
-    private func cachedImage(at index: Int) -> CGImage? {
-        guard cachePolicy == .cache else { return nil }
-        guard let cache = decodedImageCache else { return nil }
-        return cache[index]
+    func cachedImage(at index: Int) -> CGImage? {
+        decodingQueue.sync {
+            guard cachePolicy == .cache else { return nil }
+            guard let cache = decodedImageCache else { return nil }
+            return cache[index]
+        }
     }
     
     private var loadedFrameCount: Int {

@@ -28,16 +28,16 @@ class APNGDecoderTests: XCTestCase {
         XCTAssertEqual(decoder.animationControl.numberOfPlays, 0)
         
         XCTAssertFalse(decoder.defaultImageChunks.isEmpty)
-        XCTAssertEqual(decoder.frames.count, 1)
-        XCTAssertEqual(decoder.frames[0]!.frameControl.width, 128)
-        XCTAssertEqual(decoder.frames[0]!.frameControl.height, 64)
-        XCTAssertEqual(decoder.frames[0]!.frameControl.delayDenominator, 100)
-        XCTAssertEqual(decoder.frames[0]!.frameControl.delayNumerator, 100)
-        XCTAssertEqual(decoder.frames[0]!.frameControl.duration, 1.0, accuracy: 0.01)
-        XCTAssertEqual(decoder.frames[0]!.frameControl.blendOp, .over)
-        XCTAssertEqual(decoder.frames[0]!.frameControl.disposeOp, .none)
+        XCTAssertEqual(decoder.framesCount, 1)
+        XCTAssertEqual(decoder.frame(at: 0)!.frameControl.width, 128)
+        XCTAssertEqual(decoder.frame(at: 0)!.frameControl.height, 64)
+        XCTAssertEqual(decoder.frame(at: 0)!.frameControl.delayDenominator, 100)
+        XCTAssertEqual(decoder.frame(at: 0)!.frameControl.delayNumerator, 100)
+        XCTAssertEqual(decoder.frame(at: 0)!.frameControl.duration, 1.0, accuracy: 0.01)
+        XCTAssertEqual(decoder.frame(at: 0)!.frameControl.blendOp, .over)
+        XCTAssertEqual(decoder.frame(at: 0)!.frameControl.disposeOp, .none)
                         
-        XCTAssertEqual(decoder.frames[0]!.data.count, 1)
+        XCTAssertEqual(decoder.frame(at: 0)!.data.count, 1)
     }
     
     func testDecoderSetupTrivialImage002() throws {
@@ -49,9 +49,9 @@ class APNGDecoderTests: XCTestCase {
         XCTAssertEqual(decoder.animationControl.numberOfPlays, 0)
         
         XCTAssertFalse(decoder.defaultImageChunks.isEmpty)
-        XCTAssertEqual(decoder.frames.count, 1)
-        XCTAssertEqual(decoder.frames[0]!.frameControl.width, 128)
-        XCTAssertEqual(decoder.frames[0]!.data.count, 1)
+        XCTAssertEqual(decoder.framesCount, 1)
+        XCTAssertEqual(decoder.frame(at: 0)!.frameControl.width, 128)
+        XCTAssertEqual(decoder.frame(at: 0)!.data.count, 1)
     }
     
     func testDecoderSetupTrivialImage025() throws {
@@ -63,9 +63,9 @@ class APNGDecoderTests: XCTestCase {
         XCTAssertEqual(decoder.animationControl.numberOfPlays, 0)
         
         XCTAssertFalse(decoder.defaultImageChunks.isEmpty)
-        XCTAssertEqual(decoder.frames.count, 4)
-        XCTAssertEqual(decoder.frames[0]!.frameControl.width, 128)
-        XCTAssertEqual(decoder.frames[0]!.data.count, 1)
+        XCTAssertEqual(decoder.framesCount, 4)
+        XCTAssertEqual(decoder.frame(at: 0)!.frameControl.width, 128)
+        XCTAssertEqual(decoder.frame(at: 0)!.data.count, 1)
     }
     
     func testDecoderRenderCorrectFrames() throws {
@@ -217,7 +217,7 @@ class APNGDecoderTests: XCTestCase {
     
     func testDecoderHandlePTLEAfterACTL() throws {
         let decoder = try APNGDecoder(fileURL: SampleTesting.sampleTestingURL(name: "maneki-neko"))
-        XCTAssertEqual(decoder.frames.count, 3)
+        XCTAssertEqual(decoder.framesCount, 3)
     }
 }
 
