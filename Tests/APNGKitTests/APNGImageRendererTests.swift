@@ -103,7 +103,7 @@ class APNGImageRendererTests: XCTestCase {
                 XCTAssertEqual(renderer.currentIndex, (i + 1) % 4)
             }
             try renderer.reset()
-            XCTAssertEqual(decoder.currentIndex, 0)
+            XCTAssertEqual(renderer.currentIndex, 0)
 
             _ = try renderer.renderNextAndGetResult()
             XCTAssertEqual(renderer.currentIndex, 1)

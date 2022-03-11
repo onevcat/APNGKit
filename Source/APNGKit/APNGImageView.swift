@@ -69,6 +69,8 @@ open class APNGImageView: PlatformView {
     public var DrivingTimerType: DrivingTimer.Type { NormalTimer.self }
     #endif
     
+    private(set) var renderer: APNGImageRenderer?
+    
     // When the current frame was started to be displayed on the screen. It is the base time to calculate the current
     // frame duration.
     private var displayingFrameStarted: CFTimeInterval?
@@ -181,9 +183,9 @@ open class APNGImageView: PlatformView {
     }
     
     private func unsetImage() {
-        _image?.owner = nil
         stopAnimating()
         _image = nil
+        renderer = nil
         backingLayer.contents = nil
         playedCount = 0
         displayingFrameIndex = 0
@@ -210,43 +212,25 @@ open class APNGImageView: PlatformView {
                 // Nothing to do if the same image is set.
                 return
             }
-            
-            guard nextImage.owner == nil else {
-                printLog("The image is already set to another image view. You cannot assign it to current image view before removing it from the previous one.")
-                printLog("Image: \(nextImage); Existing Owner: \(nextImage.owner!); Current Image View: \(self)")
-                printLog("Consider to create a new image or set the `image` of the previous image view to `nil` first.")
-                
-                #if DEBUG
-                let env = ProcessInfo.processInfo.environment
-                // Do not trigger an assertion to let tests cover this situation.
-                // XCTest env, for example inside Xcode.
-                if env["XCTestConfigurationFilePath"] != nil {
-                    return
-                }
-                // swift command line tool. `swift test`
-                if let runner = env["_"], runner.contains("swift") {
-                    return
-                }
-                // Running inside VSCode with CodeLLDB.
-                if env["VSCODE_CLI"] != nil { //
-                    return
-                }
-                #endif
-                assertionFailure("Cannot set the image to this image view because it is already set to another one.")
-                return
-            }
-            
-            do {
-                // In case this is a dirty image. Try reset to the initial state first.
-                try nextImage.reset()
-            } catch {
-                printLog("Error happens while trying to reset the target image. Its behavior might be strange. \(error)")
-                assertionFailure("Error happened while reseting the image. Error: \(error)")
-            }
-            
+
             unsetImage()
             
-            nextImage.owner = self
+            do {
+                renderer = try APNGImageRenderer(decoder: nextImage.decoder)
+            } catch {
+                printLog("Error happens while creating renderer for image. \(error)")
+                let result = renderErrorToResult(image: nextImage, error: error)
+                switch result {
+                case .rendered:
+                    #warning("TODO. Combine fallbackToDefault and defaultDecodingError to error case.")
+                    assertionFailure("This should not happen. An error result won't return `.rendered`.")
+                case .fallbackToDefault(let defaultImage, let error):
+                    fallbackTo(defaultImage, referenceScale: nextImage.scale, error: error)
+                case .defaultDecodingError(let error, let defaultImageError):
+                    defaultDecodingErrored(frameError: error, defaultImageError: defaultImageError)
+                }
+                return
+            }
             _image = nextImage
             
             // Try to render the first frame. If failed, fallback to the default image defined in the APNG, or set the
@@ -259,7 +243,7 @@ open class APNGImageView: PlatformView {
                 if autoStartAnimationWhenSetImage {
                     startAnimating()
                 }
-                nextImage.decoder.renderNext()
+                renderer?.renderNext()
             case .fallbackToDefault(let defaultImage, let error):
                 fallbackTo(defaultImage, referenceScale: nextImage.scale, error: error)
             case .defaultDecodingError(let error, let defaultImageError):
@@ -367,7 +351,7 @@ open class APNGImageView: PlatformView {
         }
         
         // We should display the next frame!
-        guard let _ = image.decoder.output /* the frame image is rendered */ else {
+        guard let renderer = renderer, let _ = renderer.output /* the frame image is rendered */ else {
             // but unfortunately the decoding missed the target.
             // we can just wait for the next `step`.
             printLog("Missed frame for image \(image): target index: \(nextFrameIndex), while displaying the current frame index: \(displayingFrameIndex).")
@@ -392,10 +376,10 @@ open class APNGImageView: PlatformView {
             displayingFrameStarted = frameWasMissed ?
                 timestamp :
                 displayingFrameStarted! + displayingFrame.frameControl.duration
-            displayingFrameIndex = image.decoder.currentIndex
+            displayingFrameIndex = renderer.currentIndex
             
             // Start to render the next frame. This happens in a background thread in decoder.
-            image.decoder.renderNext()
+            renderer.renderNext()
             
         case .fallbackToDefault(let defaultImage, let error):
             fallbackTo(defaultImage, referenceScale: image.scale, error: error)
@@ -428,24 +412,28 @@ open class APNGImageView: PlatformView {
     }
     
     private func renderCurrentDecoderOutput() -> RenderResult {
-        guard let image = _image, let output = image.decoder.output else {
+        guard let image = _image, let output = renderer?.output else {
             return .rendered(nil)
         }
         switch output {
         case .success(let cgImage):
             return .rendered(cgImage)
         case .failure(let error):
-            do {
-                printLog("Encountered an error when decoding the next image frame, index: \(nextFrameIndex). Error: \(error). Trying to reverting to the default image.")
-                let data = try image.decoder.createDefaultImageData()
-                return .fallbackToDefault(PlatformImage(data: data, scale: image.scale), error.apngError ?? .internalError(error))
-            } catch let defaultDecodingError {
-                printLog("Encountered an error when decoding the default image. \(error)")
-                return .defaultDecodingError(
-                    frameError: error.apngError ?? .internalError(error),
-                    defaultDecodingError: defaultDecodingError.apngError ?? .internalError(defaultDecodingError)
-                )
-            }
+            return renderErrorToResult(image: image, error: error)
+        }
+    }
+    
+    private func renderErrorToResult(image: APNGImage, error: Error) -> RenderResult {
+        do {
+            printLog("Encountered an error when decoding the next image frame, index: \(nextFrameIndex). Error: \(error). Trying to reverting to the default image.")
+            let data = try image.decoder.createDefaultImageData()
+            return .fallbackToDefault(PlatformImage(data: data, scale: image.scale), error.apngError ?? .internalError(error))
+        } catch let defaultDecodingError {
+            printLog("Encountered an error when decoding the default image. \(error)")
+            return .defaultDecodingError(
+                frameError: error.apngError ?? .internalError(error),
+                defaultDecodingError: defaultDecodingError.apngError ?? .internalError(defaultDecodingError)
+            )
         }
     }
 }

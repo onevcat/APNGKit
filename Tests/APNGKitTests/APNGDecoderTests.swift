@@ -21,6 +21,7 @@ class APNGDecoderTests: XCTestCase {
     
     func testDecoderSetupTrivialImage001() throws {
         let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(1))
+        _ = try APNGImageRenderer(decoder: decoder)
         XCTAssertEqual(decoder.imageHeader.width, 128)
         XCTAssertEqual(decoder.imageHeader.height, 64)
         
@@ -42,6 +43,7 @@ class APNGDecoderTests: XCTestCase {
     
     func testDecoderSetupTrivialImage002() throws {
         let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(2))
+        _ = try APNGImageRenderer(decoder: decoder)
         XCTAssertEqual(decoder.imageHeader.width, 128)
         XCTAssertEqual(decoder.imageHeader.height, 64)
         
@@ -56,6 +58,7 @@ class APNGDecoderTests: XCTestCase {
     
     func testDecoderSetupTrivialImage025() throws {
         let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25))
+        _ = try APNGImageRenderer(decoder: decoder)
         XCTAssertEqual(decoder.imageHeader.width, 128)
         XCTAssertEqual(decoder.imageHeader.height, 64)
         
@@ -71,12 +74,5 @@ class APNGDecoderTests: XCTestCase {
     func testDecoderHandlePTLEAfterACTL() throws {
         let decoder = try APNGDecoder(fileURL: SampleTesting.sampleTestingURL(name: "maneki-neko"))
         XCTAssertEqual(decoder.framesCount, 3)
-    }
-}
-
-extension APNGDecoder {
-    func renderNextAndGetResult() throws -> CGImage {
-        try renderNextSync()
-        return try output!.get()
     }
 }

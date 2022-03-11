@@ -495,14 +495,4 @@ extension APNGImageRenderer {
         let idat = IDAT.encode(data: data)
         return Self.pngSignature + ihdr + decoder.sharedData + idat + Self.IENDBytes
     }
-    
-    func createDefaultImageData() throws -> Data {
-        let payload = try decoder.defaultImageChunks.map { idat in
-            try idat.loadData(with: self.reader)
-        }.joined()
-        let data = try generateImageData(
-            width: decoder.imageHeader.width, height: decoder.imageHeader.height, data: Data(payload)
-        )
-        return data
-    }
 }

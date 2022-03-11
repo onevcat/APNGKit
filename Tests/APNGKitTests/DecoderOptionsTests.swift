@@ -15,7 +15,8 @@ class DecoderOptionsTests: XCTestCase {
 
     func testDecoderWithoutFullFirstPassOption() throws {
         let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25))
-        XCTAssertEqual(decoder.currentIndex, 0)
+        let renderer = try APNGImageRenderer(decoder: decoder)
+        XCTAssertEqual(renderer.currentIndex, 0)
         XCTAssertEqual(decoder.framesCount, 4)
         XCTAssertNotNil(decoder.frame(at: 0))
         XCTAssertNil(decoder.frame(at: 1))
@@ -30,7 +31,8 @@ class DecoderOptionsTests: XCTestCase {
         decoder.onFirstPassDone.delegate(on: self) { (self, _) in
             exp.fulfill()
         }
-        XCTAssertEqual(decoder.currentIndex, 0)
+        let renderer = try APNGImageRenderer(decoder: decoder)
+        XCTAssertEqual(renderer.currentIndex, 0)
         XCTAssertEqual(decoder.framesCount, 4)
         XCTAssertEqual(decoder.framesCount, decoder.loadedFrames.count)
         XCTAssertFalse(decoder.firstPass)
@@ -77,6 +79,7 @@ class DecoderOptionsTests: XCTestCase {
         APNGImage.maximumCacheSize = .max
         defer { APNGImage.maximumCacheSize = oldValue }
         let apng = try APNGImage(named: "pyani.apng", in: .module, subdirectory: "General")
+        _ = try APNGImageRenderer(decoder: apng.decoder)
         XCTAssertEqual(apng.cachePolicy, .cache)
         XCTAssertNotNil(apng.decoder.decodedImageCache)
         
@@ -137,6 +140,7 @@ class DecoderOptionsTests: XCTestCase {
     
     func testImageCacheReset() throws {
         let apng = try APNGImage(named: "pyani.apng", in: .module, subdirectory: "General")
+        _ = try APNGImageRenderer(decoder: apng.decoder)
         XCTAssertEqual(apng.cachePolicy, .cache)
         XCTAssertNotNil(apng.decoder.decodedImageCache)
         

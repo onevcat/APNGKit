@@ -132,11 +132,6 @@ public class APNGImage {
     /// cache policy to another image byte size.
     public var cachePolicy: CachePolicy { decoder.cachePolicy }
     
-    // Holds the image owner view as weak, to prevent a single image held by multiple image views. The behavior of
-    // this is not defined since it is not easy to determine if they should share the timing. If you need to display the
-    // same image in different APNG image views, create multiple instance instead.
-    weak var owner: AnyObject?
-    
     /// Creates an APNG image object using the named image file in the main bundle.
     /// - Parameters:
     ///   - name: The name of the image file in the main bundle.
@@ -243,10 +238,6 @@ public class APNGImage {
                 throw error
             }
         }
-    }
-    
-    func reset() throws {
-        try decoder.reset()
     }
 }
 
