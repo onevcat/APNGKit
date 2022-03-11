@@ -33,6 +33,11 @@ class MultipleImageCollectionViewController: UICollectionViewController {
         return cell
     }
     
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as! MultipleImageCollectionViewCell
+        try? cell.animatedImageView.reset()
+    }
+    
     @IBAction func addImage(_ sender: Any) {
         let random = Int.random(in: 0 ..< MultipleImageCollectionViewController.availableImages.count)
         images.append(MultipleImageCollectionViewController.availableImages[random])

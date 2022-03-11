@@ -8,7 +8,7 @@
 import Cocoa
 import APNGKit
 
-class MultipleImagesViewController: NSViewController, NSCollectionViewDataSource {
+class MultipleImagesViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate {
 
     @IBOutlet weak var collectionView: NSCollectionView!
     
@@ -31,6 +31,13 @@ class MultipleImagesViewController: NSViewController, NSCollectionViewDataSource
         let item = collectionView.makeItem(withIdentifier: .init(rawValue: "MultipleImageCollectionViewItem"), for: indexPath) as! MultipleImageCollectionViewItem
         item.setImage(images[indexPath.item])
         return item
+    }
+    
+    func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
+        collectionView.deselectItems(at: indexPaths)
+        
+        let item = collectionView.item(at: indexPaths.first!) as! MultipleImageCollectionViewItem
+        try? item.animatedImageView.reset()
     }
     
     @IBAction func addImage(_ sender: Any) {

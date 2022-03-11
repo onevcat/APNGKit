@@ -754,13 +754,13 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="28" horizontalPageScroll="10" verticalLineScroll="28" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HZO-pi-E6L">
-                                <rect key="frame" x="0.0" y="0.0" width="150" height="381"/>
+                                <rect key="frame" x="0.0" y="0.0" width="150" height="378"/>
                                 <clipView key="contentView" drawsBackground="NO" id="u5a-0I-bwe">
-                                    <rect key="frame" x="0.0" y="0.0" width="150" height="381"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="150" height="378"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" multipleSelection="NO" autosaveColumns="NO" rowHeight="28" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="ukZ-eG-Xem" id="jTi-id-8vn">
-                                            <rect key="frame" x="0.0" y="0.0" width="150" height="381"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="150" height="378"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>
                                             <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1168,14 +1168,14 @@
         <scene sceneID="SyN-aP-W7w">
             <objects>
                 <viewController storyboardIdentifier="SpecTestViewController" id="S1b-hZ-udx" customClass="SpecTestViewController" customModule="Demo_macOS" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="XkB-n8-0Ih">
-                        <rect key="frame" x="0.0" y="0.0" width="410" height="300"/>
+                    <view key="view" misplaced="YES" id="XkB-n8-0Ih">
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="70" horizontalPageScroll="10" verticalLineScroll="70" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pu8-kF-FH1">
-                                <rect key="frame" x="0.0" y="0.0" width="430" height="300"/>
+                                <rect key="frame" x="0.0" y="0.0" width="370" height="300"/>
                                 <clipView key="contentView" id="rDA-8h-XPq">
-                                    <rect key="frame" x="1" y="1" width="428" height="298"/>
+                                    <rect key="frame" x="1" y="1" width="368" height="298"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="70" viewBased="YES" id="AH2-I4-F5f">
@@ -1275,7 +1275,7 @@
                                     </subviews>
                                 </clipView>
                                 <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="Zgr-aC-LMm">
-                                    <rect key="frame" x="1" y="283" width="428" height="16"/>
+                                    <rect key="frame" x="1" y="283" width="368" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="2IR-1t-JOu">
@@ -1310,7 +1310,7 @@
                                     <rect key="frame" x="1" y="1" width="448" height="298"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <collectionView id="a6M-3e-AJO">
+                                        <collectionView selectable="YES" id="a6M-3e-AJO">
                                             <rect key="frame" x="0.0" y="0.0" width="448" height="158"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                             <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" id="W6L-FT-Nse">
@@ -1320,6 +1320,7 @@
                                             <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <connections>
                                                 <outlet property="dataSource" destination="zDB-wc-Sj2" id="qsD-0d-UJ7"/>
+                                                <outlet property="delegate" destination="zDB-wc-Sj2" id="tT8-zJ-zxO"/>
                                             </connections>
                                         </collectionView>
                                     </subviews>
