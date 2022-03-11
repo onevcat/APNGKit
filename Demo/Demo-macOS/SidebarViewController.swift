@@ -12,11 +12,13 @@ import Delegate
 enum Page: CaseIterable {
     case samples
     case specTests
+    case multipleImages
     
     var title: String {
         switch self {
         case .samples: return "Samples"
         case .specTests: return "Spec Tests"
+        case .multipleImages: return "Multiple Images"
         }
     }
     
@@ -24,6 +26,7 @@ enum Page: CaseIterable {
         switch self {
         case .samples: return "scribble.variable"
         case .specTests: return "checkmark.circle"
+        case .multipleImages: return "mail.stack"
         }
     }
 }

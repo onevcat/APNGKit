@@ -13,7 +13,8 @@ class SplitViewController: NSSplitViewController {
     weak var detailViewController: NSViewController!
     
     var sampleViewController: SamplesViewController?
-    var specTestViewController: NSViewController?
+    var specTestViewController: SpecTestViewController?
+    var multipleImagesViewController: MultipleImagesViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +31,7 @@ class SplitViewController: NSSplitViewController {
         
         sampleViewController?.view.isHidden = true
         specTestViewController?.view.isHidden = true
+        multipleImagesViewController?.view.isHidden = true
         
         switch page {
         case .samples:
@@ -48,6 +50,14 @@ class SplitViewController: NSSplitViewController {
             }
             print("Show spec")
             specTestViewController?.view.isHidden = false
+        case .multipleImages:
+            if multipleImagesViewController == nil {
+                let vc = NSStoryboard(name: "Main", bundle: .main).instantiateController(withIdentifier: .init("MultipleImagesViewController")) as! MultipleImagesViewController
+                detailViewController.add(vc)
+                multipleImagesViewController = vc
+            }
+            print("Show multi")
+            multipleImagesViewController?.view.isHidden = false
         }
     }
 }
