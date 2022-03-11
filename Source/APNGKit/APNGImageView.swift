@@ -219,16 +219,10 @@ open class APNGImageView: PlatformView {
                 renderer = try APNGImageRenderer(decoder: nextImage.decoder)
             } catch {
                 printLog("Error happens while creating renderer for image. \(error)")
-                let result = renderErrorToResult(image: nextImage, error: error)
-                switch result {
-                case .rendered:
-                    #warning("TODO. Combine fallbackToDefault and defaultDecodingError to error case.")
-                    assertionFailure("This should not happen. An error result won't return `.rendered`.")
-                case .fallbackToDefault(let defaultImage, let error):
-                    fallbackTo(defaultImage, referenceScale: nextImage.scale, error: error)
-                case .defaultDecodingError(let error, let defaultImageError):
-                    defaultDecodingErrored(frameError: error, defaultImageError: defaultImageError)
-                }
+                defaultDecodingErrored(
+                    frameError: error.apngError ?? .internalError(error),
+                    defaultImageError: .decoderError(.invalidRenderer)
+                )
                 return
             }
             _image = nextImage
@@ -255,18 +249,18 @@ open class APNGImageView: PlatformView {
     }
     
     private func fallbackTo(_ defaultImage: PlatformImage?, referenceScale: CGFloat, error: APNGKitError) {
-        onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: true))
         let scale = defaultImage?.recommendedLayerContentsScale(referenceScale) ?? screenScale
         backingLayer.contentsScale = scale
         backingLayer.contents = defaultImage?.layerContents(forContentsScale:scale)
         stopAnimating()
+        onDecodingFrameError(.init(error: error, canFallbackToDefaultImage: true))
         onFallBackToDefaultImage()
     }
     
     private func defaultDecodingErrored(frameError: APNGKitError, defaultImageError: APNGKitError) {
-        onDecodingFrameError(.init(error: frameError, canFallbackToDefaultImage: false))
         backingLayer.contents = nil
         stopAnimating()
+        onDecodingFrameError(.init(error: frameError, canFallbackToDefaultImage: false))
         onFallBackToDefaultImageFailed(defaultImageError)
     }
     

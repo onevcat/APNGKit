@@ -43,6 +43,7 @@ extension APNGKitError {
         case outputImageCreatingFailed(frameIndex: Int)
         case canvasCreatingFailed
         case multipleAnimationControlChunk
+        case invalidRenderer
     }
     
     /// Errors happening during creating the image.
