@@ -87,7 +87,8 @@ class DecoderOptionsTests: XCTestCase {
         XCTAssertNil(apng.decoder.decodedImageCache![1])
         
         // Render and cache the next frame.
-        try apng.decoder.renderNextSync()
+        let renderer = try APNGImageRenderer(decoder: apng.decoder)
+        try renderer.renderNextSync()
         XCTAssertNotNil(apng.decoder.decodedImageCache![1])
     }
     
@@ -142,30 +143,31 @@ class DecoderOptionsTests: XCTestCase {
         XCTAssertNotNil(apng.decoder.decodedImageCache![0])
         
         XCTAssertNil(apng.decoder.decodedImageCache![1])
-        try apng.decoder.renderNextSync()
+        let renderer = try APNGImageRenderer(decoder: apng.decoder)
+        try renderer.renderNextSync()
         XCTAssertNotNil(apng.decoder.decodedImageCache![1])
         
         // When reset, a non-fully cached image should reset its cache too.
-        try apng.decoder.reset()
+        try renderer.reset()
         // Only the first frame is still in cache (since it is rendered again.)
         XCTAssertNotNil(apng.decoder.decodedImageCache![0])
         XCTAssertNil(apng.decoder.decodedImageCache![1])
         XCTAssertNil(apng.decoder.decodedImageCache![2])
         
         while apng.decoder.firstPass {
-            try apng.decoder.renderNextSync()
+            try renderer.renderNextSync()
         }
         
         // All frame should be cached.
         XCTAssertTrue(apng.decoder.decodedImageCache!.allSatisfy { $0 != nil })
         
         // Cache is not reset when all frames decoded.
-        try apng.reset()
+        try renderer.reset()
         XCTAssertTrue(apng.decoder.decodedImageCache!.allSatisfy { $0 != nil })
         
         // Cache is not reset when current index is 0.
-        XCTAssertEqual(apng.decoder.currentIndex, 0)
-        try apng.reset()
+        XCTAssertEqual(renderer.currentIndex, 0)
+        try renderer.reset()
         XCTAssertTrue(apng.decoder.decodedImageCache!.allSatisfy { $0 != nil })
     }
 }

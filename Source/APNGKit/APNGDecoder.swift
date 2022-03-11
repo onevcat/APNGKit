@@ -55,18 +55,18 @@ class APNGDecoder {
     
     // Used only when `cachePolicy` is `.cache`.
     private(set) var decodedImageCache: [CGImage?]?
-    
-    private var canvasFullSize: CGSize { .init(width: imageHeader.width, height: imageHeader.height) }
-    private var canvasFullRect: CGRect { .init(origin: .zero, size: canvasFullSize) }
+        
+    var canvasFullSize: CGSize { .init(width: imageHeader.width, height: imageHeader.height) }
+    var canvasFullRect: CGRect { .init(origin: .zero, size: canvasFullSize) }
     
     // The data chunks shared by all frames: after IHDR and before the actual IDAT or fdAT chunk.
     // Use this to revert to a valid PNG for creating a CG data provider.
-    private var sharedData = Data()
+    private(set) var sharedData = Data()
     private let outputBuffer: CGContext
-    private let reader: Reader
+    let reader: Reader
     
-    private var resetStatus: ResetStatus!
-    private let options: APNGImage.DecodingOptions
+    private(set) var resetStatus: ResetStatus!
+    let options: APNGImage.DecodingOptions
     
     let cachePolicy: APNGImage.CachePolicy
     
@@ -259,6 +259,12 @@ class APNGDecoder {
         return decodingQueue.sync { frames[0] != nil }
     }
     
+    func resetDecodedImageCache() throws {
+        decodingQueue.sync {
+            decodedImageCache = [CGImage?](repeating: nil, count: animationControl.numberOfFrames)
+        }
+    }
+    
     func reset() throws {
         if currentIndex == 0 {
             // It is under the initial state. No need to reset.
@@ -436,6 +442,13 @@ class APNGDecoder {
             guard cachePolicy == .cache else { return nil }
             guard let cache = decodedImageCache else { return nil }
             return cache[index]
+        }
+    }
+    
+    var allFramesCached: Bool {
+        decodingQueue.sync {
+            guard let cache = decodedImageCache else { return false }
+            return cache.allSatisfy { $0 != nil }
         }
     }
     
