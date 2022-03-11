@@ -168,27 +168,21 @@ class APNGImageViewTests: XCTestCase {
         XCTAssertTrue(deinitCalled)
     }
     
-//    func testSwitchingImage() throws {
-//        let ballAPNG = createBallImage()
-//        let minimalAPNG = createMinimalImage()
-//
-//        let imageView = APNGImageView(image: ballAPNG)
-//        XCTAssertTrue(imageView.isAnimating)
-//        XCTAssertTrue(ballAPNG.owner === imageView)
-//        XCTAssertNil(minimalAPNG.owner)
-//
-//        imageView.image = minimalAPNG
-//        XCTAssertTrue(imageView.isAnimating)
-//        XCTAssertNil(ballAPNG.owner)
-//        XCTAssertTrue(minimalAPNG.owner === imageView)
-//
-//        imageView.image = nil
-//        XCTAssertFalse(imageView.isAnimating)
-//        XCTAssertNil(ballAPNG.owner)
-//        XCTAssertNil(minimalAPNG.owner)
-//    }
+    func testSwitchingImage() throws {
+        let ballAPNG = createBallImage()
+        let minimalAPNG = createMinimalImage()
+
+        let imageView = APNGImageView(image: ballAPNG)
+        XCTAssertTrue(imageView.isAnimating)
+
+        imageView.image = minimalAPNG
+        XCTAssertTrue(imageView.isAnimating)
+
+        imageView.image = nil
+        XCTAssertFalse(imageView.isAnimating)
+    }
     
-    func testSettingImageWithOwner() throws {
+    func testSettingImage() throws {
         let apng = createBallImage()
         
         let imageView1 = APNGImageView(image: apng)
@@ -198,6 +192,15 @@ class APNGImageViewTests: XCTestCase {
         XCTAssertNotNil(imageView1.image)
         XCTAssertNotNil(imageView2.image)
         XCTAssertNotNil(imageView3.image)
+        
+        XCTAssertTrue(imageView1.isAnimating)
+        XCTAssertTrue(imageView2.isAnimating)
+        XCTAssertTrue(imageView3.isAnimating)
+        
+        imageView3.autoStartAnimationWhenSetImage = false
+        imageView3.image = apng
+        XCTAssertNotNil(imageView3.image)
+        XCTAssertFalse(imageView3.isAnimating)
     }
 }
 

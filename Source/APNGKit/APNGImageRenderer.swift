@@ -42,7 +42,7 @@ class APNGImageRenderer {
         }
         self.outputBuffer = outputBuffer
         
-        if decoder.isFirstFrameLoaded {
+        if decoder.isFirstFrameLoaded { // The first frame is already loaded by another renderer.
             try renderFirstFrame()
             try applyResetStatus()
         } else {
@@ -141,7 +141,7 @@ class APNGImageRenderer {
             currentOutputImage = nil
         }
         
-        let pngImageData = try generateImageData(frameControl: frame.frameControl, data: data)
+        let pngImageData = try decoder.generateImageData(frameControl: frame.frameControl, data: data)
         guard let source = CGImageSourceCreateWithData(
             pngImageData as CFData, [kCGImageSourceShouldCache: true] as CFDictionary
         ) else {
@@ -469,30 +469,12 @@ extension APNGImageRenderer {
     }
 }
 
-extension APNGImageRenderer {
-    
-    static let pngSignature: [Byte] = [
-        0x89, 0x50, 0x4E, 0x47,
-        0x0D, 0x0A, 0x1A, 0x0A
-    ]
-    
-    static let IENDBytes: [Byte] = [
-        0x00, 0x00, 0x00, 0x00,
-        0x49, 0x45, 0x4E, 0x44,
-        0xAE, 0x42, 0x60, 0x82
-    ]
-    
-    private func generateImageData(frameControl: fcTL, data: Data) throws -> Data {
-        try generateImageData(width: frameControl.width, height: frameControl.height, data: data)
-    }
-}
-
-extension APNGImageRenderer {
-    func generateImageData(width: Int, height: Int, data: Data) throws -> Data {
-        let ihdr = try decoder.imageHeader.updated(
-            width: width, height: height
-        ).encode()
-        let idat = IDAT.encode(data: data)
-        return Self.pngSignature + ihdr + decoder.sharedData + idat + Self.IENDBytes
+extension DispatchQueue {
+    func asyncOrSyncIfMain(execute block: @escaping () -> Void) {
+        if Thread.isMainThread {
+            block()
+        } else {
+            self.async(execute: block)
+        }
     }
 }

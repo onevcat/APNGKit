@@ -165,6 +165,47 @@ class APNGImageRendererTests: XCTestCase {
             try renderer.reset()
         }
     }
+    
+    func testMultipleRenderer() throws {
+        let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25))
+        
+        let renderer1 = try APNGImageRenderer(decoder: decoder)
+        let renderer2 = try APNGImageRenderer(decoder: decoder)
+        
+        XCTAssertNotNil(renderer1.output)
+        let frame1_0 = try renderer1.output!.get()
+        XCTAssertEqual(frame1_0.height, 64)
+        XCTAssertEqual(renderer1.currentIndex, 0)
+        
+        XCTAssertNotNil(renderer2.output)
+        let frame2_0 = try renderer2.output!.get()
+        XCTAssertEqual(frame2_0.height, 64)
+        XCTAssertEqual(renderer2.currentIndex, 0)
+        
+        _ = try renderer1.renderNextAndGetResult()
+        XCTAssertEqual(renderer1.currentIndex, 1)
+        XCTAssertEqual(renderer2.currentIndex, 0)
+        
+        _ = try renderer1.renderNextAndGetResult()
+        XCTAssertEqual(renderer1.currentIndex, 2)
+        XCTAssertEqual(renderer2.currentIndex, 0)
+        
+        _ = try renderer2.renderNextAndGetResult()
+        XCTAssertEqual(renderer1.currentIndex, 2)
+        XCTAssertEqual(renderer2.currentIndex, 1)
+        
+        try renderer1.reset()
+        XCTAssertEqual(renderer1.currentIndex, 0)
+        XCTAssertEqual(renderer2.currentIndex, 1)
+        
+        _ = try renderer1.renderNextAndGetResult()
+        XCTAssertEqual(renderer1.currentIndex, 1)
+        XCTAssertEqual(renderer2.currentIndex, 1)
+        
+        _ = try renderer2.renderNextAndGetResult()
+        XCTAssertEqual(renderer1.currentIndex, 1)
+        XCTAssertEqual(renderer2.currentIndex, 2)
+    }
 }
 
 extension APNGImageRenderer {

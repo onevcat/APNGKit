@@ -157,8 +157,6 @@ class APNGImageViewTimingTests: XCTestCase {
         }
         .done()
     }
-
-
     
     func testSwitchingImageReset() throws {
         let minimalAPNG = createMinimalImage()
@@ -183,6 +181,42 @@ class APNGImageViewTimingTests: XCTestCase {
             // original image should be reset
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
             XCTAssertEqual(imageView.renderer?.currentIndex, 0)
+        }
+        .done()
+    }
+    
+    func testImageUsedInMultipleImageViews() throws {
+        let minimalAPNG = createMinimalImage()
+        
+        let imageView1 = APNGImageView(image: minimalAPNG)
+        let imageView2 = APNGImageView()
+        
+        let firstFrame = imageView1.image!.decoder.loadedFrames.first!
+        let frameDuration = firstFrame.frameControl.duration
+        
+        timeWrap {}
+        .after(frameDuration * 0.5) {}
+        .after(frameDuration) {
+            XCTAssertEqual(imageView1.displayingFrameIndex, 1)
+            XCTAssertEqual(imageView1.renderer?.currentIndex, 2)
+        }
+        .after(frameDuration) {
+            imageView2.image = minimalAPNG
+            XCTAssertEqual(imageView1.displayingFrameIndex, 2)
+            XCTAssertEqual(imageView1.renderer?.currentIndex, 3)
+            
+            XCTAssertEqual(imageView2.displayingFrameIndex, 0)
+            XCTAssertEqual(imageView2.renderer?.currentIndex, 0)
+        }
+        .after(frameDuration * 0.5) {
+            imageView1.image = nil
+        }
+        .after(frameDuration) {
+            XCTAssertEqual(imageView1.displayingFrameIndex, 0)
+            XCTAssertNil(imageView1.renderer)
+            
+            XCTAssertEqual(imageView2.displayingFrameIndex, 1)
+            XCTAssertEqual(imageView2.renderer?.currentIndex, 2)
         }
         .done()
     }

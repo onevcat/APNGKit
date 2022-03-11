@@ -31,10 +31,7 @@ class APNGDecoder {
     
     let imageHeader: IHDR
     let animationControl: acTL
-    
-    private var foundMultipleAnimationControl = false
-    
-    private let renderingQueue = DispatchQueue(label: "com.onevcat.apngkit.renderingQueue", qos: .userInteractive)
+        
     private let decodingQueue = DispatchQueue(label: "com.onevcat.apngkit.decodingQueue", qos: .userInteractive)
     
     private var frames: [APNGFrame?] = []
@@ -53,9 +50,10 @@ class APNGDecoder {
     private(set) var sharedData = Data()
     let reader: Reader
     
+    // Holds the reader and sequence status after the first frame decoded. When reset, we need to make sure the renderer
+    // reader is set to this position before starting another read process.
     private(set) var resetStatus: ResetStatus!
     let options: APNGImage.DecodingOptions
-    
     let cachePolicy: APNGImage.CachePolicy
     
     convenience init(data: Data, options: APNGImage.DecodingOptions = []) throws {
@@ -98,12 +96,13 @@ class APNGDecoder {
         
         // Too large `numberOfFrames`. Do not accept it since we are doing a pre-action memory alloc.
         // Although 1024 frames should be enough for all normal case, there is an improvement plan:
-        // - Add a read option to loose this restriction (at user's risk. A large number would cause OOM.)
-        // - An alloc-with-use memory model. Do not alloc memory by this number (which might be malformed), but do the
+        // - [x] Add a read option to loose this restriction (at user's risk. A large number would cause OOM.) | Done as `.unlimitedFrameCount`.
+        // - [ ] An alloc-with-use memory model. Do not alloc memory by this number (which might be malformed), but do the
         //   alloc JIT.
         //
         // For now, just hard code a reasonable upper limitation.
         if numberOfFrames >= 1024 && !options.contains(.unlimitedFrameCount) {
+            printLog("The input frame count exceeds the upper limit. Consider to make sure the frame count is correct or set `.unlimitedFrameCount` to allow huge frame count at your risk.")
             throw APNGKitError.decoderError(.invalidNumberOfFrames(value: numberOfFrames))
         }
         frames = [APNGFrame?](repeating: nil, count: acTLResult.chunk.numberOfFrames)
@@ -136,7 +135,10 @@ class APNGDecoder {
         
         animationControl = acTLResult.chunk
     }
-    
+}
+
+// Renderer-orientated interfaces
+extension APNGDecoder {
     func setFirstFrameLoaded(frameResult: FirstFrameResult) {
         guard firstFrameResult == nil else {
             return
@@ -153,20 +155,25 @@ class APNGDecoder {
         }
         resetStatus = ResetStatus(offset: offset, expectedSequenceNumber: expectedSequenceNumber)
     }
-    
+}
+
+// Frame thread safe.
+extension APNGDecoder {
     func set(frame: APNGFrame, at index: Int) {
         decodingQueue.sync { frames[index] = frame }
     }
     
     func frame(at index: Int) -> APNGFrame? {
-        return decodingQueue.sync { frames[index] }
+        decodingQueue.sync { frames[index] }
     }
     
     var loadedFrames: [APNGFrame] {
         decodingQueue.sync { frames.compactMap { $0 } }
     }
     
-    var framesCount: Int { frames.count }
+    var framesCount: Int {
+        decodingQueue.sync { frames.count }
+    }
     
     func setDecodedImageCache(image: CGImage, at index: Int) {
         decodingQueue.sync {
@@ -177,7 +184,9 @@ class APNGDecoder {
     }
     
     var isFirstFrameLoaded: Bool {
-        return decodingQueue.sync { frames[0] != nil }
+        decodingQueue.sync {
+            frames[0] != nil
+        }
     }
     
     func resetDecodedImageCache() throws {
@@ -201,12 +210,11 @@ class APNGDecoder {
         }
     }
     
-    private var loadedFrameCount: Int {
-        frames.firstIndex { $0 == nil } ?? frames.count
-    }
-    
     var firstPass: Bool {
-        loadedFrameCount < frames.count
+        decodingQueue.sync {
+            let loadedFrameCount = frames.firstIndex { $0 == nil } ?? frames.count
+            return loadedFrameCount < frames.count
+        }
     }
 }
 
@@ -223,7 +231,7 @@ extension APNGDecoder {
         0xAE, 0x42, 0x60, 0x82
     ]
     
-    private func generateImageData(frameControl: fcTL, data: Data) throws -> Data {
+    func generateImageData(frameControl: fcTL, data: Data) throws -> Data {
         try generateImageData(width: frameControl.width, height: frameControl.height, data: data)
     }
     
@@ -236,6 +244,7 @@ extension APNGDecoder {
     }
 }
 
+// Falling back
 extension APNGDecoder {
     func createDefaultImageData() throws -> Data {
         let payload = try defaultImageChunks.map { idat in
@@ -323,14 +332,4 @@ extension fcTL {
 extension CGColorSpace {
     static let deviceRGB = CGColorSpaceCreateDeviceRGB()
     static let deviceGray = CGColorSpaceCreateDeviceGray()
-}
-
-extension DispatchQueue {
-    func asyncOrSyncIfMain(execute block: @escaping () -> Void) {
-        if Thread.isMainThread {
-            block()
-        } else {
-            self.async(execute: block)
-        }
-    }
 }
