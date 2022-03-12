@@ -22,7 +22,7 @@ class DecoderOptionsTests: XCTestCase {
         XCTAssertNil(decoder.frame(at: 1))
         XCTAssertNil(decoder.frame(at: 2))
         XCTAssertNil(decoder.frame(at: 3))
-        XCTAssertTrue(decoder.firstPass)
+        XCTAssertTrue(decoder.isDuringFirstPass)
     }
 
     func testDecoderWithFullFirstPassOption() throws {
@@ -35,7 +35,7 @@ class DecoderOptionsTests: XCTestCase {
         XCTAssertEqual(renderer.currentIndex, 0)
         XCTAssertEqual(decoder.framesCount, 4)
         XCTAssertEqual(decoder.framesCount, decoder.loadedFrames.count)
-        XCTAssertFalse(decoder.firstPass)
+        XCTAssertFalse(decoder.isDuringFirstPass)
         waitForExpectations(timeout: 1.0, handler: nil)
     }
 
@@ -158,7 +158,7 @@ class DecoderOptionsTests: XCTestCase {
         XCTAssertNil(apng.decoder.decodedImageCache![1])
         XCTAssertNil(apng.decoder.decodedImageCache![2])
         
-        while apng.decoder.firstPass {
+        while apng.decoder.isDuringFirstPass {
             try renderer.renderNextSync()
         }
         

@@ -77,7 +77,7 @@ class APNGImageRenderer {
         
         if decoder.options.contains(.fullFirstPass) {
             var index = currentIndex
-            while decoder.firstPass {
+            while decoder.isDuringFirstPass {
                 index = index + 1
                 let (frame, data) = try loadFrame()
                 
@@ -94,7 +94,7 @@ class APNGImageRenderer {
             }
         }
         
-        if !decoder.firstPass { // Animation with only one frame,check IEND.
+        if !decoder.isDuringFirstPass { // Animation with only one frame,check IEND.
             let skipChecksumVerify = decoder.options.contains(.skipChecksumVerify)
             _ = try reader.readChunk(type: IEND.self, skipChecksumVerify: skipChecksumVerify)
             // Dispatch to give the user a chance to setup delegate after they get the returned APNG image.
@@ -128,74 +128,6 @@ class APNGImageRenderer {
         try reader.seek(toOffset: resetStatus.offset)
         expectedSequenceNumber = resetStatus.expectedSequenceNumber
     }
-    
-    private func render(frame: APNGFrame, data: Data, index: Int) throws -> CGImage {
-        // Shortcut for image cache. The cache only be available as a whole bundle.
-        if let cached = decoder.cachedImage(at: index), decoder.allFramesCached {
-            return cached
-        }
-        
-        if index == 0 {
-            // Reset for the first frame
-            previousOutputImage = nil
-            currentOutputImage = nil
-        }
-        
-        let pngImageData = try decoder.generateImageData(frameControl: frame.frameControl, data: data)
-        guard let source = CGImageSourceCreateWithData(
-            pngImageData as CFData, [kCGImageSourceShouldCache: true] as CFDictionary
-        ) else {
-            throw APNGKitError.decoderError(.invalidFrameImageData(data: pngImageData, frameIndex: index))
-        }
-        guard let nextFrameImage = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
-            throw APNGKitError.decoderError(.frameImageCreatingFailed(source: source, frameIndex: index))
-        }
-        
-        // Dispose
-        if index == 0 { // New frame (rendering frame) is the first frame
-            outputBuffer.clear(decoder.canvasFullRect)
-        } else {
-            let displayingFrame = decoder.frame(at: index - 1)!
-            let displayingRegion = displayingFrame.normalizedRect(fullHeight: decoder.imageHeader.height)
-            switch displayingFrame.frameControl.disposeOp {
-            case .none:
-                previousOutputImage = currentOutputImage
-            case .background:
-                outputBuffer.clear(displayingRegion)
-                previousOutputImage = outputBuffer.makeImage()
-            case .previous:
-                if let previousOutputImage = previousOutputImage {
-                    if let cropped = previousOutputImage.cropping(to: displayingFrame.frameControl.cgRect) {
-                        outputBuffer.clear(displayingRegion)
-                        outputBuffer.draw(cropped, in: displayingRegion)
-                    } else {
-                        printLog("The previous image cannot be restored to target size. Something goes wrong.")
-                    }
-                } else {
-                    // Current Frame is the first frame. `.previous` should be treated as `.background`
-                    outputBuffer.clear(displayingRegion)
-                }
-            }
-        }
-        
-        // Blend & Draw the new frame
-        switch frame.frameControl.blendOp {
-        case .source:
-            outputBuffer.clear(frame.normalizedRect(fullHeight: decoder.imageHeader.height))
-            outputBuffer.draw(nextFrameImage, in: frame.normalizedRect(fullHeight: decoder.imageHeader.height))
-        case .over:
-            outputBuffer.draw(nextFrameImage, in: frame.normalizedRect(fullHeight: decoder.imageHeader.height))
-        }
-        
-        guard let nextOutputImage = outputBuffer.makeImage() else {
-            throw APNGKitError.decoderError(.outputImageCreatingFailed(frameIndex: index))
-        }
-        
-        currentOutputImage = nextOutputImage
-        decoder.setDecodedImageCache(image: nextOutputImage, at: index)
-        
-        return nextOutputImage
-    }
 }
 
 extension APNGImageRenderer {
@@ -216,7 +148,7 @@ extension APNGImageRenderer {
         
         // The cache is only still valid when all frames are in cache. If there is any `nil` in the cache, reset it.
         // Otherwise, it is not easy to decide the partial drawing context.
-        if decoder.cachePolicy == .cache, !decoder.allFramesCached {
+        if decoder.cachePolicy == .cache, !decoder.isAllFramesCached {
             try decoder.resetDecodedImageCache()
         }
         
@@ -429,7 +361,7 @@ extension APNGImageRenderer {
     private func renderNextImpl() throws -> (CGImage, Int) {
         let image: CGImage
         var newIndex = currentIndex + 1
-        if decoder.firstPass {
+        if decoder.isDuringFirstPass {
             let (frame, data) = try loadFrame()
             
             if foundMultipleAnimationControl {
@@ -438,7 +370,7 @@ extension APNGImageRenderer {
             decoder.set(frame: frame, at: newIndex)
             
             image = try render(frame: frame, data: data, index: newIndex)
-            if !decoder.firstPass {
+            if !decoder.isDuringFirstPass {
                 _ = try reader.readChunk(type: IEND.self, skipChecksumVerify: decoder.options.contains(.skipChecksumVerify))
                 DispatchQueue.main.asyncOrSyncIfMain {
                     self.decoder.onFirstPassDone()
@@ -456,7 +388,7 @@ extension APNGImageRenderer {
     }
     
     private func renderFrame(frame: APNGFrame, index: Int) throws -> CGImage {
-        guard !decoder.firstPass else {
+        guard !decoder.isDuringFirstPass else {
             preconditionFailure("renderFrame cannot work until all frames are loaded.")
         }
         
@@ -466,6 +398,74 @@ extension APNGImageRenderer {
         
         let data = try frame.loadData(with: reader)
         return try render(frame: frame, data: data, index: index)
+    }
+    
+    private func render(frame: APNGFrame, data: Data, index: Int) throws -> CGImage {
+        // Shortcut for image cache. The cache only be available as a whole bundle.
+        if let cached = decoder.cachedImage(at: index), decoder.isAllFramesCached {
+            return cached
+        }
+        
+        if index == 0 {
+            // Reset for the first frame
+            previousOutputImage = nil
+            currentOutputImage = nil
+        }
+        
+        let pngImageData = try decoder.generateImageData(frameControl: frame.frameControl, data: data)
+        guard let source = CGImageSourceCreateWithData(
+            pngImageData as CFData, [kCGImageSourceShouldCache: true] as CFDictionary
+        ) else {
+            throw APNGKitError.decoderError(.invalidFrameImageData(data: pngImageData, frameIndex: index))
+        }
+        guard let nextFrameImage = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
+            throw APNGKitError.decoderError(.frameImageCreatingFailed(source: source, frameIndex: index))
+        }
+        
+        // Dispose
+        if index == 0 { // New frame (rendering frame) is the first frame
+            outputBuffer.clear(decoder.canvasFullRect)
+        } else {
+            let displayingFrame = decoder.frame(at: index - 1)!
+            let displayingRegion = displayingFrame.normalizedRect(fullHeight: decoder.imageHeader.height)
+            switch displayingFrame.frameControl.disposeOp {
+            case .none:
+                previousOutputImage = currentOutputImage
+            case .background:
+                outputBuffer.clear(displayingRegion)
+                previousOutputImage = outputBuffer.makeImage()
+            case .previous:
+                if let previousOutputImage = previousOutputImage {
+                    if let cropped = previousOutputImage.cropping(to: displayingFrame.frameControl.cgRect) {
+                        outputBuffer.clear(displayingRegion)
+                        outputBuffer.draw(cropped, in: displayingRegion)
+                    } else {
+                        printLog("The previous image cannot be restored to target size. Something goes wrong.")
+                    }
+                } else {
+                    // Current Frame is the first frame. `.previous` should be treated as `.background`
+                    outputBuffer.clear(displayingRegion)
+                }
+            }
+        }
+        
+        // Blend & Draw the new frame
+        switch frame.frameControl.blendOp {
+        case .source:
+            outputBuffer.clear(frame.normalizedRect(fullHeight: decoder.imageHeader.height))
+            outputBuffer.draw(nextFrameImage, in: frame.normalizedRect(fullHeight: decoder.imageHeader.height))
+        case .over:
+            outputBuffer.draw(nextFrameImage, in: frame.normalizedRect(fullHeight: decoder.imageHeader.height))
+        }
+        
+        guard let nextOutputImage = outputBuffer.makeImage() else {
+            throw APNGKitError.decoderError(.outputImageCreatingFailed(frameIndex: index))
+        }
+        
+        currentOutputImage = nextOutputImage
+        decoder.setCachedImage(nextOutputImage, at: index)
+        
+        return nextOutputImage
     }
 }
 
@@ -477,4 +477,50 @@ extension DispatchQueue {
             self.async(execute: block)
         }
     }
+}
+
+// Drawing properties for IHDR.
+extension IHDR {
+    var colorSpace: CGColorSpace {
+        switch colorType {
+        case .greyscale, .greyscaleWithAlpha: return .deviceGray
+        case .trueColor, .trueColorWithAlpha: return .deviceRGB
+        case .indexedColor: return .deviceRGB
+        }
+    }
+    
+    var bitmapInfo: CGBitmapInfo {
+        switch colorType {
+        case .greyscale, .trueColor:
+            return CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
+        case .greyscaleWithAlpha, .trueColorWithAlpha, .indexedColor:
+            return CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
+        }
+    }
+    
+    var bitDepthPerComponent: Int {
+        // The sample depth is the same as the bit depth except in the case of
+        // indexed-colour PNG images (colour type 3), in which the sample depth is always 8 bits.
+        Int(colorType == .indexedColor ? 8 : bitDepth)
+    }
+    
+    var bitsPerPixel: UInt32 {
+        let componentsPerPixel =
+            colorType == .indexedColor ? 4 /* Draw indexed color as true color with alpha in CG world. */
+                                       : colorType.componentsPerPixel
+        return UInt32(componentsPerPixel * bitDepthPerComponent)
+    }
+    
+    var bytesPerPixel: UInt32 {
+        bitsPerPixel / 8
+    }
+    
+    var bytesPerRow: Int {
+        width * Int(bytesPerPixel)
+    }
+}
+
+extension CGColorSpace {
+    static let deviceRGB = CGColorSpaceCreateDeviceRGB()
+    static let deviceGray = CGColorSpaceCreateDeviceGray()
 }

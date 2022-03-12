@@ -32,7 +32,7 @@ import Delegate
 /// ```
 public class APNGImage {
     
-    /// The maximum size in memory which determines whether the decoded images should be cached or not.
+    /// The maximum byte size in memory which determines whether the decoded images should be cached or not.
     ///
     /// If a cache policy is not specified in `DecodingOptions`, APNGKit will decide if the decoded images should be
     /// cached or not by checking its loop number and the estimated size. Enlarge this number to allow bigger images
@@ -120,7 +120,7 @@ public class APNGImage {
         // If you need to know the full duration before the first pass, use `DecodingOptions.fullFirstPass` to
         // initialize the image object.
         let knownDuration = decoder.loadedFrames.reduce(0.0) { $0 + ($1.frameControl.duration) }
-        return decoder.firstPass ? .loadedPartial(knownDuration) : .full(knownDuration)
+        return decoder.isDuringFirstPass ? .loadedPartial(knownDuration) : .full(knownDuration)
     }
     
     /// The cache policy used by this image for the image data of decoded frames.

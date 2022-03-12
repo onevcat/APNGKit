@@ -26,6 +26,10 @@ class APNGDecoder {
         let expectedSequenceNumber: Int
     }
     
+    let reader: Reader
+    let options: APNGImage.DecodingOptions
+    let cachePolicy: APNGImage.CachePolicy
+    
     // Called when the first pass is done.
     let onFirstPassDone = Delegate<(), Void>()
     
@@ -34,27 +38,24 @@ class APNGDecoder {
         
     private let decodingQueue = DispatchQueue(label: "com.onevcat.apngkit.decodingQueue", qos: .userInteractive)
     
+    // Holds decoded frame data and chunk info.
     private var frames: [APNGFrame?] = []
+    // Used only when `cachePolicy` is `.cache`.
+    private(set) var decodedImageCache: [CGImage?]?
     
     var defaultImageChunks: [IDAT] { firstFrameResult?.defaultImageChunks ?? [] }
     private(set) var firstFrameResult: FirstFrameResult?
     
-    // Used only when `cachePolicy` is `.cache`.
-    private(set) var decodedImageCache: [CGImage?]?
-        
-    var canvasFullSize: CGSize { .init(width: imageHeader.width, height: imageHeader.height) }
     var canvasFullRect: CGRect { .init(origin: .zero, size: canvasFullSize) }
+    private var canvasFullSize: CGSize { .init(width: imageHeader.width, height: imageHeader.height) }
     
     // The data chunks shared by all frames: after IHDR and before the actual IDAT or fdAT chunk.
     // Use this to revert to a valid PNG for creating a CG data provider.
     private(set) var sharedData = Data()
-    let reader: Reader
     
     // Holds the reader and sequence status after the first frame decoded. When reset, we need to make sure the renderer
     // reader is set to this position before starting another read process.
     private(set) var resetStatus: ResetStatus!
-    let options: APNGImage.DecodingOptions
-    let cachePolicy: APNGImage.CachePolicy
     
     convenience init(data: Data, options: APNGImage.DecodingOptions = []) throws {
         let reader = DataReader(data: data)
@@ -77,6 +78,7 @@ class APNGDecoder {
         guard let signature = try reader.read(upToCount: 8),
               signature.bytes == Self.pngSignature
         else {
+            // Not a PNG image.
             throw APNGKitError.decoderError(.fileFormatError)
         }
         let ihdr = try reader.readChunk(type: IHDR.self, skipChecksumVerify: skipChecksumVerify)
@@ -102,7 +104,8 @@ class APNGDecoder {
         //
         // For now, just hard code a reasonable upper limitation.
         if numberOfFrames >= 1024 && !options.contains(.unlimitedFrameCount) {
-            printLog("The input frame count exceeds the upper limit. Consider to make sure the frame count is correct or set `.unlimitedFrameCount` to allow huge frame count at your risk.")
+            printLog("The input frame count exceeds the upper limit. Consider to make sure the frame count is correct " +
+                     "or set `.unlimitedFrameCount` to allow huge frame count at your risk.")
             throw APNGKitError.decoderError(.invalidNumberOfFrames(value: numberOfFrames))
         }
         frames = [APNGFrame?](repeating: nil, count: acTLResult.chunk.numberOfFrames)
@@ -132,7 +135,6 @@ class APNGDecoder {
         }
         
         sharedData.append(acTLResult.dataBeforeThunk)
-        
         animationControl = acTLResult.chunk
     }
 }
@@ -143,7 +145,6 @@ extension APNGDecoder {
         guard firstFrameResult == nil else {
             return
         }
-        
         firstFrameResult = frameResult
         sharedData.append(contentsOf: frameResult.dataBeforeFirstFrame)
         set(frame: frameResult.frame, at: 0)
@@ -159,33 +160,29 @@ extension APNGDecoder {
 
 // Frame thread safe.
 extension APNGDecoder {
-    func set(frame: APNGFrame, at index: Int) {
-        decodingQueue.sync { frames[index] = frame }
+    var framesCount: Int {
+        decodingQueue.sync { frames.count }
     }
     
     func frame(at index: Int) -> APNGFrame? {
         decodingQueue.sync { frames[index] }
     }
     
-    var loadedFrames: [APNGFrame] {
-        decodingQueue.sync { frames.compactMap { $0 } }
+    func set(frame: APNGFrame, at index: Int) {
+        decodingQueue.sync { frames[index] = frame }
     }
     
-    var framesCount: Int {
-        decodingQueue.sync { frames.count }
-    }
-    
-    func setDecodedImageCache(image: CGImage, at index: Int) {
-        decodingQueue.sync {
-            if cachePolicy == .cache {
-                decodedImageCache?[index] = image
-            }
+    func cachedImage(at index: Int) -> CGImage? {
+        guard cachePolicy == .cache else { return nil }
+        return decodingQueue.sync {
+            guard let cache = decodedImageCache else { return nil }
+            return cache[index]
         }
     }
     
-    var isFirstFrameLoaded: Bool {
-        decodingQueue.sync {
-            frames[0] != nil
+    func setCachedImage(_ image: CGImage, at index: Int) {
+        if cachePolicy == .cache {
+            decodingQueue.sync { decodedImageCache?[index] = image }
         }
     }
     
@@ -195,26 +192,23 @@ extension APNGDecoder {
         }
     }
     
-    func cachedImage(at index: Int) -> CGImage? {
-        decodingQueue.sync {
-            guard cachePolicy == .cache else { return nil }
-            guard let cache = decodedImageCache else { return nil }
-            return cache[index]
-        }
+    var loadedFrames: [APNGFrame] {
+        decodingQueue.sync { frames.compactMap { $0 } }
     }
     
-    var allFramesCached: Bool {
+    var isFirstFrameLoaded: Bool {
+        decodingQueue.sync { frames[0] != nil }
+    }
+    
+    var isAllFramesCached: Bool {
         decodingQueue.sync {
             guard let cache = decodedImageCache else { return false }
             return cache.allSatisfy { $0 != nil }
         }
     }
     
-    var firstPass: Bool {
-        decodingQueue.sync {
-            let loadedFrameCount = frames.firstIndex { $0 == nil } ?? frames.count
-            return loadedFrameCount < frames.count
-        }
+    var isDuringFirstPass: Bool {
+        decodingQueue.sync { frames.contains { $0 == nil } }
     }
 }
 
@@ -236,9 +230,7 @@ extension APNGDecoder {
     }
     
     private func generateImageData(width: Int, height: Int, data: Data) throws -> Data {
-        let ihdr = try imageHeader.updated(
-            width: width, height: height
-        ).encode()
+        let ihdr = try imageHeader.updated(width: width, height: height).encode()
         let idat = IDAT.encode(data: data)
         return Self.pngSignature + ihdr + sharedData + idat + Self.IENDBytes
     }
@@ -250,9 +242,7 @@ extension APNGDecoder {
         let payload = try defaultImageChunks.map { idat in
             try idat.loadData(with: self.reader)
         }.joined()
-        let data = try generateImageData(
-            width: imageHeader.width, height: imageHeader.height, data: Data(payload)
-        )
+        let data = try generateImageData(width: imageHeader.width, height: imageHeader.height, data: Data(payload))
         return data
     }
 }
@@ -277,48 +267,6 @@ public struct APNGFrame {
     }
 }
 
-// Drawing properties for IHDR.
-extension IHDR {
-    var colorSpace: CGColorSpace {
-        switch colorType {
-        case .greyscale, .greyscaleWithAlpha: return .deviceGray
-        case .trueColor, .trueColorWithAlpha: return .deviceRGB
-        case .indexedColor: return .deviceRGB
-        }
-    }
-    
-    var bitmapInfo: CGBitmapInfo {
-        switch colorType {
-        case .greyscale, .trueColor:
-            return CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
-        case .greyscaleWithAlpha, .trueColorWithAlpha, .indexedColor:
-            return CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
-        }
-    }
-    
-    var bitDepthPerComponent: Int {
-        // The sample depth is the same as the bit depth except in the case of
-        // indexed-colour PNG images (colour type 3), in which the sample depth is always 8 bits.
-        Int(colorType == .indexedColor ? 8 : bitDepth)
-    }
-    
-    var bitsPerPixel: UInt32 {
-        let componentsPerPixel =
-            colorType == .indexedColor ? 4 /* Draw indexed color as true color with alpha in CG world. */
-                                       : colorType.componentsPerPixel
-        return UInt32(componentsPerPixel * bitDepthPerComponent)
-    }
-    
-    var bytesPerPixel: UInt32 {
-        bitsPerPixel / 8
-    }
-    
-    var bytesPerRow: Int {
-        width * Int(bytesPerPixel)
-    }
-
-}
-
 extension fcTL {
     func normalizedRect(fullHeight: Int) -> CGRect {
         .init(x: xOffset, y: fullHeight - yOffset - height, width: width, height: height)
@@ -327,9 +275,4 @@ extension fcTL {
     var cgRect: CGRect {
         .init(x: xOffset, y: yOffset, width: width, height: height)
     }
-}
-
-extension CGColorSpace {
-    static let deviceRGB = CGColorSpaceCreateDeviceRGB()
-    static let deviceGray = CGColorSpaceCreateDeviceGray()
 }
