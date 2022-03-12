@@ -32,7 +32,7 @@ import Delegate
 /// ```
 public class APNGImage {
     
-    /// The maximum size in memory which determines whether the decoded images should be cached or not.
+    /// The maximum byte size in memory which determines whether the decoded images should be cached or not.
     ///
     /// If a cache policy is not specified in `DecodingOptions`, APNGKit will decide if the decoded images should be
     /// cached or not by checking its loop number and the estimated size. Enlarge this number to allow bigger images
@@ -63,7 +63,7 @@ public class APNGImage {
     /// Be notice that only loaded frames are returned before `onFramesInformationPrepared` happens. If you need to
     /// access all the frames from the very beginning, use `APNGImage.DecodingOptions.fullFirstPass` when creating the
     /// image.
-    public var loadedFrames: [APNGFrame] { decoder.frames.compactMap { $0 } }
+    public var loadedFrames: [APNGFrame] { decoder.loadedFrames }
     
     /// The cached CGImage object at a given frame. Only when `self.cachePolicy` is `.cache` and the corresponding frame
     /// is loaded, an image will be returned. Otherwise, `nil` is returned.
@@ -119,8 +119,8 @@ public class APNGImage {
         //
         // If you need to know the full duration before the first pass, use `DecodingOptions.fullFirstPass` to
         // initialize the image object.
-        let knownDuration = decoder.frames.reduce(0.0) { $0 + ($1?.frameControl.duration ?? 0) }
-        return decoder.firstPass ? .loadedPartial(knownDuration) : .full(knownDuration)
+        let knownDuration = decoder.loadedFrames.reduce(0.0) { $0 + ($1.frameControl.duration) }
+        return decoder.isDuringFirstPass ? .loadedPartial(knownDuration) : .full(knownDuration)
     }
     
     /// The cache policy used by this image for the image data of decoded frames.
@@ -131,11 +131,6 @@ public class APNGImage {
     /// or `.notCacheDecodedImages`. You can also adjust `APNGImage.maximumCacheSize` to suggest APNGKit change its
     /// cache policy to another image byte size.
     public var cachePolicy: CachePolicy { decoder.cachePolicy }
-    
-    // Holds the image owner view as weak, to prevent a single image held by multiple image views. The behavior of
-    // this is not defined since it is not easy to determine if they should share the timing. If you need to display the
-    // same image in different APNG image views, create multiple instance instead.
-    weak var owner: AnyObject?
     
     /// Creates an APNG image object using the named image file in the main bundle.
     /// - Parameters:
@@ -243,10 +238,6 @@ public class APNGImage {
                 throw error
             }
         }
-    }
-    
-    func reset() throws {
-        try decoder.reset()
     }
 }
 

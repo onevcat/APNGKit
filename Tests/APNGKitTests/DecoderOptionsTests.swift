@@ -15,13 +15,14 @@ class DecoderOptionsTests: XCTestCase {
 
     func testDecoderWithoutFullFirstPassOption() throws {
         let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25))
-        XCTAssertEqual(decoder.currentIndex, 0)
-        XCTAssertEqual(decoder.frames.count, 4)
-        XCTAssertNotNil(decoder.frames[0])
-        XCTAssertNil(decoder.frames[1])
-        XCTAssertNil(decoder.frames[2])
-        XCTAssertNil(decoder.frames[3])
-        XCTAssertTrue(decoder.firstPass)
+        let renderer = try APNGImageRenderer(decoder: decoder)
+        XCTAssertEqual(renderer.currentIndex, 0)
+        XCTAssertEqual(decoder.framesCount, 4)
+        XCTAssertNotNil(decoder.frame(at: 0))
+        XCTAssertNil(decoder.frame(at: 1))
+        XCTAssertNil(decoder.frame(at: 2))
+        XCTAssertNil(decoder.frame(at: 3))
+        XCTAssertTrue(decoder.isDuringFirstPass)
     }
 
     func testDecoderWithFullFirstPassOption() throws {
@@ -30,18 +31,19 @@ class DecoderOptionsTests: XCTestCase {
         decoder.onFirstPassDone.delegate(on: self) { (self, _) in
             exp.fulfill()
         }
-        XCTAssertEqual(decoder.currentIndex, 0)
-        XCTAssertEqual(decoder.frames.count, 4)
-        XCTAssertTrue(decoder.frames.allSatisfy { $0 != nil })
-        XCTAssertFalse(decoder.firstPass)
+        let renderer = try APNGImageRenderer(decoder: decoder)
+        XCTAssertEqual(renderer.currentIndex, 0)
+        XCTAssertEqual(decoder.framesCount, 4)
+        XCTAssertEqual(decoder.framesCount, decoder.loadedFrames.count)
+        XCTAssertFalse(decoder.isDuringFirstPass)
         waitForExpectations(timeout: 1.0, handler: nil)
     }
 
     func testDecoderWithoutLoadingFrameData() throws {
         let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25), options: [.fullFirstPass])
-        decoder.frames.forEach { frame in
+        decoder.loadedFrames.forEach { frame in
             XCTAssertNotNil(frame)
-            let dataChunks = frame!.data
+            let dataChunks = frame.data
             XCTAssertFalse(dataChunks.isEmpty)
             let allIsOffset = dataChunks.allSatisfy { chunk in
                 if case .position(_, _) = chunk.dataPresentation {
@@ -56,9 +58,9 @@ class DecoderOptionsTests: XCTestCase {
     
     func testDecoderWithLoadingFrameData() throws {
         let decoder = try APNGDecoder(fileURL: SpecTesting.specTestingURL(25), options: [.fullFirstPass, .loadFrameData])
-        decoder.frames.forEach { frame in
+        decoder.loadedFrames.forEach { frame in
             XCTAssertNotNil(frame)
-            let dataChunks = frame!.data
+            let dataChunks = frame.data
             XCTAssertFalse(dataChunks.isEmpty)
             let allIsData = dataChunks.allSatisfy { chunk in
                 if case .data(let d) = chunk.dataPresentation {
@@ -77,6 +79,7 @@ class DecoderOptionsTests: XCTestCase {
         APNGImage.maximumCacheSize = .max
         defer { APNGImage.maximumCacheSize = oldValue }
         let apng = try APNGImage(named: "pyani.apng", in: .module, subdirectory: "General")
+        _ = try APNGImageRenderer(decoder: apng.decoder)
         XCTAssertEqual(apng.cachePolicy, .cache)
         XCTAssertNotNil(apng.decoder.decodedImageCache)
         
@@ -87,7 +90,8 @@ class DecoderOptionsTests: XCTestCase {
         XCTAssertNil(apng.decoder.decodedImageCache![1])
         
         // Render and cache the next frame.
-        try apng.decoder.renderNextSync()
+        let renderer = try APNGImageRenderer(decoder: apng.decoder)
+        try renderer.renderNextSync()
         XCTAssertNotNil(apng.decoder.decodedImageCache![1])
     }
     
@@ -136,36 +140,38 @@ class DecoderOptionsTests: XCTestCase {
     
     func testImageCacheReset() throws {
         let apng = try APNGImage(named: "pyani.apng", in: .module, subdirectory: "General")
+        _ = try APNGImageRenderer(decoder: apng.decoder)
         XCTAssertEqual(apng.cachePolicy, .cache)
         XCTAssertNotNil(apng.decoder.decodedImageCache)
         
         XCTAssertNotNil(apng.decoder.decodedImageCache![0])
         
         XCTAssertNil(apng.decoder.decodedImageCache![1])
-        try apng.decoder.renderNextSync()
+        let renderer = try APNGImageRenderer(decoder: apng.decoder)
+        try renderer.renderNextSync()
         XCTAssertNotNil(apng.decoder.decodedImageCache![1])
         
         // When reset, a non-fully cached image should reset its cache too.
-        try apng.decoder.reset()
+        try renderer.reset()
         // Only the first frame is still in cache (since it is rendered again.)
         XCTAssertNotNil(apng.decoder.decodedImageCache![0])
         XCTAssertNil(apng.decoder.decodedImageCache![1])
         XCTAssertNil(apng.decoder.decodedImageCache![2])
         
-        while apng.decoder.firstPass {
-            try apng.decoder.renderNextSync()
+        while apng.decoder.isDuringFirstPass {
+            try renderer.renderNextSync()
         }
         
         // All frame should be cached.
         XCTAssertTrue(apng.decoder.decodedImageCache!.allSatisfy { $0 != nil })
         
         // Cache is not reset when all frames decoded.
-        try apng.reset()
+        try renderer.reset()
         XCTAssertTrue(apng.decoder.decodedImageCache!.allSatisfy { $0 != nil })
         
         // Cache is not reset when current index is 0.
-        XCTAssertEqual(apng.decoder.currentIndex, 0)
-        try apng.reset()
+        XCTAssertEqual(renderer.currentIndex, 0)
+        try renderer.reset()
         XCTAssertTrue(apng.decoder.decodedImageCache!.allSatisfy { $0 != nil })
     }
 }

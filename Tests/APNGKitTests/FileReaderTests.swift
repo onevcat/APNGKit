@@ -159,4 +159,27 @@ class FileReaderTests: XCTestCase {
         _ = try normalReader.read(upToCount: 4)
         XCTAssertEqual(5, try normalReader.offset())
     }
+    
+    func testFileReaderClone() throws {
+        let reader1 = try FileReader(url: Self.tmpFileURL)
+        let data1 = try reader1.read(upToCount: 1)
+        XCTAssertEqual([1], data1?.bytes)
+        
+        let reader2 = try reader1.clone()
+        
+        let data2_1 = try reader1.read(upToCount: 2)
+        let data2_2 = try reader2.read(upToCount: 2)
+        XCTAssertEqual([2,3], data2_1?.bytes)
+        XCTAssertEqual([2,3], data2_2?.bytes)
+        
+        let data3_1 = try reader1.read(upToCount: 2)
+        XCTAssertEqual([4,5], data3_1?.bytes)
+        
+        try reader1.seek(toOffset: 0)
+        let data1_1 = try reader1.read(upToCount: 2)
+        XCTAssertEqual([1, 2], data1_1?.bytes)
+        
+        let data3_2 = try reader2.read(upToCount: 2)
+        XCTAssertEqual([4,5], data3_2?.bytes)
+    }
 }

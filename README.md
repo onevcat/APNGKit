@@ -152,31 +152,6 @@ imageView.image = image
 imageView.startAnimating()
 ```
 
-#### Image owner
-
-DO NOT set the same image to multiple image views, which is not allowed in APNGKit. Every created `APNGImage` has an 
-owner, you cannot set multiple owners to it, otherwise it confuses how to sync with the screen. To display the same 
-image, create a new one:
-
-```swift
-let image = try APNGImage(named: "image")
-imageView.image = image
-
-// You cannot set the same image to another image view.
-// This causes an error.
-anotherImageView.image = image
-
-// You can create another one and set it.
-// This works.
-let anotherImage = try APNGImage(named: "image")
-anotherImageView.image = anotherImage
-
-// Or first remove the original owner.
-// This works
-imageView.image = nil
-anotherImageView.image = image
-```
-
 #### XIB or Storyboard
 
 If you are an Interface Builder lover, drag a `UIView` (or `NSView`) (Please note, not a `UIImageView` or `NSImageView`) 

@@ -24,42 +24,42 @@ class APNGImageViewTimingTests: XCTestCase {
             XCTFail("Frame missed, index: \(index). CI node performance is not enough.")
         }
         
-        let firstFrame = imageView.image!.decoder.frames.first!
+        let firstFrame = imageView.image!.decoder.loadedFrames.first!
         XCTAssertNotNil(firstFrame)
         
         // The minimal animation has identical frame duration for each frame.
-        let frameDuration = firstFrame!.frameControl.duration
+        let frameDuration = firstFrame.frameControl.duration
         timeWrap {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
-            XCTAssertEqual(imageView.image!.decoder.currentIndex, 0)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 0)
         }
         // Only ensure before the next frame. Display link requires synced with refresh rate...
         .after(frameDuration * 0.5) {
-            XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 1)
         }
         .after(frameDuration) {
             // Displaying this index.
             XCTAssertEqual(imageView.displayingFrameIndex, 1)
             // The next frame is prepared.
-            XCTAssertEqual(imageView.image?.decoder.currentIndex, 2)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 2)
         }
         .after(frameDuration) {
             XCTAssertEqual(imageView.displayingFrameIndex, 2)
-            XCTAssertEqual(imageView.image?.decoder.currentIndex, 3)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 3)
         }
         .after(frameDuration) {
             XCTAssertEqual(loopCount, 0)
             XCTAssertEqual(imageView.displayingFrameIndex, 3)
-            XCTAssertEqual(imageView.image?.decoder.currentIndex, 0)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 0)
         }
         .after(frameDuration) {
             XCTAssertEqual(loopCount, 1)
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
-            XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 1)
         }
         .after(frameDuration) {
             XCTAssertEqual(imageView.displayingFrameIndex, 1)
-            XCTAssertEqual(imageView.image?.decoder.currentIndex, 2)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 2)
         }
         .done()
     }
@@ -72,18 +72,18 @@ class APNGImageViewTimingTests: XCTestCase {
 
         XCTAssertFalse(imageView.isAnimating)
 
-        let firstFrame = imageView.image!.decoder.frames.first!
-        let frameDuration = firstFrame!.frameControl.duration
+        let firstFrame = imageView.image!.decoder.loadedFrames.first!
+        let frameDuration = firstFrame.frameControl.duration
         
         timeWrap {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
         }
         .after(frameDuration * 0.5) {
-            XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 1)
         }
         .after(frameDuration) { // Animation is not started
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
-            XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 1)
             XCTAssertFalse(imageView.isAnimating)
             
             imageView.startAnimating()
@@ -92,7 +92,7 @@ class APNGImageViewTimingTests: XCTestCase {
         .after(frameDuration * 0.5) { }
         .after(frameDuration) { // Animation is going on...
             XCTAssertEqual(imageView.displayingFrameIndex, 1)
-            XCTAssertEqual(imageView.image?.decoder.currentIndex, 2)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 2)
             XCTAssertTrue(imageView.isAnimating)
         }
         .done()
@@ -101,25 +101,25 @@ class APNGImageViewTimingTests: XCTestCase {
     func testAnimatingStop() throws {
         let imageView = APNGImageView(image: createMinimalImage())
         XCTAssertTrue(imageView.isAnimating)
-        let firstFrame = imageView.image!.decoder.frames.first!
-        let frameDuration = firstFrame!.frameControl.duration
+        let firstFrame = imageView.image!.decoder.loadedFrames.first!
+        let frameDuration = firstFrame.frameControl.duration
         timeWrap {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
-            XCTAssertEqual(imageView.image!.decoder.currentIndex, 0)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 0)
         }
         .after(frameDuration * 0.5) {
-            XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 1)
         }
         .after(frameDuration) {
             XCTAssertEqual(imageView.displayingFrameIndex, 1)
-            XCTAssertEqual(imageView.image?.decoder.currentIndex, 2)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 2)
             
             imageView.stopAnimating()
             XCTAssertFalse(imageView.isAnimating)
         }
         .after(frameDuration) {
             XCTAssertEqual(imageView.displayingFrameIndex, 1)
-            XCTAssertEqual(imageView.image?.decoder.currentIndex, 2)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 2)
         }
         .done()
     }
@@ -129,8 +129,8 @@ class APNGImageViewTimingTests: XCTestCase {
         apng.numberOfPlays = 1
         let imageView = APNGImageView(image: apng)
         
-        let firstFrame = imageView.image!.decoder.frames.first!
-        let frameDuration = firstFrame!.frameControl.duration
+        let firstFrame = imageView.image!.decoder.loadedFrames.first!
+        let frameDuration = firstFrame.frameControl.duration
         
         var allDone = false
         imageView.onAllPlaysDone.delegate(on: self) { (self, _) in
@@ -138,14 +138,14 @@ class APNGImageViewTimingTests: XCTestCase {
         }
         timeWrap {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
-            XCTAssertEqual(imageView.image!.decoder.currentIndex, 0)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 0)
         }
         .after(frameDuration * 0.5) {
-            XCTAssertEqual(imageView.image?.decoder.currentIndex, 1)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 1)
         }
         .after(frameDuration * 3) {
             XCTAssertEqual(imageView.displayingFrameIndex, 3)
-            XCTAssertEqual(imageView.image!.decoder.currentIndex, 0)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 0)
             XCTAssertTrue(imageView.isAnimating)
             XCTAssertFalse(allDone)
         }
@@ -157,32 +157,66 @@ class APNGImageViewTimingTests: XCTestCase {
         }
         .done()
     }
-
-
     
     func testSwitchingImageReset() throws {
         let minimalAPNG = createMinimalImage()
         let imageView = APNGImageView(image: minimalAPNG)
         
-        let firstFrame = imageView.image!.decoder.frames.first!
-        let frameDuration = firstFrame!.frameControl.duration
+        let firstFrame = imageView.image!.decoder.loadedFrames.first!
+        let frameDuration = firstFrame.frameControl.duration
         
         timeWrap {}
         .after(frameDuration * 0.5) {}
         .after(frameDuration) {
             XCTAssertEqual(imageView.displayingFrameIndex, 1)
-            XCTAssertEqual(minimalAPNG.decoder.currentIndex, 2)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 2)
             imageView.image = nil
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
-            XCTAssertEqual(minimalAPNG.decoder.currentIndex, 2)
+            XCTAssertNil(imageView.renderer)
         }
         .after(frameDuration) {
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
-            XCTAssertEqual(minimalAPNG.decoder.currentIndex, 2)
+            XCTAssertNil(imageView.renderer)
             imageView.image = minimalAPNG
             // original image should be reset
             XCTAssertEqual(imageView.displayingFrameIndex, 0)
-            XCTAssertEqual(minimalAPNG.decoder.currentIndex, 0)
+            XCTAssertEqual(imageView.renderer?.currentIndex, 0)
+        }
+        .done()
+    }
+    
+    func testImageUsedInMultipleImageViews() throws {
+        let minimalAPNG = createMinimalImage()
+        
+        let imageView1 = APNGImageView(image: minimalAPNG)
+        let imageView2 = APNGImageView()
+        
+        let firstFrame = imageView1.image!.decoder.loadedFrames.first!
+        let frameDuration = firstFrame.frameControl.duration
+        
+        timeWrap {}
+        .after(frameDuration * 0.5) {}
+        .after(frameDuration) {
+            XCTAssertEqual(imageView1.displayingFrameIndex, 1)
+            XCTAssertEqual(imageView1.renderer?.currentIndex, 2)
+        }
+        .after(frameDuration) {
+            imageView2.image = minimalAPNG
+            XCTAssertEqual(imageView1.displayingFrameIndex, 2)
+            XCTAssertEqual(imageView1.renderer?.currentIndex, 3)
+            
+            XCTAssertEqual(imageView2.displayingFrameIndex, 0)
+            XCTAssertEqual(imageView2.renderer?.currentIndex, 0)
+        }
+        .after(frameDuration * 0.5) {
+            imageView1.image = nil
+        }
+        .after(frameDuration) {
+            XCTAssertEqual(imageView1.displayingFrameIndex, 0)
+            XCTAssertNil(imageView1.renderer)
+            
+            XCTAssertEqual(imageView2.displayingFrameIndex, 1)
+            XCTAssertEqual(imageView2.renderer?.currentIndex, 2)
         }
         .done()
     }

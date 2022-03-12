@@ -26,47 +26,36 @@ class APNGDecoder {
         let expectedSequenceNumber: Int
     }
     
+    let reader: Reader
+    let options: APNGImage.DecodingOptions
+    let cachePolicy: APNGImage.CachePolicy
+    
     // Called when the first pass is done.
     let onFirstPassDone = Delegate<(), Void>()
     
-    // Only valid on main thread. Set the `output` to a `.failure` value would result the default image being rendered
-    // for the next frame in APNGImageView.
-    var output: Result<CGImage, APNGKitError>?
-    // Only valid on main thread.
-    var currentIndex: Int = 0
-    
     let imageHeader: IHDR
     let animationControl: acTL
+        
+    private let decodingQueue = DispatchQueue(label: "com.onevcat.apngkit.decodingQueue", qos: .userInteractive)
     
-    private var foundMultipleAnimationControl = false
-    
-    private let renderingQueue = DispatchQueue(label: "com.onevcat.apngkit.renderingQueue", qos: .userInteractive)
-    
-    private(set) var frames: [APNGFrame?] = []
-    
-    private(set) var defaultImageChunks: [IDAT] = []
-    
-    private var expectedSequenceNumber = 0
-    
-    private var currentOutputImage: CGImage?
-    private var previousOutputImage: CGImage?
-    
+    // Holds decoded frame data and chunk info.
+    private var frames: [APNGFrame?] = []
     // Used only when `cachePolicy` is `.cache`.
     private(set) var decodedImageCache: [CGImage?]?
     
+    var defaultImageChunks: [IDAT] { firstFrameResult?.defaultImageChunks ?? [] }
+    private(set) var firstFrameResult: FirstFrameResult?
+    
+    var canvasFullRect: CGRect { .init(origin: .zero, size: canvasFullSize) }
     private var canvasFullSize: CGSize { .init(width: imageHeader.width, height: imageHeader.height) }
-    private var canvasFullRect: CGRect { .init(origin: .zero, size: canvasFullSize) }
     
     // The data chunks shared by all frames: after IHDR and before the actual IDAT or fdAT chunk.
     // Use this to revert to a valid PNG for creating a CG data provider.
-    private var sharedData = Data()
-    private let outputBuffer: CGContext
-    private let reader: Reader
+    private(set) var sharedData = Data()
     
-    private var resetStatus: ResetStatus!
-    private let options: APNGImage.DecodingOptions
-    
-    let cachePolicy: APNGImage.CachePolicy
+    // Holds the reader and sequence status after the first frame decoded. When reset, we need to make sure the renderer
+    // reader is set to this position before starting another read process.
+    private(set) var resetStatus: ResetStatus!
     
     convenience init(data: Data, options: APNGImage.DecodingOptions = []) throws {
         let reader = DataReader(data: data)
@@ -89,6 +78,7 @@ class APNGDecoder {
         guard let signature = try reader.read(upToCount: 8),
               signature.bytes == Self.pngSignature
         else {
+            // Not a PNG image.
             throw APNGKitError.decoderError(.fileFormatError)
         }
         let ihdr = try reader.readChunk(type: IHDR.self, skipChecksumVerify: skipChecksumVerify)
@@ -108,12 +98,14 @@ class APNGDecoder {
         
         // Too large `numberOfFrames`. Do not accept it since we are doing a pre-action memory alloc.
         // Although 1024 frames should be enough for all normal case, there is an improvement plan:
-        // - Add a read option to loose this restriction (at user's risk. A large number would cause OOM.)
-        // - An alloc-with-use memory model. Do not alloc memory by this number (which might be malformed), but do the
+        // - [x] Add a read option to loose this restriction (at user's risk. A large number would cause OOM.) | Done as `.unlimitedFrameCount`.
+        // - [ ] An alloc-with-use memory model. Do not alloc memory by this number (which might be malformed), but do the
         //   alloc JIT.
         //
         // For now, just hard code a reasonable upper limitation.
         if numberOfFrames >= 1024 && !options.contains(.unlimitedFrameCount) {
+            printLog("The input frame count exceeds the upper limit. Consider to make sure the frame count is correct " +
+                     "or set `.unlimitedFrameCount` to allow huge frame count at your risk.")
             throw APNGKitError.decoderError(.invalidNumberOfFrames(value: numberOfFrames))
         }
         frames = [APNGFrame?](repeating: nil, count: acTLResult.chunk.numberOfFrames)
@@ -143,428 +135,80 @@ class APNGDecoder {
         }
         
         sharedData.append(acTLResult.dataBeforeThunk)
-        
         animationControl = acTLResult.chunk
-        
-        guard let outputBuffer = CGContext(
-            data: nil,
-            width: imageHeader.width,
-            height: imageHeader.height,
-            bitsPerComponent: imageHeader.bitDepthPerComponent,
-            bytesPerRow: imageHeader.bytesPerRow,
-            space: imageHeader.colorSpace,
-            bitmapInfo: imageHeader.bitmapInfo.rawValue
-        ) else {
-            throw APNGKitError.decoderError(.canvasCreatingFailed)
-        }
-        self.outputBuffer = outputBuffer
-        
-        // fcTL and acTL order can be changed in APNG spec.
-        // Try to check if the first `fcTL` is already existing before `acTL`. If there is already a valid `fcTL`, use
-        // it as the first frame control to extract the default image.
-        let first_fcTLReader = DataReader(data: acTLResult.dataBeforeThunk)
-        let firstFCTL: fcTL?
-        do {
-            let first_fcTLResult = try first_fcTLReader.readUntil(type: fcTL.self)
-            firstFCTL = first_fcTLResult.chunk
-        } catch {
-            firstFCTL = nil
-        }
-
-        // Decode the first frame, so the image view has the initial image to show from the very beginning.
-        let firstFrameResult = try loadFirstFrameAndDefaultImage(firstFCTL: firstFCTL)
-        let firstFrame = firstFrameResult.frame
-        let firstFrameData = firstFrameResult.frameImageData
-        self.defaultImageChunks = firstFrameResult.defaultImageChunks
-        sharedData.append(firstFrameResult.dataBeforeFirstFrame)
-        self.frames[currentIndex] = firstFrame
-        
-        // Render the first frame.
-        // It is safe to set it here since this `setup()` method will be only called in init, before any chance to
-        // make another call like `renderNext` to modify `output` at the same time.
-        if !foundMultipleAnimationControl {
-            let cgImage = try render(frame: firstFrame, data: firstFrameData, index: currentIndex)
-            output = .success(cgImage)
-        } else {
-            output = .failure(.decoderError(.multipleAnimationControlChunk))
-        }
-        
-        // Store the current reader offset. If later we need to reset the image loading state, we can start from here
-        // to make the whole image back to the state of just initialized.
-        resetStatus = ResetStatus(offset: try reader.offset(), expectedSequenceNumber: expectedSequenceNumber)
-        
-        if options.contains(.fullFirstPass) {
-            var index = currentIndex
-            while firstPass {
-                index = index + 1
-                let (frame, data) = try loadFrame()
-                
-                if options.contains(.preRenderAllFrames) {
-                    _ = try render(frame: frame, data: data, index: index)
-                }
-                
-                if foundMultipleAnimationControl {
-                    throw APNGKitError.decoderError(.multipleAnimationControlChunk)
-                }
-                frames[index] = frame
-            }
-        }
-        
-        if !firstPass { // Animation with only one frame,check IEND.
-            _ = try reader.readChunk(type: IEND.self, skipChecksumVerify: skipChecksumVerify)
-            
-            // Dispatch to give the user a chance to setup delegate after they get the returned APNG image.
-            DispatchQueue.main.async { self.onFirstPassDone() }
-        }
     }
-    
-    func reset() throws {
-        if currentIndex == 0 {
-            // It is under the initial state. No need to reset.
+}
+
+// Renderer-orientated interfaces
+extension APNGDecoder {
+    func setFirstFrameLoaded(frameResult: FirstFrameResult) {
+        guard firstFrameResult == nil else {
             return
         }
-        
-        var firstFrame: APNGFrame? = nil
-        var firstFrameData: Data? = nil
-        
-        try renderingQueue.sync {
-            firstFrame = frames[0]
-            firstFrameData = try firstFrame?.loadData(with: reader)
-            try reader.seek(toOffset: resetStatus.offset)
-            expectedSequenceNumber = resetStatus.expectedSequenceNumber
+        firstFrameResult = frameResult
+        sharedData.append(contentsOf: frameResult.dataBeforeFirstFrame)
+        set(frame: frameResult.frame, at: 0)
+    }
+    
+    func setResetStatus(offset: UInt64, expectedSequenceNumber: Int) {
+        guard resetStatus == nil else {
+            return
         }
-        
-        if cachePolicy == .cache, let cache = decodedImageCache, cache.contains(nil) {
-            // The cache is only still valid when all frames are in cache. If there is any `nil` in the cache, reset it.
-            // Otherwise, it is not easy to decide the partial drawing context.
+        resetStatus = ResetStatus(offset: offset, expectedSequenceNumber: expectedSequenceNumber)
+    }
+}
+
+// Frame thread safe.
+extension APNGDecoder {
+    var framesCount: Int {
+        decodingQueue.sync { frames.count }
+    }
+    
+    func frame(at index: Int) -> APNGFrame? {
+        decodingQueue.sync { frames[index] }
+    }
+    
+    func set(frame: APNGFrame, at index: Int) {
+        decodingQueue.sync { frames[index] = frame }
+    }
+    
+    func cachedImage(at index: Int) -> CGImage? {
+        guard cachePolicy == .cache else { return nil }
+        return decodingQueue.sync {
+            guard let cache = decodedImageCache else { return nil }
+            return cache[index]
+        }
+    }
+    
+    func setCachedImage(_ image: CGImage, at index: Int) {
+        if cachePolicy == .cache {
+            decodingQueue.sync { decodedImageCache?[index] = image }
+        }
+    }
+    
+    func resetDecodedImageCache() throws {
+        decodingQueue.sync {
             decodedImageCache = [CGImage?](repeating: nil, count: animationControl.numberOfFrames)
         }
-        
-        currentIndex = 0
-        output = .success(try render(frame: firstFrame!, data: firstFrameData!, index: 0))
-    }
-
-    private func renderNextImpl() throws -> (CGImage, Int) {
-        let image: CGImage
-        var newIndex = currentIndex + 1
-        if firstPass {
-            let (frame, data) = try loadFrame()
-            
-            if foundMultipleAnimationControl {
-                throw APNGKitError.decoderError(.multipleAnimationControlChunk)
-            }
-            
-            frames[newIndex] = frame
-            
-            image = try render(frame: frame, data: data, index: newIndex)
-            if !firstPass {
-                _ = try reader.readChunk(type: IEND.self, skipChecksumVerify: options.contains(.skipChecksumVerify))
-                DispatchQueue.main.asyncOrSyncIfMain {
-                    self.onFirstPassDone()
-                }
-                
-            }
-        } else {
-            if newIndex == frames.count {
-                newIndex = 0
-            }
-            // It is not the first pass. All frames info should be already decoded and stored in `frames`.
-            image = try renderFrame(frame: frames[newIndex]!, index: newIndex)
-        }
-        return (image, newIndex)
     }
     
-    func renderNextSync() throws {
-        output = nil
-        do {
-            let (image, index) = try renderNextImpl()
-            self.output = .success(image)
-            self.currentIndex = index
-        } catch {
-            self.output = .failure(error as? APNGKitError ?? .internalError(error))
+    var loadedFrames: [APNGFrame] {
+        decodingQueue.sync { frames.compactMap { $0 } }
+    }
+    
+    var isFirstFrameLoaded: Bool {
+        decodingQueue.sync { frames[0] != nil }
+    }
+    
+    var isAllFramesCached: Bool {
+        decodingQueue.sync {
+            guard let cache = decodedImageCache else { return false }
+            return cache.allSatisfy { $0 != nil }
         }
     }
     
-    // The result will be rendered to `output`.
-    func renderNext() {
-        output = nil // This method is expected to be called on main thread.
-        renderingQueue.async {
-            do {
-                let (image, index) = try self.renderNextImpl()
-                DispatchQueue.main.async {
-                    self.output = .success(image)
-                    self.currentIndex = index
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    self.output = .failure(error as? APNGKitError ?? .internalError(error))
-                }
-            }
-        }
-    }
-
-    private func render(frame: APNGFrame, data: Data, index: Int) throws -> CGImage {
-        // Shortcut for image cache.
-        if let cached = cachedImage(at: index) {
-            return cached
-        }
-        
-        if index == 0 {
-            // Reset for the first frame
-            previousOutputImage = nil
-            currentOutputImage = nil
-        }
-        
-        let pngImageData = try generateImageData(frameControl: frame.frameControl, data: data)
-        guard let source = CGImageSourceCreateWithData(
-            pngImageData as CFData, [kCGImageSourceShouldCache: true] as CFDictionary
-        ) else {
-            throw APNGKitError.decoderError(.invalidFrameImageData(data: pngImageData, frameIndex: index))
-        }
-        guard let nextFrameImage = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
-            throw APNGKitError.decoderError(.frameImageCreatingFailed(source: source, frameIndex: index))
-        }
-        
-        // Dispose
-        if index == 0 { // New frame (rendering frame) is the first frame
-            outputBuffer.clear(canvasFullRect)
-        } else {
-            let displayingFrame = frames[index - 1]!
-            let displayingRegion = displayingFrame.normalizedRect(fullHeight: imageHeader.height)
-            switch displayingFrame.frameControl.disposeOp {
-            case .none:
-                previousOutputImage = currentOutputImage
-            case .background:
-                outputBuffer.clear(displayingRegion)
-                previousOutputImage = outputBuffer.makeImage()
-            case .previous:
-                if let previousOutputImage = previousOutputImage {
-                    if let cropped = previousOutputImage.cropping(to: displayingFrame.frameControl.cgRect) {
-                        outputBuffer.clear(displayingRegion)
-                        outputBuffer.draw(cropped, in: displayingRegion)
-                    } else {
-                        printLog("The previous image cannot be restored to target size. Something goes wrong.")
-                    }
-                } else {
-                    // Current Frame is the first frame. `.previous` should be treated as `.background`
-                    outputBuffer.clear(displayingRegion)
-                }
-            }
-        }
-        
-        // Blend & Draw the new frame
-        switch frame.frameControl.blendOp {
-        case .source:
-            outputBuffer.clear(frame.normalizedRect(fullHeight: imageHeader.height))
-            outputBuffer.draw(nextFrameImage, in: frame.normalizedRect(fullHeight: imageHeader.height))
-        case .over:
-            outputBuffer.draw(nextFrameImage, in: frame.normalizedRect(fullHeight: imageHeader.height))
-        }
-        
-        guard let nextOutputImage = outputBuffer.makeImage() else {
-            throw APNGKitError.decoderError(.outputImageCreatingFailed(frameIndex: index))
-        }
-        
-        currentOutputImage = nextOutputImage
-        
-        if cachePolicy == .cache {
-            decodedImageCache?[index] = nextOutputImage
-        }
-        
-        return nextOutputImage
-    }
-    
-    private func renderFrame(frame: APNGFrame, index: Int) throws -> CGImage {
-        guard !firstPass else {
-            preconditionFailure("renderFrame cannot work until all frames are loaded.")
-        }
-        
-        if let cached = cachedImage(at: index) {
-            return cached
-        }
-        
-        let data = try frame.loadData(with: reader)
-        return try render(frame: frame, data: data, index: index)
-    }
-    
-    private func cachedImage(at index: Int) -> CGImage? {
-        guard cachePolicy == .cache else { return nil }
-        guard let cache = decodedImageCache else { return nil }
-        return cache[index]
-    }
-    
-    private var loadedFrameCount: Int {
-        frames.firstIndex { $0 == nil } ?? frames.count
-    }
-    
-    var firstPass: Bool {
-        loadedFrameCount < frames.count
-    }
-    
-    private func loadFirstFrameAndDefaultImage(firstFCTL: fcTL?) throws -> FirstFrameResult {
-        var result: FirstFrameResult?
-        var prefixedData = Data() // It is possible there are more shared data between acTL and first frame.
-        while result == nil {
-            try reader.peek { info, action in
-                // Start to load the first frame and default image. There are two possible options.
-                switch info.name.bytes {
-                case fcTL.nameBytes:
-                    // Sequence number    Chunk
-                    // (none)             `acTL`
-                    // 0                  `fcTL` first frame
-                    // (none)             `IDAT` first frame / default image
-                    let frameControl = try action(.read(type: fcTL.self)).fcTL
-                    try checkSequenceNumber(frameControl)
-                    let (chunks, data) = try loadImageData()
-                    let firstFrame = APNGFrame(frameControl: frameControl, data: chunks)
-                    result = FirstFrameResult(
-                        frame: firstFrame,
-                        frameImageData: data,
-                        defaultImageChunks: chunks,
-                        dataBeforeFirstFrame: prefixedData
-                    )
-                case IDAT.nameBytes:
-                    // Sequence number    Chunk
-                    // (none)             `acTL`
-                    // (none)             `IDAT` default image
-                    // 0                  `fcTL` first frame
-                    // 1                  first `fdAT` for first frame
-                    _ = try action(.reset)
-                    
-                    if let firstFCTL = firstFCTL {
-                        try checkSequenceNumber(firstFCTL)
-                        let (chunks, data) = try loadImageData()
-                        let firstFrame = APNGFrame(frameControl: firstFCTL, data: chunks)
-                        result = FirstFrameResult(
-                            frame: firstFrame,
-                            frameImageData: data,
-                            defaultImageChunks: chunks,
-                            dataBeforeFirstFrame: prefixedData
-                        )
-                    } else {
-                        let (defaultImageChunks, _) = try loadImageData()
-                        let (frame, frameData) = try loadFrame()
-                        result = FirstFrameResult(
-                            frame: frame,
-                            frameImageData: frameData,
-                            defaultImageChunks: defaultImageChunks,
-                            dataBeforeFirstFrame: prefixedData
-                        )
-                    }
-                case acTL.nameBytes:
-                    self.foundMultipleAnimationControl = true
-                    _ = try action(.read())
-                default:
-                    if case .rawData(let data) = try action(.read()) {
-                        prefixedData.append(data)
-                    }
-                }
-            }
-        }
-        return result!
-    }
-    
-    // Load the next full fcTL controlled and its frame data from current position
-    private func loadFrame() throws -> (APNGFrame, Data) {
-        var result: (APNGFrame, Data)?
-        while result == nil {
-            try reader.peek { info, action in
-                switch info.name.bytes {
-                case fcTL.nameBytes:
-                    let frameControl = try action(.read(type: fcTL.self)).fcTL
-                    try checkSequenceNumber(frameControl)
-                    let (dataChunks, data) = try loadFrameData()
-                    result = (APNGFrame(frameControl: frameControl, data: dataChunks), data)
-                case acTL.nameBytes:
-                    self.foundMultipleAnimationControl = true
-                    _ = try action(.read())
-                default:
-                    _ = try action(.read())
-                }
-            }
-        }
-        return result!
-    }
-    
-    private func loadFrameData() throws -> ([fdAT], Data) {
-        var result: [fdAT] = []
-        var allData: Data = .init()
-        
-        let skipChecksumVerify = options.contains(.skipChecksumVerify)
-        
-        var frameDataEnd = false
-        while !frameDataEnd {
-            try reader.peek { info, action in
-                switch info.name.bytes {
-                case fdAT.nameBytes:
-                    let peekAction: PeekAction =
-                        options.contains(.loadFrameData) ?
-                            .read(type: fdAT.self, skipChecksumVerify: skipChecksumVerify) :
-                            .readIndexedfdAT(skipChecksumVerify: skipChecksumVerify)
-                    let (chunk, data) = try action(peekAction).fdAT
-                    try checkSequenceNumber(chunk)
-                    result.append(chunk)
-                    allData.append(data)
-                case fcTL.nameBytes, IEND.nameBytes:
-                    _ = try action(.reset)
-                    frameDataEnd = true
-                default:
-                    _ = try action(.read())
-                }
-            }
-        }
-        guard !result.isEmpty else {
-            throw APNGKitError.decoderError(.frameDataNotFound(expectedSequence: expectedSequenceNumber))
-        }
-        return (result, allData)
-    }
-    
-    private func loadImageData() throws -> ([IDAT], Data) {
-        var chunks: [IDAT] = []
-        var allData: Data = .init()
-        
-        let skipChecksumVerify = options.contains(.skipChecksumVerify)
-        
-        var imageDataEnd = false
-        while !imageDataEnd {
-            try reader.peek { info, action in
-                switch info.name.bytes {
-                case IDAT.nameBytes:
-                    let peekAction: PeekAction =
-                    options.contains(.loadFrameData) ?
-                        .read(type: IDAT.self, skipChecksumVerify: skipChecksumVerify) :
-                        .readIndexedIDAT(skipChecksumVerify: skipChecksumVerify)
-                    let (chunk, data) = try action(peekAction).IDAT
-                    chunks.append(chunk)
-                    allData.append(data)
-                case fcTL.nameBytes, IEND.nameBytes:
-                    _ = try action(.reset)
-                    imageDataEnd = true
-                default:
-                    _ = try action(.read())
-                }
-            }
-        }
-        guard !chunks.isEmpty else {
-            throw APNGKitError.decoderError(.imageDataNotFound)
-        }
-        return (chunks, allData)
-    }
-    
-    private func checkSequenceNumber(_ frameControl: fcTL) throws {
-        let sequenceNumber = frameControl.sequenceNumber
-        guard sequenceNumber == expectedSequenceNumber else {
-            throw APNGKitError.decoderError(.wrongSequenceNumber(expected: expectedSequenceNumber, got: sequenceNumber))
-        }
-        expectedSequenceNumber += 1
-    }
-    
-    private func checkSequenceNumber(_ frameData: fdAT) throws {
-        let sequenceNumber = frameData.sequenceNumber
-        guard sequenceNumber == expectedSequenceNumber else {
-            throw APNGKitError.decoderError(.wrongSequenceNumber(expected: expectedSequenceNumber, got: sequenceNumber!))
-        }
-        expectedSequenceNumber += 1
+    var isDuringFirstPass: Bool {
+        decodingQueue.sync { frames.contains { $0 == nil } }
     }
 }
 
@@ -581,27 +225,24 @@ extension APNGDecoder {
         0xAE, 0x42, 0x60, 0x82
     ]
     
-    private func generateImageData(frameControl: fcTL, data: Data) throws -> Data {
+    func generateImageData(frameControl: fcTL, data: Data) throws -> Data {
         try generateImageData(width: frameControl.width, height: frameControl.height, data: data)
     }
     
     private func generateImageData(width: Int, height: Int, data: Data) throws -> Data {
-        let ihdr = try imageHeader.updated(
-            width: width, height: height
-        ).encode()
+        let ihdr = try imageHeader.updated(width: width, height: height).encode()
         let idat = IDAT.encode(data: data)
         return Self.pngSignature + ihdr + sharedData + idat + Self.IENDBytes
     }
 }
 
+// Falling back
 extension APNGDecoder {
     func createDefaultImageData() throws -> Data {
         let payload = try defaultImageChunks.map { idat in
             try idat.loadData(with: self.reader)
         }.joined()
-        let data = try generateImageData(
-            width: imageHeader.width, height: imageHeader.height, data: Data(payload)
-        )
+        let data = try generateImageData(width: imageHeader.width, height: imageHeader.height, data: Data(payload))
         return data
     }
 }
@@ -626,48 +267,6 @@ public struct APNGFrame {
     }
 }
 
-// Drawing properties for IHDR.
-extension IHDR {
-    var colorSpace: CGColorSpace {
-        switch colorType {
-        case .greyscale, .greyscaleWithAlpha: return .deviceGray
-        case .trueColor, .trueColorWithAlpha: return .deviceRGB
-        case .indexedColor: return .deviceRGB
-        }
-    }
-    
-    var bitmapInfo: CGBitmapInfo {
-        switch colorType {
-        case .greyscale, .trueColor:
-            return CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
-        case .greyscaleWithAlpha, .trueColorWithAlpha, .indexedColor:
-            return CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
-        }
-    }
-    
-    var bitDepthPerComponent: Int {
-        // The sample depth is the same as the bit depth except in the case of
-        // indexed-colour PNG images (colour type 3), in which the sample depth is always 8 bits.
-        Int(colorType == .indexedColor ? 8 : bitDepth)
-    }
-    
-    var bitsPerPixel: UInt32 {
-        let componentsPerPixel =
-            colorType == .indexedColor ? 4 /* Draw indexed color as true color with alpha in CG world. */
-                                       : colorType.componentsPerPixel
-        return UInt32(componentsPerPixel * bitDepthPerComponent)
-    }
-    
-    var bytesPerPixel: UInt32 {
-        bitsPerPixel / 8
-    }
-    
-    var bytesPerRow: Int {
-        width * Int(bytesPerPixel)
-    }
-
-}
-
 extension fcTL {
     func normalizedRect(fullHeight: Int) -> CGRect {
         .init(x: xOffset, y: fullHeight - yOffset - height, width: width, height: height)
@@ -675,20 +274,5 @@ extension fcTL {
     
     var cgRect: CGRect {
         .init(x: xOffset, y: yOffset, width: width, height: height)
-    }
-}
-
-extension CGColorSpace {
-    static let deviceRGB = CGColorSpaceCreateDeviceRGB()
-    static let deviceGray = CGColorSpaceCreateDeviceGray()
-}
-
-extension DispatchQueue {
-    func asyncOrSyncIfMain(execute block: @escaping () -> Void) {
-        if Thread.isMainThread {
-            block()
-        } else {
-            self.async(execute: block)
-        }
     }
 }
