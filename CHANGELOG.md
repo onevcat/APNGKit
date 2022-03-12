@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.2.0] - 2022-03-12
+
 ### Add
 
 - Support for setting a single `APNGImage` to multiple `APNGImageView`s. It lifts off the limitation in previous versions that an `APNGImage` can only be set to one `APNGImageView`. Now, it is free to be used in different image views and the image view controls the animation playing. [#124](https://github.com/onevcat/APNGKit/pull/124) @onevcat
@@ -53,3 +55,4 @@ need also check the README to do a re-implement.
 [2.1.0]: https://github.com/onevcat/APNGKit/compare/2.0.2...2.1.0
 [2.1.1]: https://github.com/onevcat/APNGKit/compare/2.1.0...2.1.1
 [2.1.2]: https://github.com/onevcat/APNGKit/compare/2.1.1...2.1.2
+[2.2.0]: https://github.com/onevcat/APNGKit/compare/2.1.2...2.2.0
