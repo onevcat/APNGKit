@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fix
+
+- Wrong canvas parameter when the image header set to "true color". Now an image with non-alpha channel should be also read correctly. [#125](https://github.com/onevcat/APNGKit/pull/125) @onevcat
+
 ## [2.2.0] - 2022-03-12
 
 ### Add
