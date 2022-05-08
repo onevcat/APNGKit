@@ -14,7 +14,8 @@ platform :ios do
       package_path: "./",
       scheme: "APNGKit",
       clean: true, 
-      destination: "platform=macOS"
+      destination: "platform=macOS",
+      result_bundle: true
     )
   end
 
@@ -23,7 +24,8 @@ platform :ios do
       package_path: "./",
       scheme: "APNGKit",
       clean: true, 
-      destination: "platform=iOS Simulator,name=iPhone 12"
+      destination: "platform=iOS Simulator,name=iPhone 12",
+      result_bundle: true
     )
   end
 
@@ -32,7 +34,8 @@ platform :ios do
       package_path: "./",
       scheme: "APNGKit",
       clean: true, 
-      destination: "platform=tvOS Simulator,name=Apple TV"
+      destination: "platform=tvOS Simulator,name=Apple TV",
+      result_bundle: true
     )
   end
   
