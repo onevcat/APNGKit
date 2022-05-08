@@ -81,7 +81,7 @@ struct IHDR: Chunk {
         var componentsPerPixel: Int {
             switch self {
             case .greyscale: return 1
-            case .trueColor: return 3
+            case .trueColor: return 4
             case .indexedColor: return 1
             case .greyscaleWithAlpha: return 2
             case .trueColorWithAlpha: return 4

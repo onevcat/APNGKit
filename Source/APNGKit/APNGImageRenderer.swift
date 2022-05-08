@@ -491,8 +491,10 @@ extension IHDR {
     
     var bitmapInfo: CGBitmapInfo {
         switch colorType {
-        case .greyscale, .trueColor:
+        case .greyscale:
             return CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
+        case .trueColor:
+            return CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue)
         case .greyscaleWithAlpha, .trueColorWithAlpha, .indexedColor:
             return CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
         }
