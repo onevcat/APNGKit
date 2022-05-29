@@ -63,6 +63,11 @@ extension UnsignedInteger {
     }
 }
 
-func printLog(_ item: Any) {
-    print("[APNGKit] \(item)")
+func printLog(_ item: Any, logLevel: LogLevel = .default) {
+    if logLevel == .off || LogLevel.current == .off {
+        return
+    }
+    if logLevel <= LogLevel.current {
+        print("[APNGKit] \(item)")
+    }
 }

@@ -348,7 +348,7 @@ open class APNGImageView: PlatformView {
         guard let renderer = renderer, let _ = renderer.output /* the frame image is rendered */ else {
             // but unfortunately the decoding missed the target.
             // we can just wait for the next `step`.
-            printLog("Missed frame for image \(image): target index: \(nextFrameIndex), while displaying the current frame index: \(displayingFrameIndex).")
+            printLog("Missed frame for image \(image): target index: \(nextFrameIndex), while displaying the current frame index: \(displayingFrameIndex).", logLevel: .verbose)
             onFrameMissed(nextFrameIndex)
             frameMissed = true
             return
