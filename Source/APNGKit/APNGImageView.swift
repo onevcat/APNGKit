@@ -63,11 +63,7 @@ open class APNGImageView: PlatformView {
     /// The timer type which is used to drive the animation. By default, if `CADisplayLink` is available, a
     /// `DisplayTimer` is used. On platforms that `CADisplayLink` is not available, a normal `Foundation.Timer` based
     /// one is used.
-    #if canImport(UIKit)
-    public var DrivingTimerType: DrivingTimer.Type { NormalTimer.self }
-    #else
-    public var DrivingTimerType: DrivingTimer.Type { NormalTimer.self }
-    #endif
+    public var DrivingTimerType: DrivingTimer.Type { PlatformDrivingTimer.self }
     
     private(set) var renderer: APNGImageRenderer?
     

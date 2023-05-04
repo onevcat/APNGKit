@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   run-test:
-    runs-on: macos-11
+    runs-on: macos-13
     strategy:
       matrix:
         destination: [
@@ -18,7 +18,7 @@ jobs:
           lfs: true
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.4
+          ruby-version: 2.7.8
           bundler-cache: true
       - uses: actions/cache@v2
         with:

@@ -24,7 +24,7 @@ platform :ios do
       package_path: "./",
       scheme: "APNGKit",
       clean: true, 
-      destination: "platform=iOS Simulator,name=iPhone 12",
+      destination: "platform=iOS Simulator,name=iPhone 14",
       result_bundle: true
     )
   end
