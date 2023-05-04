@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fix
+
+- Use `.info` log level for missing frames when decoding. This allows a better debugging experience when the image is not rendered as expected. [#129](https://github.com/onevcat/APNGKit/pull/129)
+- Upgrade the project for Xcode 14.3. The deploy target version of demo app prevented it from building with Xcode 14.3. [#134](https://github.com/onevcat/APNGKit/pull/134)
+
+
 ## [2.2.1] - 2022-05-08
 
 ### Fix
