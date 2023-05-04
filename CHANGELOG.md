@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.2.2] - 2023-05-04
+
 ### Fix
 
 - Use `.info` log level for missing frames when decoding. This allows a better debugging experience when the image is not rendered as expected. [#129](https://github.com/onevcat/APNGKit/pull/129)
@@ -69,3 +71,4 @@ need also check the README to do a re-implement.
 [2.1.2]: https://github.com/onevcat/APNGKit/compare/2.1.1...2.1.2
 [2.2.0]: https://github.com/onevcat/APNGKit/compare/2.1.2...2.2.0
 [2.2.1]: https://github.com/onevcat/APNGKit/compare/2.2.0...2.2.1
+[2.2.2]: https://github.com/onevcat/APNGKit/compare/2.2.1...2.2.2
