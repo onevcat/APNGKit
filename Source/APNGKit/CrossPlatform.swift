@@ -12,7 +12,7 @@ import UIKit
 public typealias PlatformDrivingTimer = DisplayTimer
 public typealias PlatformView = UIView
 public typealias PlatformImage = UIImage
-var screenScale: CGFloat { UIScreen.main.scale }
+var screenScale: CGFloat { UITraitCollection.current.displayScale }
 
 extension Notification.Name {
     static var applicationDidBecomeActive = UIApplication.didBecomeActiveNotification
