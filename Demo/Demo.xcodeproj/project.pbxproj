@@ -188,6 +188,8 @@
 		4BFF950B271C077D001645A7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFF950A271C077D001645A7 /* AppDelegate.swift */; };
 		4BFF950F271C077D001645A7 /* TopViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BFF950E271C077D001645A7 /* TopViewController.swift */; };
 		4BFF9514271C077F001645A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BFF9513271C077F001645A7 /* Assets.xcassets */; };
+		D1285CBD2AD309BE005EABFA /* tRNS_alpha.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1285CBC2AD309BE005EABFA /* tRNS_alpha.apng */; };
+		D1285CBE2AD309BE005EABFA /* tRNS_alpha.apng in Resources */ = {isa = PBXBuildFile; fileRef = D1285CBC2AD309BE005EABFA /* tRNS_alpha.apng */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -296,6 +298,7 @@
 		4BFF9513271C077F001645A7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4BFF9518271C077F001645A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BFF951F271C07AC001645A7 /* APNGKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = APNGKit; path = ..; sourceTree = "<group>"; };
+		D1285CBC2AD309BE005EABFA /* tRNS_alpha.apng */ = {isa = PBXFileReference; lastKnownFileType = file; path = tRNS_alpha.apng; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -365,6 +368,7 @@
 		4BC3D8CD271C095D004DF785 /* General */ = {
 			isa = PBXGroup;
 			children = (
+				D1285CBC2AD309BE005EABFA /* tRNS_alpha.apng */,
 				4B5B97382744831600431356 /* maneki-neko.apng */,
 				4BC3D8CE271C095D004DF785 /* elephant_apng@2x.apng */,
 				4BC3D8CF271C095D004DF785 /* APNG-4D.apng */,
@@ -629,6 +633,7 @@
 				4B5B975D2744835400431356 /* 035.png in Resources */,
 				4B5B976A2744835400431356 /* 005.png in Resources */,
 				4B5B976F2744835400431356 /* 008.png in Resources */,
+				D1285CBE2AD309BE005EABFA /* tRNS_alpha.apng in Resources */,
 				4B5B977B2744835400431356 /* 043.png in Resources */,
 				4B5B977A2744835400431356 /* 042.png in Resources */,
 				4B5B97502744835400431356 /* 055.png in Resources */,
@@ -708,6 +713,7 @@
 				4BC3D91D271C095D004DF785 /* ball.apng in Resources */,
 				4BC3D94D271C095D004DF785 /* 050.png in Resources */,
 				4BC3D960271C095D004DF785 /* 032.png in Resources */,
+				D1285CBD2AD309BE005EABFA /* tRNS_alpha.apng in Resources */,
 				4BC3D942271C095D004DF785 /* 041.png in Resources */,
 				4BC3D91C271C095D004DF785 /* elephant_apng.apng in Resources */,
 				4BC3D92B271C095D004DF785 /* 015.png in Resources */,

@@ -16,6 +16,7 @@ let sampleImages = [
     "maneki-neko",
     "APNG-cube",
     "pyani",
+    "tRNS_alpha",
     "pia",
     "over_none",
     "over_background",
