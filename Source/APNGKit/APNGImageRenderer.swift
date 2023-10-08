@@ -24,19 +24,11 @@ class APNGImageRenderer {
     private var foundMultipleAnimationControl: Bool = false
     private var expectedSequenceNumber: Int = 0
     
-    init(decoder: APNGDecoder, shouldRenderWithAlpha: Bool = false) throws {
+    init(decoder: APNGDecoder) throws {
         self.decoder = decoder
         self.reader = try decoder.reader.clone()
         
         let imageHeader = decoder.imageHeader
-        
-        let bitmapInfo: CGBitmapInfo
-        if shouldRenderWithAlpha {
-            bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
-        } else {
-            bitmapInfo = imageHeader.bitmapInfo
-        }
-        
         guard let outputBuffer = CGContext(
             data: nil,
             width: imageHeader.width,
@@ -44,7 +36,7 @@ class APNGImageRenderer {
             bitsPerComponent: imageHeader.bitDepthPerComponent,
             bytesPerRow: imageHeader.bytesPerRow,
             space: imageHeader.colorSpace,
-            bitmapInfo: bitmapInfo.rawValue
+            bitmapInfo: imageHeader.bitmapInfo.rawValue
         ) else {
             throw APNGKitError.decoderError(.canvasCreatingFailed)
         }

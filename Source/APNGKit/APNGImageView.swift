@@ -25,9 +25,6 @@ open class APNGImageView: PlatformView {
     /// of `self`. Default is `true`.
     open var autoStartAnimationWhenSetImage = true
     
-    /// Enable this option to always reference the alpha channel during rendering. Default is `false`.
-    open var shouldRenderWithAlpha = false
-    
     /// A delegate called every time when a "play" (a single loop of the animated image) is done. The parameter number
     /// is the count of played loops.
     ///
@@ -98,10 +95,9 @@ open class APNGImageView: PlatformView {
     
     /// Creates an APNG image view with the specified animated image.
     /// - Parameter image: The initial image to display in the image view.
-    public convenience init(image: APNGImage?, autoStartAnimating: Bool = true, shouldRenderWithAlpha: Bool = false) {
+    public convenience init(image: APNGImage?, autoStartAnimating: Bool = true) {
         self.init(frame: .zero)
         self.autoStartAnimationWhenSetImage = autoStartAnimating
-        self.shouldRenderWithAlpha = shouldRenderWithAlpha
         self.image = image
     }
     
@@ -216,7 +212,7 @@ open class APNGImageView: PlatformView {
             unsetImage()
             
             do {
-                renderer = try APNGImageRenderer(decoder: nextImage.decoder, shouldRenderWithAlpha: shouldRenderWithAlpha)
+                renderer = try APNGImageRenderer(decoder: nextImage.decoder)
             } catch {
                 printLog("Error happens while creating renderer for image. \(error)")
                 defaultDecodingErrored(
