@@ -113,7 +113,8 @@ class APNGImageViewTests: XCTestCase {
         #endif
         XCTAssertEqual(imageView.bounds, .init(origin: .zero, size: apng.size))
     }
-    
+        
+    #if !os(macOS) // macOS has a "lazy release" behavior in test bundle, so these tests are failing on macOS
     func testReleaseWhenNotAnimating() throws {
         var imageView: DeinitInspectableAPNGImageView?
         imageView = DeinitInspectableAPNGImageView(frame: .zero)
@@ -126,7 +127,6 @@ class APNGImageViewTests: XCTestCase {
         XCTAssertTrue(deinitCalled)
     }
     
-    #if !os(macOS) // macOS has a "lazy release" behavior in test bundle, so these tests are failing on macOS
     func testReleaseWhenInitImage() throws {
         let apng = createBallImage()
         var imageView: DeinitInspectableAPNGImageView?
