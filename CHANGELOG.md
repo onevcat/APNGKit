@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fix
+
+- Use an alpha bitmap context to render images with true color (PNG ColorType 2). This allows the `tRNS` chunk to be handled correctly. [#138](https://github.com/onevcat/APNGKit/pull/138)
+
 ## [2.2.2] - 2023-05-04
 
 ### Fix
