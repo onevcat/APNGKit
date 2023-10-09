@@ -484,8 +484,7 @@ extension IHDR {
     var colorSpace: CGColorSpace {
         switch colorType {
         case .greyscale, .greyscaleWithAlpha: return .deviceGray
-        case .trueColor, .trueColorWithAlpha: return .deviceRGB
-        case .indexedColor: return .deviceRGB
+        case .indexedColor, .trueColor, .trueColorWithAlpha: return .deviceRGB
         }
     }
     
@@ -493,9 +492,7 @@ extension IHDR {
         switch colorType {
         case .greyscale:
             return CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
-        case .trueColor:
-            return CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue)
-        case .greyscaleWithAlpha, .trueColorWithAlpha, .indexedColor:
+        case .indexedColor, .trueColor, .greyscaleWithAlpha, .trueColorWithAlpha:
             return CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
         }
     }
