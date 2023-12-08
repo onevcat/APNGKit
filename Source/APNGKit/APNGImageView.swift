@@ -381,7 +381,14 @@ open class APNGImageView: PlatformView {
     @objc private func appMovedFromBackground() {
         // Reset the current displaying frame when the app is active again.
         // This prevents the animation being played faster due to the old timestamp.
-        displayingFrameStarted = drivingTimer?.timestamp
+        //
+        // Also check to ignore when `timestamp` is still 0. It is an app lifetime change from iOS 17 where an APNGImage
+        // instance already exists when app starts. See #139.
+        if let timer = drivingTimer, timer.timestamp == 0 {
+            displayingFrameStarted = timer.timestamp
+        } else {
+            displayingFrameStarted = nil
+        }
     }
     
     // Invalid and reset the display link.
