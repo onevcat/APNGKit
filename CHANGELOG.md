@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fix
+
+- A timing issue that on iOS 17 a wrong timestamp might be used when the image starts to play when the app is just going to start up. It caused the image to be played at the wrong speed. [#140](https://github.com/onevcat/APNGKit/pull/140) @alexander-steel @devflow @onevcat
+
 ## [2.2.3] - 2023-10-09
 
 ### Fix
