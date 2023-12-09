@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.2.4] - 2023-12-09
+
 ### Fix
 
 - A timing issue that on iOS 17 a wrong timestamp might be used when the image starts to play when the app is just going to start up. It caused the image to be played at the wrong speed. [#140](https://github.com/onevcat/APNGKit/pull/140) @alexander-steel @devflow @onevcat
@@ -83,3 +85,4 @@ need also check the README to do a re-implement.
 [2.2.1]: https://github.com/onevcat/APNGKit/compare/2.2.0...2.2.1
 [2.2.2]: https://github.com/onevcat/APNGKit/compare/2.2.1...2.2.2
 [2.2.3]: https://github.com/onevcat/APNGKit/compare/2.2.2...2.2.3
+[2.2.4]: https://github.com/onevcat/APNGKit/compare/2.2.3...2.2.4
