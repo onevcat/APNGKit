@@ -384,7 +384,7 @@ open class APNGImageView: PlatformView {
         //
         // Also check to ignore when `timestamp` is still 0. It is an app lifetime change from iOS 17 where an APNGImage
         // instance already exists when app starts. See #139.
-        if let timer = drivingTimer, timer.timestamp == 0 {
+        if let timer = drivingTimer, timer.timestamp != 0 {
             displayingFrameStarted = timer.timestamp
         } else {
             displayingFrameStarted = nil
