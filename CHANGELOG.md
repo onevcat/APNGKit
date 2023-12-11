@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fix
+
+- A wrong condition check that caused the fix in 2.2.4 not to work as expected. [#141](https://github.com/onevcat/APNGKit/pull/141)
+
 ## [2.2.4] - 2023-12-09
 
 ### Fix
