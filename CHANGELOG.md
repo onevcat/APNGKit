@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.2.5] - 2023-12-11
+
 ### Fix
 
 - A wrong condition check that caused the fix in 2.2.4 not to work as expected. [#141](https://github.com/onevcat/APNGKit/pull/141)
@@ -90,3 +92,4 @@ need also check the README to do a re-implement.
 [2.2.2]: https://github.com/onevcat/APNGKit/compare/2.2.1...2.2.2
 [2.2.3]: https://github.com/onevcat/APNGKit/compare/2.2.2...2.2.3
 [2.2.4]: https://github.com/onevcat/APNGKit/compare/2.2.3...2.2.4
+[2.2.5]: https://github.com/onevcat/APNGKit/compare/2.2.4...2.2.5
