@@ -23,8 +23,11 @@ class ViewControllerStub {
     func setupViewController(_ input: UIViewController) -> UIViewController {
 
         input.loadViewIfNeeded()
-        
+        #if os(visionOS)
+        window = UIWindow(frame: .init(x: 0, y: 0, width: 800, height: 600))
+        #else
         window = UIWindow(frame: UIScreen.main.bounds)
+        #endif
         window.rootViewController = input
         window.makeKeyAndVisible()
         return input
