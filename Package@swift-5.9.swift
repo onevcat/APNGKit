@@ -8,7 +8,7 @@ let package = Package(
         .library(name: "APNGKit", targets: ["APNGKit"])
     ],
     dependencies: [
-        .package(url: "https://github.com/onevcat/Delegate.git", from: "1.1.1")
+        .package(url: "https://github.com/onevcat/Delegate.git", from: "1.2.0")
     ],
     targets: [
         .target(

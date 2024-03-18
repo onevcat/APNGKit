@@ -1,16 +1,14 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "Delegate",
-        "repositoryURL": "https://github.com/onevcat/Delegate.git",
-        "state": {
-          "branch": null,
-          "revision": "45c5ec58d5a9656a9cc729506e0ed3093ca8f772",
-          "version": "1.1.1"
-        }
+  "pins" : [
+    {
+      "identity" : "delegate",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Delegate",
+      "state" : {
+        "revision" : "499e507f2a68d6e8737f7f6f7c0385596b4398fc",
+        "version" : "1.2.0"
       }
-    ]
-  },
-  "version": 1
+    }
+  ],
+  "version" : 2
 }
