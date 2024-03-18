@@ -25,6 +25,8 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/onevcat/APNGKit.git", :tag => s.version }
   
   s.source_files  = "Source/**/*.swift"
+  s.resource_bundles = {"APNGKit" => ["Source/APNGKit/PrivacyInfo.xcprivacy"]}
+
   s.swift_versions = ["5.3", "5.4", "5.5"]
   s.dependency "Delegate", "~> 1.1"
 end
