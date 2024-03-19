@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.3.0] - 2024-03-19
+
 ### Add
 
 - Support for visionOS. Now APNGKit can be used on visionOS in the native way. [#146](https://github.com/onevcat/APNGKit/pull/146)
@@ -103,3 +105,4 @@ need also check the README to do a re-implement.
 [2.2.3]: https://github.com/onevcat/APNGKit/compare/2.2.2...2.2.3
 [2.2.4]: https://github.com/onevcat/APNGKit/compare/2.2.3...2.2.4
 [2.2.5]: https://github.com/onevcat/APNGKit/compare/2.2.4...2.2.5
+[2.3.0]: https://github.com/onevcat/APNGKit/compare/2.2.5...2.3.0
