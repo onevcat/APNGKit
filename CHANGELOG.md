@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Add
+
+- Add `maxRenderSize` parameter to all `APNGImage` initializers. When set, the compositing canvas and cached frames are downsampled to fit within the given size, significantly reducing memory usage for oversized APNGs. The image's logical `size` and layout behavior are unchanged. [#151](https://github.com/onevcat/APNGKit/pull/151) @plateaukao [#152](https://github.com/onevcat/APNGKit/pull/152) @onevcat
+
+### Fix
+
+- Integralize the render-space rectangle in `APNGDecoder.renderRect(_:)` to prevent fractional coordinates from causing `CGImage.cropping(to:)` to return `nil` during `.previous` disposal, and to avoid 1px gaps between partial-frame regions. [#152](https://github.com/onevcat/APNGKit/pull/152)
+- Fix the Demo app's Frames overlay to use proportional coordinates, so the frame-region highlight stays correctly aligned when `maxRenderSize` downsampling is active. [#152](https://github.com/onevcat/APNGKit/pull/152)
+
+### Note
+
+- Update CI to `macos-26` runner, actions v4, Ruby 3.3, and Xcode 26.5 toolchain. [#152](https://github.com/onevcat/APNGKit/pull/152)
+
 ## [2.3.0] - 2024-03-19
 
 ### Add
