@@ -207,7 +207,7 @@ class APNGImageRendererTests: XCTestCase {
         XCTAssertEqual(renderer2.currentIndex, 2)
     }
     func testRenderDownsamplesToMaxSize() throws {
-        // Baseline: rendering without a `maxSize` keeps the native pixel size. This also guards the default path
+        // Baseline: rendering without a `maxRenderSize` keeps the native pixel size. This also guards the default path
         // against regression from the downsampling change.
         let nativeDecoder = try APNGDecoder(fileURL: SampleTesting.sampleTestingURL(name: "ball"))
         XCTAssertEqual(nativeDecoder.renderScale, 1.0)
@@ -221,7 +221,7 @@ class APNGImageRendererTests: XCTestCase {
         // Downsample to half. The output canvas — and every composited frame — must come out at the scaled size.
         let decoder = try APNGDecoder(
             fileURL: SampleTesting.sampleTestingURL(name: "ball"),
-            maxSize: CGSize(width: width / 2, height: height / 2)
+            maxRenderSize: CGSize(width: width / 2, height: height / 2)
         )
         XCTAssertEqual(decoder.renderScale, 0.5, accuracy: 0.0001)
         XCTAssertEqual(decoder.renderWidth, width / 2)
@@ -242,16 +242,73 @@ class APNGImageRendererTests: XCTestCase {
     }
 
     func testMaxSizeLargerThanNativeDoesNotUpscale() throws {
-        // `maxSize` is an upper bound only: an image already smaller than it is left at native size.
+        // `maxRenderSize` is an upper bound only: an image already smaller than it is left at native size.
         let decoder = try APNGDecoder(
             fileURL: SampleTesting.sampleTestingURL(name: "ball"),
-            maxSize: CGSize(width: 10_000, height: 10_000)
+            maxRenderSize: CGSize(width: 10_000, height: 10_000)
         )
         XCTAssertEqual(decoder.renderScale, 1.0)
         let renderer = try APNGImageRenderer(decoder: decoder)
         let frame0 = try renderer.output!.get()
         XCTAssertEqual(frame0.width, decoder.imageHeader.width)
         XCTAssertEqual(frame0.height, decoder.imageHeader.height)
+    }
+
+    func testDownsamplingWithPreviousDisposal() throws {
+        // `over_previous.apng` uses `.previous` dispose op. Rendering all frames with downsampling must not crash
+        // or produce nil from `CGImage.cropping(to:)` — the exact scenario that fractional rects would break.
+        let nativeDecoder = try APNGDecoder(
+            fileURL: SampleTesting.sampleTestingURL(name: "over_previous"),
+            options: [.fullFirstPass]
+        )
+        let width = nativeDecoder.imageHeader.width
+        let height = nativeDecoder.imageHeader.height
+
+        let decoder = try APNGDecoder(
+            fileURL: SampleTesting.sampleTestingURL(name: "over_previous"),
+            options: [.fullFirstPass],
+            maxRenderSize: CGSize(width: width / 2, height: height / 2)
+        )
+        let renderer = try APNGImageRenderer(decoder: decoder)
+        let frame0 = try renderer.output!.get()
+        XCTAssertEqual(frame0.width, decoder.renderWidth)
+        XCTAssertEqual(frame0.height, decoder.renderHeight)
+
+        for _ in 1..<decoder.framesCount {
+            let frame = try renderer.renderNextAndGetResult()
+            XCTAssertEqual(frame.width, decoder.renderWidth)
+            XCTAssertEqual(frame.height, decoder.renderHeight)
+        }
+    }
+
+    func testDownsamplingWithPartialFrames() throws {
+        // `spinfox.apng` uses partial-frame updates (sub-region fcTL with offsets). Downsampling must correctly
+        // scale the sub-region rects so that composited output dimensions match the render canvas.
+        let nativeDecoder = try APNGDecoder(
+            fileURL: SampleTesting.sampleTestingURL(name: "spinfox"),
+            options: [.fullFirstPass]
+        )
+        let width = nativeDecoder.imageHeader.width
+        let height = nativeDecoder.imageHeader.height
+
+        // Use a non-power-of-two scale to exercise fractional rect rounding.
+        let decoder = try APNGDecoder(
+            fileURL: SampleTesting.sampleTestingURL(name: "spinfox"),
+            options: [.fullFirstPass],
+            maxRenderSize: CGSize(width: width * 2 / 3, height: height * 2 / 3)
+        )
+        XCTAssertLessThan(decoder.renderScale, 1.0)
+
+        let renderer = try APNGImageRenderer(decoder: decoder)
+        let frame0 = try renderer.output!.get()
+        XCTAssertEqual(frame0.width, decoder.renderWidth)
+        XCTAssertEqual(frame0.height, decoder.renderHeight)
+
+        for _ in 1..<decoder.framesCount {
+            let frame = try renderer.renderNextAndGetResult()
+            XCTAssertEqual(frame.width, decoder.renderWidth)
+            XCTAssertEqual(frame.height, decoder.renderHeight)
+        }
     }
 }
 

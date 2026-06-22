@@ -31,7 +31,7 @@ class APNGImageRenderer {
         let imageHeader = decoder.imageHeader
         // The canvas is allocated at the render (possibly downsampled) size. When `decoder.renderScale` is `1.0` these
         // are the native dimensions; otherwise they shrink the buffer — and every frame drawn into it — to fit the
-        // requested `maxSize`, keeping the memory footprint bounded.
+        // requested `maxRenderSize`, keeping the memory footprint bounded.
         guard let outputBuffer = CGContext(
             data: nil,
             width: decoder.renderWidth,
@@ -439,11 +439,11 @@ extension APNGImageRenderer {
                 previousOutputImage = outputBuffer.makeImage()
             case .previous:
                 if let previousOutputImage = previousOutputImage {
-                    // `previousOutputImage` is already at render scale, so crop it in render space too. `renderRect`
-                    // can yield a fractional rect, and `cropping(to:)` returns `nil` for a non-integral or
-                    // out-of-bounds rectangle — so integralize it and clamp to the image bounds first.
+                    // `previousOutputImage` is already at render scale, so crop in render space.
+                    // `renderRect` already integralizes, but `cropping(to:)` still returns `nil` for
+                    // out-of-bounds rects, so clamp to the image bounds.
                     let imageBounds = CGRect(x: 0, y: 0, width: previousOutputImage.width, height: previousOutputImage.height)
-                    let cropRect = decoder.renderRect(displayingFrame.frameControl.cgRect).integral.intersection(imageBounds)
+                    let cropRect = decoder.renderRect(displayingFrame.frameControl.cgRect).intersection(imageBounds)
                     if let cropped = previousOutputImage.cropping(to: cropRect) {
                         outputBuffer.clear(displayingRegion)
                         outputBuffer.draw(cropped, in: displayingRegion)

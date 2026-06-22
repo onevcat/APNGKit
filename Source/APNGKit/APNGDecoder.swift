@@ -38,7 +38,7 @@ class APNGDecoder {
 
     // The scale applied to the rendering canvas to limit its memory footprint. `1.0` means the image is rendered at
     // its native pixel size. A value in `(0, 1)` means the canvas (and so every decoded frame) is downsampled by this
-    // factor. It is derived from the `maxSize` passed when creating the decoder.
+    // factor. It is derived from the `maxRenderSize` passed when creating the decoder.
     let renderScale: CGFloat
 
     private let decodingQueue = DispatchQueue(label: "com.onevcat.apngkit.decodingQueue", qos: .userInteractive)
@@ -72,12 +72,13 @@ class APNGDecoder {
 
     private func scaledLength(_ value: Int) -> Int { Self.scaledLength(value, scale: renderScale) }
 
-    // Scales a rectangle expressed in the native image coordinate space into the render (downsampled) space. Origins
-    // and sizes are scaled by the same factor so neighbouring frame regions keep sharing their boundaries. When
-    // `renderScale` is `1.0` the input rectangle is returned unchanged.
+    // Scales a rectangle expressed in the native image coordinate space into the render (downsampled) space and
+    // integralizes the result so that every call site operates on pixel-aligned boundaries. Without `.integral`,
+    // fractional coordinates can cause `CGImage.cropping(to:)` to return `nil` and neighbouring partial-frame
+    // regions to leave 1 px gaps or overlaps.
     func renderRect(_ rect: CGRect) -> CGRect {
         guard renderScale < 1.0 else { return rect }
-        return rect.applying(CGAffineTransform(scaleX: renderScale, y: renderScale))
+        return rect.applying(CGAffineTransform(scaleX: renderScale, y: renderScale)).integral
     }
     
     // The data chunks shared by all frames: after IHDR and before the actual IDAT or fdAT chunk.
@@ -88,17 +89,17 @@ class APNGDecoder {
     // reader is set to this position before starting another read process.
     private(set) var resetStatus: ResetStatus!
     
-    convenience init(data: Data, options: APNGImage.DecodingOptions = [], maxSize: CGSize? = nil) throws {
+    convenience init(data: Data, options: APNGImage.DecodingOptions = [], maxRenderSize: CGSize? = nil) throws {
         let reader = DataReader(data: data)
-        try self.init(reader: reader, options: options, maxSize: maxSize)
+        try self.init(reader: reader, options: options, maxRenderSize: maxRenderSize)
     }
 
-    convenience init(fileURL: URL, options: APNGImage.DecodingOptions = [], maxSize: CGSize? = nil) throws {
+    convenience init(fileURL: URL, options: APNGImage.DecodingOptions = [], maxRenderSize: CGSize? = nil) throws {
         let reader = try FileReader(url: fileURL)
-        try self.init(reader: reader, options: options, maxSize: maxSize)
+        try self.init(reader: reader, options: options, maxRenderSize: maxRenderSize)
     }
 
-    private init(reader: Reader, options: APNGImage.DecodingOptions, maxSize: CGSize? = nil) throws {
+    private init(reader: Reader, options: APNGImage.DecodingOptions, maxRenderSize: CGSize? = nil) throws {
 
         self.reader = reader
         self.options = options
@@ -115,14 +116,14 @@ class APNGDecoder {
         let ihdr = try reader.readChunk(type: IHDR.self, skipChecksumVerify: skipChecksumVerify)
         imageHeader = ihdr.chunk
 
-        // Determine the rendering scale from the requested `maxSize`. We only ever scale down: if the image already
-        // fits inside `maxSize` (or no limit is given) the native size is kept. Downsampling keeps the rendering canvas
+        // Determine the rendering scale from the requested `maxRenderSize`. We only ever scale down: if the image already
+        // fits inside `maxRenderSize` (or no limit is given) the native size is kept. Downsampling keeps the rendering canvas
         // and every cached frame small, which is what prevents oversized images from exhausting memory.
-        if let maxSize = maxSize, maxSize.width > 0, maxSize.height > 0,
+        if let maxRenderSize = maxRenderSize, maxRenderSize.width > 0, maxRenderSize.height > 0,
            imageHeader.width > 0, imageHeader.height > 0 {
             let fitScale = min(
-                maxSize.width / CGFloat(imageHeader.width),
-                maxSize.height / CGFloat(imageHeader.height)
+                maxRenderSize.width / CGFloat(imageHeader.width),
+                maxRenderSize.height / CGFloat(imageHeader.height)
             )
             renderScale = min(1.0, fitScale)
         } else {
