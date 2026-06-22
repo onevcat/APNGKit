@@ -62,12 +62,15 @@ class APNGDecoder {
     // The bytes per row of the rendering canvas, after applying `renderScale`.
     var renderBytesPerRow: Int { renderWidth * Int(imageHeader.bytesPerPixel) }
 
-    // Scales a single length (a width or a height) from the native coordinate space into the render space, clamping to
-    // a minimum of one pixel so the canvas is never degenerate.
-    private func scaledLength(_ value: Int) -> Int {
-        guard renderScale < 1.0 else { return value }
-        return max(1, Int((CGFloat(value) * renderScale).rounded()))
+    // Scales a single length (a width or a height) from the native coordinate space into a render space. A positive
+    // length is clamped to a minimum of one pixel so a downsampled canvas is never degenerate, while a zero length
+    // stays zero. Declared `static` so it can also be used during `init`, before `self` is fully formed.
+    static func scaledLength(_ value: Int, scale: CGFloat) -> Int {
+        guard scale < 1.0, value > 0 else { return value }
+        return max(1, Int((CGFloat(value) * scale).rounded()))
     }
+
+    private func scaledLength(_ value: Int) -> Int { Self.scaledLength(value, scale: renderScale) }
 
     // Scales a rectangle expressed in the native image coordinate space into the render (downsampled) space. Origins
     // and sizes are scaled by the same factor so neighbouring frame regions keep sharing their boundaries. When
@@ -161,15 +164,11 @@ class APNGDecoder {
         } else { // Optimization: Auto determine if we want to cache the image based on image information.
             if acTLResult.chunk.numberOfPlays == 0 {
                 // Although it is not accurate enough, we only use the image header and animation control chunk to estimate.
-                // Use the render (downsampled) dimensions, since that is the size each cached frame actually takes. These
-                // are computed inline rather than via `renderWidth`/`renderHeight` because `self` is not yet fully
-                // initialized here.
-                let scaledWidth = renderScale < 1.0
-                    ? max(1, Int((CGFloat(imageHeader.width) * renderScale).rounded()))
-                    : imageHeader.width
-                let scaledHeight = renderScale < 1.0
-                    ? max(1, Int((CGFloat(imageHeader.height) * renderScale).rounded()))
-                    : imageHeader.height
+                // Use the render (downsampled) dimensions, since that is the size each cached frame actually takes. The
+                // `static` `scaledLength` is used (rather than `renderWidth`/`renderHeight`) because `self` is not yet
+                // fully initialized here.
+                let scaledWidth = Self.scaledLength(imageHeader.width, scale: renderScale)
+                let scaledHeight = Self.scaledLength(imageHeader.height, scale: renderScale)
                 let estimatedTotalBytes = scaledHeight * scaledWidth * Int(imageHeader.bytesPerPixel) * numberOfFrames
                 // Cache images when it does not take too much memory.
                 cachePolicy = estimatedTotalBytes < APNGImage.maximumCacheSize ? .cache : .noCache

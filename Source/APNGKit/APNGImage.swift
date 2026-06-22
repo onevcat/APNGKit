@@ -137,7 +137,10 @@ public class APNGImage {
     ///   - name: The name of the image file in the main bundle.
     ///   - decodingOptions: The decoding options being used while decoding the image data.
     ///   - maxSize: The maximum pixel size the image should be rendered at. If the image is larger than this size, it is
-    ///     downsampled to fit, which bounds its memory footprint. Pass `nil` (the default) to render at native size.
+    ///     downsampled to fit, which bounds its memory footprint. This affects only the rendering resolution and memory
+    ///     use: the image's logical `size` (and an `APNGImageView`'s `intrinsicContentSize`) still reflects the native
+    ///     dimensions, and the downsampled output is scaled up to fill that size when displayed. Pass `nil` (the
+    ///     default) to render at native size.
     /// - Returns: The image object that best matches the given name.
     ///
     /// This method guesses what is the image you want to load based on the given `name`. It searches the possible
@@ -157,7 +160,10 @@ public class APNGImage {
     ///   - bundle: The bundle in which APNGKit should search in for the image.
     ///   - subpath: The subdirectory path in the bundle where the image is put.
     ///   - maxSize: The maximum pixel size the image should be rendered at. If the image is larger than this size, it is
-    ///     downsampled to fit, which bounds its memory footprint. Pass `nil` (the default) to render at native size.
+    ///     downsampled to fit, which bounds its memory footprint. This affects only the rendering resolution and memory
+    ///     use: the image's logical `size` (and an `APNGImageView`'s `intrinsicContentSize`) still reflects the native
+    ///     dimensions, and the downsampled output is scaled up to fill that size when displayed. Pass `nil` (the
+    ///     default) to render at native size.
     /// - Returns: The image object that best matches the given name, bundle and subpath.
     ///
     /// This method guesses what is the image you want to load based on the given `name`. It searches the possible
@@ -182,7 +188,10 @@ public class APNGImage {
     ///   - scale: The desired image scale. If not set, APNGKit will guess from the file name.
     ///   - decodingOptions: The decoding options being used while decoding the image data.
     ///   - maxSize: The maximum pixel size the image should be rendered at. If the image is larger than this size, it is
-    ///     downsampled to fit, which bounds its memory footprint. Pass `nil` (the default) to render at native size.
+    ///     downsampled to fit, which bounds its memory footprint. This affects only the rendering resolution and memory
+    ///     use: the image's logical `size` (and an `APNGImageView`'s `intrinsicContentSize`) still reflects the native
+    ///     dimensions, and the downsampled output is scaled up to fill that size when displayed. Pass `nil` (the
+    ///     default) to render at native size.
     /// - Returns: The image object that loaded from the given file path.
     public convenience init(
         filePath: String,
@@ -200,7 +209,10 @@ public class APNGImage {
     ///   - scale: The desired image scale. If not set, APNGKit will guess from the file name.
     ///   - decodingOptions: The decoding options being used while decoding the image data.
     ///   - maxSize: The maximum pixel size the image should be rendered at. If the image is larger than this size, it is
-    ///     downsampled to fit, which bounds its memory footprint. Pass `nil` (the default) to render at native size.
+    ///     downsampled to fit, which bounds its memory footprint. This affects only the rendering resolution and memory
+    ///     use: the image's logical `size` (and an `APNGImageView`'s `intrinsicContentSize`) still reflects the native
+    ///     dimensions, and the downsampled output is scaled up to fill that size when displayed. Pass `nil` (the
+    ///     default) to render at native size.
     /// - Returns: The image object that loaded from the given file URL.
     public init(
         fileURL: URL,
@@ -231,7 +243,10 @@ public class APNGImage {
     ///   - scale: The desired image scale. If not set, `1.0` is used.
     ///   - decodingOptions: The decoding options being used while decoding the image data.
     ///   - maxSize: The maximum pixel size the image should be rendered at. If the image is larger than this size, it is
-    ///     downsampled to fit, which bounds its memory footprint. Pass `nil` (the default) to render at native size.
+    ///     downsampled to fit, which bounds its memory footprint. This affects only the rendering resolution and memory
+    ///     use: the image's logical `size` (and an `APNGImageView`'s `intrinsicContentSize`) still reflects the native
+    ///     dimensions, and the downsampled output is scaled up to fill that size when displayed. Pass `nil` (the
+    ///     default) to render at native size.
     /// - Returns: The image object that loaded from the given data.
     public init(
         data: Data,

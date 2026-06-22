@@ -439,8 +439,12 @@ extension APNGImageRenderer {
                 previousOutputImage = outputBuffer.makeImage()
             case .previous:
                 if let previousOutputImage = previousOutputImage {
-                    // `previousOutputImage` is already at render scale, so crop it in render space too.
-                    if let cropped = previousOutputImage.cropping(to: decoder.renderRect(displayingFrame.frameControl.cgRect)) {
+                    // `previousOutputImage` is already at render scale, so crop it in render space too. `renderRect`
+                    // can yield a fractional rect, and `cropping(to:)` returns `nil` for a non-integral or
+                    // out-of-bounds rectangle — so integralize it and clamp to the image bounds first.
+                    let imageBounds = CGRect(x: 0, y: 0, width: previousOutputImage.width, height: previousOutputImage.height)
+                    let cropRect = decoder.renderRect(displayingFrame.frameControl.cgRect).integral.intersection(imageBounds)
+                    if let cropped = previousOutputImage.cropping(to: cropRect) {
                         outputBuffer.clear(displayingRegion)
                         outputBuffer.draw(cropped, in: displayingRegion)
                     } else {
