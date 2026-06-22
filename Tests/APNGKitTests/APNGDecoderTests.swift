@@ -75,4 +75,16 @@ class APNGDecoderTests: XCTestCase {
         let decoder = try APNGDecoder(fileURL: SampleTesting.sampleTestingURL(name: "maneki-neko"))
         XCTAssertEqual(decoder.framesCount, 3)
     }
+
+    func testScaledLength() {
+        // A zero length stays zero rather than being clamped up to one.
+        XCTAssertEqual(APNGDecoder.scaledLength(0, scale: 0.5), 0)
+        // A positive length is clamped to a minimum of one pixel so a downsampled canvas is never degenerate.
+        XCTAssertEqual(APNGDecoder.scaledLength(1, scale: 0.1), 1)
+        // A scale of `1.0` (or greater) keeps the native length untouched.
+        XCTAssertEqual(APNGDecoder.scaledLength(100, scale: 1.0), 100)
+        // A fractional scale rounds to the nearest pixel.
+        XCTAssertEqual(APNGDecoder.scaledLength(100, scale: 0.5), 50)
+        XCTAssertEqual(APNGDecoder.scaledLength(101, scale: 0.5), 51)
+    }
 }

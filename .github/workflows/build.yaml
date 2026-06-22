@@ -4,23 +4,23 @@ on: [push, pull_request]
 
 jobs:
   run-test:
-    runs-on: macos-13
+    runs-on: macos-26
     strategy:
       matrix:
         destination: [
-          'macOS', 
-          'iOS', 
+          'macOS',
+          'iOS',
           'tvOS'
         ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           lfs: true
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.8
+          ruby-version: '3.3'
           bundler-cache: true
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: .build
           key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}

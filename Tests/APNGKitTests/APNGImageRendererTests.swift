@@ -206,6 +206,110 @@ class APNGImageRendererTests: XCTestCase {
         XCTAssertEqual(renderer1.currentIndex, 1)
         XCTAssertEqual(renderer2.currentIndex, 2)
     }
+    func testRenderDownsamplesToMaxSize() throws {
+        // Baseline: rendering without a `maxRenderSize` keeps the native pixel size. This also guards the default path
+        // against regression from the downsampling change.
+        let nativeDecoder = try APNGDecoder(fileURL: SampleTesting.sampleTestingURL(name: "ball"))
+        XCTAssertEqual(nativeDecoder.renderScale, 1.0)
+        let nativeRenderer = try APNGImageRenderer(decoder: nativeDecoder)
+        let nativeFrame0 = try nativeRenderer.output!.get()
+        let width = nativeDecoder.imageHeader.width
+        let height = nativeDecoder.imageHeader.height
+        XCTAssertEqual(nativeFrame0.width, width)
+        XCTAssertEqual(nativeFrame0.height, height)
+
+        // Downsample to half. The output canvas — and every composited frame — must come out at the scaled size.
+        let decoder = try APNGDecoder(
+            fileURL: SampleTesting.sampleTestingURL(name: "ball"),
+            maxRenderSize: CGSize(width: width / 2, height: height / 2)
+        )
+        XCTAssertEqual(decoder.renderScale, 0.5, accuracy: 0.0001)
+        XCTAssertEqual(decoder.renderWidth, width / 2)
+        XCTAssertEqual(decoder.renderHeight, height / 2)
+
+        let renderer = try APNGImageRenderer(decoder: decoder)
+        let frame0 = try renderer.output!.get()
+        XCTAssertEqual(frame0.width, width / 2)
+        XCTAssertEqual(frame0.height, height / 2)
+
+        // The scaled size must hold across the compositing pipeline for subsequent frames, not just the first.
+        let frame1 = try renderer.renderNextAndGetResult()
+        XCTAssertEqual(frame1.width, width / 2)
+        XCTAssertEqual(frame1.height, height / 2)
+        let frame2 = try renderer.renderNextAndGetResult()
+        XCTAssertEqual(frame2.width, width / 2)
+        XCTAssertEqual(frame2.height, height / 2)
+    }
+
+    func testMaxSizeLargerThanNativeDoesNotUpscale() throws {
+        // `maxRenderSize` is an upper bound only: an image already smaller than it is left at native size.
+        let decoder = try APNGDecoder(
+            fileURL: SampleTesting.sampleTestingURL(name: "ball"),
+            maxRenderSize: CGSize(width: 10_000, height: 10_000)
+        )
+        XCTAssertEqual(decoder.renderScale, 1.0)
+        let renderer = try APNGImageRenderer(decoder: decoder)
+        let frame0 = try renderer.output!.get()
+        XCTAssertEqual(frame0.width, decoder.imageHeader.width)
+        XCTAssertEqual(frame0.height, decoder.imageHeader.height)
+    }
+
+    func testDownsamplingWithPreviousDisposal() throws {
+        // `over_previous.apng` uses `.previous` dispose op. Rendering all frames with downsampling must not crash
+        // or produce nil from `CGImage.cropping(to:)` — the exact scenario that fractional rects would break.
+        let nativeDecoder = try APNGDecoder(
+            fileURL: SampleTesting.sampleTestingURL(name: "over_previous"),
+            options: [.fullFirstPass]
+        )
+        let width = nativeDecoder.imageHeader.width
+        let height = nativeDecoder.imageHeader.height
+
+        let decoder = try APNGDecoder(
+            fileURL: SampleTesting.sampleTestingURL(name: "over_previous"),
+            options: [.fullFirstPass],
+            maxRenderSize: CGSize(width: width / 2, height: height / 2)
+        )
+        let renderer = try APNGImageRenderer(decoder: decoder)
+        let frame0 = try renderer.output!.get()
+        XCTAssertEqual(frame0.width, decoder.renderWidth)
+        XCTAssertEqual(frame0.height, decoder.renderHeight)
+
+        for _ in 1..<decoder.framesCount {
+            let frame = try renderer.renderNextAndGetResult()
+            XCTAssertEqual(frame.width, decoder.renderWidth)
+            XCTAssertEqual(frame.height, decoder.renderHeight)
+        }
+    }
+
+    func testDownsamplingWithPartialFrames() throws {
+        // `spinfox.apng` uses partial-frame updates (sub-region fcTL with offsets). Downsampling must correctly
+        // scale the sub-region rects so that composited output dimensions match the render canvas.
+        let nativeDecoder = try APNGDecoder(
+            fileURL: SampleTesting.sampleTestingURL(name: "spinfox"),
+            options: [.fullFirstPass]
+        )
+        let width = nativeDecoder.imageHeader.width
+        let height = nativeDecoder.imageHeader.height
+
+        // Use a non-power-of-two scale to exercise fractional rect rounding.
+        let decoder = try APNGDecoder(
+            fileURL: SampleTesting.sampleTestingURL(name: "spinfox"),
+            options: [.fullFirstPass],
+            maxRenderSize: CGSize(width: width * 2 / 3, height: height * 2 / 3)
+        )
+        XCTAssertLessThan(decoder.renderScale, 1.0)
+
+        let renderer = try APNGImageRenderer(decoder: decoder)
+        let frame0 = try renderer.output!.get()
+        XCTAssertEqual(frame0.width, decoder.renderWidth)
+        XCTAssertEqual(frame0.height, decoder.renderHeight)
+
+        for _ in 1..<decoder.framesCount {
+            let frame = try renderer.renderNextAndGetResult()
+            XCTAssertEqual(frame.width, decoder.renderWidth)
+            XCTAssertEqual(frame.height, decoder.renderHeight)
+        }
+    }
 }
 
 extension APNGImageRenderer {

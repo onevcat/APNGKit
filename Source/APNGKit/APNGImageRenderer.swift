@@ -29,12 +29,15 @@ class APNGImageRenderer {
         self.reader = try decoder.reader.clone()
         
         let imageHeader = decoder.imageHeader
+        // The canvas is allocated at the render (possibly downsampled) size. When `decoder.renderScale` is `1.0` these
+        // are the native dimensions; otherwise they shrink the buffer — and every frame drawn into it — to fit the
+        // requested `maxRenderSize`, keeping the memory footprint bounded.
         guard let outputBuffer = CGContext(
             data: nil,
-            width: imageHeader.width,
-            height: imageHeader.height,
+            width: decoder.renderWidth,
+            height: decoder.renderHeight,
             bitsPerComponent: imageHeader.bitDepthPerComponent,
-            bytesPerRow: imageHeader.bytesPerRow,
+            bytesPerRow: decoder.renderBytesPerRow,
             space: imageHeader.colorSpace,
             bitmapInfo: imageHeader.bitmapInfo.rawValue
         ) else {
@@ -427,7 +430,7 @@ extension APNGImageRenderer {
             outputBuffer.clear(decoder.canvasFullRect)
         } else {
             let displayingFrame = decoder.frame(at: index - 1)!
-            let displayingRegion = displayingFrame.normalizedRect(fullHeight: decoder.imageHeader.height)
+            let displayingRegion = decoder.renderRect(displayingFrame.normalizedRect(fullHeight: decoder.imageHeader.height))
             switch displayingFrame.frameControl.disposeOp {
             case .none:
                 previousOutputImage = currentOutputImage
@@ -436,7 +439,12 @@ extension APNGImageRenderer {
                 previousOutputImage = outputBuffer.makeImage()
             case .previous:
                 if let previousOutputImage = previousOutputImage {
-                    if let cropped = previousOutputImage.cropping(to: displayingFrame.frameControl.cgRect) {
+                    // `previousOutputImage` is already at render scale, so crop in render space.
+                    // `renderRect` already integralizes, but `cropping(to:)` still returns `nil` for
+                    // out-of-bounds rects, so clamp to the image bounds.
+                    let imageBounds = CGRect(x: 0, y: 0, width: previousOutputImage.width, height: previousOutputImage.height)
+                    let cropRect = decoder.renderRect(displayingFrame.frameControl.cgRect).intersection(imageBounds)
+                    if let cropped = previousOutputImage.cropping(to: cropRect) {
                         outputBuffer.clear(displayingRegion)
                         outputBuffer.draw(cropped, in: displayingRegion)
                     } else {
@@ -449,13 +457,15 @@ extension APNGImageRenderer {
             }
         }
         
-        // Blend & Draw the new frame
+        // Blend & Draw the new frame. The frame's destination rectangle is scaled into render space; drawing the
+        // natively-decoded `nextFrameImage` into a smaller rectangle lets Core Graphics downsample it for us.
+        let frameRenderRect = decoder.renderRect(frame.normalizedRect(fullHeight: decoder.imageHeader.height))
         switch frame.frameControl.blendOp {
         case .source:
-            outputBuffer.clear(frame.normalizedRect(fullHeight: decoder.imageHeader.height))
-            outputBuffer.draw(nextFrameImage, in: frame.normalizedRect(fullHeight: decoder.imageHeader.height))
+            outputBuffer.clear(frameRenderRect)
+            outputBuffer.draw(nextFrameImage, in: frameRenderRect)
         case .over:
-            outputBuffer.draw(nextFrameImage, in: frame.normalizedRect(fullHeight: decoder.imageHeader.height))
+            outputBuffer.draw(nextFrameImage, in: frameRenderRect)
         }
         
         guard let nextOutputImage = outputBuffer.makeImage() else {
