@@ -40,39 +40,40 @@ func createMinimalImage() -> APNGImage {
 }
 
 class TimeWrap {
-    
+
     struct Item {
         let timeInterval: TimeInterval
         let block: () -> Void
     }
-    
+
     private var accumulated: TimeInterval = 0
     private let testCase: XCTestCase
     private let expectation: XCTestExpectation
-    
+
     private var items: [Item] = []
-    private var passed = 0.0
-    
+    private var startTime: Date!
+
     init(testCase: XCTestCase) {
         self.testCase = testCase
         self.expectation = testCase.expectation(description: "Time Wrap")
     }
-    
+
     func after(_ delay: TimeInterval, block: @escaping () -> Void) -> TimeWrap {
         accumulated = accumulated + delay
         items.append(.init(timeInterval: accumulated, block: block))
         return self
     }
-    
+
     func done(){
-        Timer.scheduledTimer(timeInterval: 0.0, target: self, selector: #selector(step), userInfo: nil, repeats: true)
+        startTime = Date()
+        Timer.scheduledTimer(timeInterval: 0.005, target: self, selector: #selector(step), userInfo: nil, repeats: true)
         wait()
     }
-    
+
     @objc func step(t: Timer) {
-        passed = t.timeInterval + passed
+        let elapsed = Date().timeIntervalSince(startTime)
         if let first = self.items.first {
-            if passed >= first.timeInterval {
+            if elapsed >= first.timeInterval {
                 first.block()
                 self.items.removeFirst()
             }
@@ -81,9 +82,9 @@ class TimeWrap {
             self.expectation.fulfill()
         }
     }
-    
+
     func wait() {
-        testCase.waitForExpectations(timeout: accumulated + 1, handler: nil)
+        testCase.waitForExpectations(timeout: accumulated + 2, handler: nil)
     }
 }
 
