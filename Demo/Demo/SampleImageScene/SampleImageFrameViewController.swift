@@ -22,7 +22,8 @@ class SampleImageFrameViewController: UIViewController, UITableViewDataSource, U
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SampleImageFrameTableViewCell", for: indexPath) as! SampleImageFrameTableViewCell
-        cell.set(frame: frames[indexPath.row].frameControl, image: image?.cachedFrameImage(at: indexPath.row), index: indexPath.row, scale: image!.scale)
+        let canvasSize = CGSize(width: image!.size.width * image!.scale, height: image!.size.height * image!.scale)
+        cell.set(frame: frames[indexPath.row].frameControl, image: image?.cachedFrameImage(at: indexPath.row), index: indexPath.row, scale: image!.scale, canvasSize: canvasSize)
         return cell
     }
     
@@ -47,44 +48,46 @@ class SampleImageFrameTableViewCell: UITableViewCell {
     
     @IBOutlet weak var frameCountLabel: UILabel!
     
-    func set(frame: fcTL, image: CGImage?, index: Int, scale: CGFloat) {
+    func set(frame: fcTL, image: CGImage?, index: Int, scale: CGFloat, canvasSize: CGSize) {
         frameCountLabel.text = "#\(index)"
-        
+
         offsetLabel.text = "{\(frame.xOffset), \(frame.yOffset)}"
         sizeLabel.text = "\(frame.width) x \(frame.height)"
         durationLabel.text = String(format: "%.3f", frame.duration) + " s"
         disposeLabel.text = frame.disposeOp.text
         blendLabel.text = frame.blendOp.text
-        
+
         if let cgImage = image {
             let uiImage = UIImage(cgImage: cgImage, scale: scale, orientation: .up)
             renderedImageView.image = uiImage
             let ratio = uiImage.size.aspectFitRatio(to: renderedImageView.bounds.size)
             let scaledSize = uiImage.size.aspectFit(to: renderedImageView.bounds.size)
-            
+
             bgWidth.constant = scaledSize.width
             bgHeight.constant = scaledSize.height
-            
-            let scaledRenderSize = CGSize(width: CGFloat(frame.width) / scale / ratio, height: CGFloat(frame.height) / scale / ratio)
-            let scaledOffset = CGPoint(x: CGFloat(frame.xOffset) / scale / ratio, y: CGFloat(frame.yOffset) / scale / ratio)
-            
+
+            // Use proportions relative to native canvas so the overlay stays correct
+            // regardless of whether maxRenderSize downsampled the cached frames.
+            let overlayW = scaledSize.width * CGFloat(frame.width) / canvasSize.width
+            let overlayH = scaledSize.height * CGFloat(frame.height) / canvasSize.height
+            let overlayX = scaledSize.width * CGFloat(frame.xOffset) / canvasSize.width
+            let overlayY = scaledSize.height * CGFloat(frame.yOffset) / canvasSize.height
+
             let scaledOriginOffset = CGPoint(
                 x: (renderedImageView.bounds.size.width - scaledSize.width) / 2,
                 y: (renderedImageView.bounds.size.height - scaledSize.height) / 2
             )
-            
-            overlayLeading.constant = scaledOffset.x + scaledOriginOffset.x
-            overlayTop.constant = scaledOffset.y + scaledOriginOffset.y
-            overlayWidth.constant = scaledRenderSize.width
-            overlayHeight.constant = scaledRenderSize.height
-            
+
+            overlayLeading.constant = overlayX + scaledOriginOffset.x
+            overlayTop.constant = overlayY + scaledOriginOffset.y
+            overlayWidth.constant = overlayW
+            overlayHeight.constant = overlayH
+
         } else {
             renderedImageView.image = nil
             bgWidth.constant = 0
             bgHeight.constant = 0
         }
-        
-        
     }
 }
 
