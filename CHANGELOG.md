@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-06-22
+
 ### Add
 
 - Add `maxRenderSize` parameter to all `APNGImage` initializers. When set, the compositing canvas and cached frames are downsampled to fit within the given size, significantly reducing memory usage for oversized APNGs. The image's logical `size` and layout behavior are unchanged. [#151](https://github.com/onevcat/APNGKit/pull/151) @plateaukao [#152](https://github.com/onevcat/APNGKit/pull/152) @onevcat
@@ -119,3 +121,4 @@ need also check the README to do a re-implement.
 [2.2.4]: https://github.com/onevcat/APNGKit/compare/2.2.3...2.2.4
 [2.2.5]: https://github.com/onevcat/APNGKit/compare/2.2.4...2.2.5
 [2.3.0]: https://github.com/onevcat/APNGKit/compare/2.2.5...2.3.0
+[2.4.0]: https://github.com/onevcat/APNGKit/compare/2.3.0...2.4.0
