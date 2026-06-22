@@ -35,7 +35,12 @@ class APNGDecoder {
     
     let imageHeader: IHDR
     let animationControl: acTL
-        
+
+    // The scale applied to the rendering canvas to limit its memory footprint. `1.0` means the image is rendered at
+    // its native pixel size. A value in `(0, 1)` means the canvas (and so every decoded frame) is downsampled by this
+    // factor. It is derived from the `maxSize` passed when creating the decoder.
+    let renderScale: CGFloat
+
     private let decodingQueue = DispatchQueue(label: "com.onevcat.apngkit.decodingQueue", qos: .userInteractive)
     
     // Holds decoded frame data and chunk info.
@@ -46,8 +51,31 @@ class APNGDecoder {
     var defaultImageChunks: [IDAT] { firstFrameResult?.defaultImageChunks ?? [] }
     private(set) var firstFrameResult: FirstFrameResult?
     
-    var canvasFullRect: CGRect { .init(origin: .zero, size: canvasFullSize) }
-    private var canvasFullSize: CGSize { .init(width: imageHeader.width, height: imageHeader.height) }
+    // The full rendering canvas rectangle, in the render (downsampled) coordinate space. When `renderScale` is `1.0`
+    // this equals the native image size.
+    var canvasFullRect: CGRect { .init(x: 0, y: 0, width: renderWidth, height: renderHeight) }
+
+    // The width of the rendering canvas in pixels, after applying `renderScale`.
+    var renderWidth: Int { scaledLength(imageHeader.width) }
+    // The height of the rendering canvas in pixels, after applying `renderScale`.
+    var renderHeight: Int { scaledLength(imageHeader.height) }
+    // The bytes per row of the rendering canvas, after applying `renderScale`.
+    var renderBytesPerRow: Int { renderWidth * Int(imageHeader.bytesPerPixel) }
+
+    // Scales a single length (a width or a height) from the native coordinate space into the render space, clamping to
+    // a minimum of one pixel so the canvas is never degenerate.
+    private func scaledLength(_ value: Int) -> Int {
+        guard renderScale < 1.0 else { return value }
+        return max(1, Int((CGFloat(value) * renderScale).rounded()))
+    }
+
+    // Scales a rectangle expressed in the native image coordinate space into the render (downsampled) space. Origins
+    // and sizes are scaled by the same factor so neighbouring frame regions keep sharing their boundaries. When
+    // `renderScale` is `1.0` the input rectangle is returned unchanged.
+    func renderRect(_ rect: CGRect) -> CGRect {
+        guard renderScale < 1.0 else { return rect }
+        return rect.applying(CGAffineTransform(scaleX: renderScale, y: renderScale))
+    }
     
     // The data chunks shared by all frames: after IHDR and before the actual IDAT or fdAT chunk.
     // Use this to revert to a valid PNG for creating a CG data provider.
@@ -57,18 +85,18 @@ class APNGDecoder {
     // reader is set to this position before starting another read process.
     private(set) var resetStatus: ResetStatus!
     
-    convenience init(data: Data, options: APNGImage.DecodingOptions = []) throws {
+    convenience init(data: Data, options: APNGImage.DecodingOptions = [], maxSize: CGSize? = nil) throws {
         let reader = DataReader(data: data)
-        try self.init(reader: reader, options: options)
+        try self.init(reader: reader, options: options, maxSize: maxSize)
     }
-    
-    convenience init(fileURL: URL, options: APNGImage.DecodingOptions = []) throws {
+
+    convenience init(fileURL: URL, options: APNGImage.DecodingOptions = [], maxSize: CGSize? = nil) throws {
         let reader = try FileReader(url: fileURL)
-        try self.init(reader: reader, options: options)
+        try self.init(reader: reader, options: options, maxSize: maxSize)
     }
-    
-    private init(reader: Reader, options: APNGImage.DecodingOptions) throws {
-    
+
+    private init(reader: Reader, options: APNGImage.DecodingOptions, maxSize: CGSize? = nil) throws {
+
         self.reader = reader
         self.options = options
         
@@ -83,7 +111,21 @@ class APNGDecoder {
         }
         let ihdr = try reader.readChunk(type: IHDR.self, skipChecksumVerify: skipChecksumVerify)
         imageHeader = ihdr.chunk
-        
+
+        // Determine the rendering scale from the requested `maxSize`. We only ever scale down: if the image already
+        // fits inside `maxSize` (or no limit is given) the native size is kept. Downsampling keeps the rendering canvas
+        // and every cached frame small, which is what prevents oversized images from exhausting memory.
+        if let maxSize = maxSize, maxSize.width > 0, maxSize.height > 0,
+           imageHeader.width > 0, imageHeader.height > 0 {
+            let fitScale = min(
+                maxSize.width / CGFloat(imageHeader.width),
+                maxSize.height / CGFloat(imageHeader.height)
+            )
+            renderScale = min(1.0, fitScale)
+        } else {
+            renderScale = 1.0
+        }
+
         let acTLResult: UntilChunkResult<acTL>
         do {
             acTLResult = try reader.readUntil(type: acTL.self, skipChecksumVerify: skipChecksumVerify)
@@ -119,7 +161,16 @@ class APNGDecoder {
         } else { // Optimization: Auto determine if we want to cache the image based on image information.
             if acTLResult.chunk.numberOfPlays == 0 {
                 // Although it is not accurate enough, we only use the image header and animation control chunk to estimate.
-                let estimatedTotalBytes = imageHeader.height * imageHeader.bytesPerRow * numberOfFrames
+                // Use the render (downsampled) dimensions, since that is the size each cached frame actually takes. These
+                // are computed inline rather than via `renderWidth`/`renderHeight` because `self` is not yet fully
+                // initialized here.
+                let scaledWidth = renderScale < 1.0
+                    ? max(1, Int((CGFloat(imageHeader.width) * renderScale).rounded()))
+                    : imageHeader.width
+                let scaledHeight = renderScale < 1.0
+                    ? max(1, Int((CGFloat(imageHeader.height) * renderScale).rounded()))
+                    : imageHeader.height
+                let estimatedTotalBytes = scaledHeight * scaledWidth * Int(imageHeader.bytesPerPixel) * numberOfFrames
                 // Cache images when it does not take too much memory.
                 cachePolicy = estimatedTotalBytes < APNGImage.maximumCacheSize ? .cache : .noCache
             } else {

@@ -136,15 +136,18 @@ public class APNGImage {
     /// - Parameters:
     ///   - name: The name of the image file in the main bundle.
     ///   - decodingOptions: The decoding options being used while decoding the image data.
+    ///   - maxSize: The maximum pixel size the image should be rendered at. If the image is larger than this size, it is
+    ///     downsampled to fit, which bounds its memory footprint. Pass `nil` (the default) to render at native size.
     /// - Returns: The image object that best matches the given name.
     ///
     /// This method guesses what is the image you want to load based on the given `name`. It searches the possible
     /// combinations of file name, extensions and image scales in the bundle.
     public convenience init(
         named name: String,
-        decodingOptions: DecodingOptions = []
+        decodingOptions: DecodingOptions = [],
+        maxSize: CGSize? = nil
     ) throws {
-        try self.init(named: name, decodingOptions: decodingOptions, in: nil, subdirectory: nil)
+        try self.init(named: name, decodingOptions: decodingOptions, in: nil, subdirectory: nil, maxSize: maxSize)
     }
     
     /// Creates an APNG image object using the named image file in the specified bundle and subdirectory.
@@ -153,6 +156,8 @@ public class APNGImage {
     ///   - decodingOptions: The decoding options being used while decoding the image data.
     ///   - bundle: The bundle in which APNGKit should search in for the image.
     ///   - subpath: The subdirectory path in the bundle where the image is put.
+    ///   - maxSize: The maximum pixel size the image should be rendered at. If the image is larger than this size, it is
+    ///     downsampled to fit, which bounds its memory footprint. Pass `nil` (the default) to render at native size.
     /// - Returns: The image object that best matches the given name, bundle and subpath.
     ///
     /// This method guesses what is the image you want to load based on the given `name`. It searches the possible
@@ -161,13 +166,14 @@ public class APNGImage {
         named name: String,
         decodingOptions: DecodingOptions = [],
         in bundle: Bundle?,
-        subdirectory subpath: String? = nil
+        subdirectory subpath: String? = nil,
+        maxSize: CGSize? = nil
     ) throws {
         let guessing = FileNameGuessing(name: name)
         guard let resource = guessing.load(in: bundle, subpath: subpath) else {
             throw APNGKitError.imageError(.resourceNotFound(name: name, bundle: bundle ?? .main))
         }
-        try self.init(fileURL: resource.fileURL, scale: resource.scale, decodingOptions: decodingOptions)
+        try self.init(fileURL: resource.fileURL, scale: resource.scale, decodingOptions: decodingOptions, maxSize: maxSize)
     }
     
     /// Creates an APNG image object using the file path.
@@ -175,14 +181,17 @@ public class APNGImage {
     ///   - filePath: The path of APNG file.
     ///   - scale: The desired image scale. If not set, APNGKit will guess from the file name.
     ///   - decodingOptions: The decoding options being used while decoding the image data.
+    ///   - maxSize: The maximum pixel size the image should be rendered at. If the image is larger than this size, it is
+    ///     downsampled to fit, which bounds its memory footprint. Pass `nil` (the default) to render at native size.
     /// - Returns: The image object that loaded from the given file path.
     public convenience init(
         filePath: String,
         scale: CGFloat? = nil,
-        decodingOptions: DecodingOptions = []
+        decodingOptions: DecodingOptions = [],
+        maxSize: CGSize? = nil
     ) throws {
         let fileURL = URL(fileURLWithPath: filePath)
-        try self.init(fileURL: fileURL, scale: scale, decodingOptions: decodingOptions)
+        try self.init(fileURL: fileURL, scale: scale, decodingOptions: decodingOptions, maxSize: maxSize)
     }
     
     /// Creates an APNG image object using the file URL.
@@ -190,15 +199,18 @@ public class APNGImage {
     ///   - fileURL: The URL of APNG file on disk.
     ///   - scale: The desired image scale. If not set, APNGKit will guess from the file name.
     ///   - decodingOptions: The decoding options being used while decoding the image data.
+    ///   - maxSize: The maximum pixel size the image should be rendered at. If the image is larger than this size, it is
+    ///     downsampled to fit, which bounds its memory footprint. Pass `nil` (the default) to render at native size.
     /// - Returns: The image object that loaded from the given file URL.
     public init(
         fileURL: URL,
         scale: CGFloat? = nil,
-        decodingOptions: DecodingOptions = []
+        decodingOptions: DecodingOptions = [],
+        maxSize: CGSize? = nil
     ) throws {
         self.scale = scale ?? fileURL.imageScale
         do {
-            decoder = try APNGDecoder(fileURL: fileURL, options: decodingOptions)
+            decoder = try APNGDecoder(fileURL: fileURL, options: decodingOptions, maxSize: maxSize)
             let repeatCount = decoder.animationControl.numberOfPlays
             numberOfPlays = repeatCount == 0 ? nil : repeatCount
         } catch {
@@ -218,15 +230,18 @@ public class APNGImage {
     ///   - data: The data containing APNG information and frames.
     ///   - scale: The desired image scale. If not set, `1.0` is used.
     ///   - decodingOptions: The decoding options being used while decoding the image data.
+    ///   - maxSize: The maximum pixel size the image should be rendered at. If the image is larger than this size, it is
+    ///     downsampled to fit, which bounds its memory footprint. Pass `nil` (the default) to render at native size.
     /// - Returns: The image object that loaded from the given data.
     public init(
         data: Data,
         scale: CGFloat = 1.0,
-        decodingOptions: DecodingOptions = []
+        decodingOptions: DecodingOptions = [],
+        maxSize: CGSize? = nil
     ) throws {
         self.scale = scale
         do {
-            self.decoder = try APNGDecoder(data: data, options: decodingOptions)
+            self.decoder = try APNGDecoder(data: data, options: decodingOptions, maxSize: maxSize)
             let repeatCount = decoder.animationControl.numberOfPlays
             numberOfPlays = repeatCount == 0 ? nil : repeatCount
         } catch {

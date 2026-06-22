@@ -206,6 +206,53 @@ class APNGImageRendererTests: XCTestCase {
         XCTAssertEqual(renderer1.currentIndex, 1)
         XCTAssertEqual(renderer2.currentIndex, 2)
     }
+    func testRenderDownsamplesToMaxSize() throws {
+        // Baseline: rendering without a `maxSize` keeps the native pixel size. This also guards the default path
+        // against regression from the downsampling change.
+        let nativeDecoder = try APNGDecoder(fileURL: SampleTesting.sampleTestingURL(name: "ball"))
+        XCTAssertEqual(nativeDecoder.renderScale, 1.0)
+        let nativeRenderer = try APNGImageRenderer(decoder: nativeDecoder)
+        let nativeFrame0 = try nativeRenderer.output!.get()
+        let width = nativeDecoder.imageHeader.width
+        let height = nativeDecoder.imageHeader.height
+        XCTAssertEqual(nativeFrame0.width, width)
+        XCTAssertEqual(nativeFrame0.height, height)
+
+        // Downsample to half. The output canvas — and every composited frame — must come out at the scaled size.
+        let decoder = try APNGDecoder(
+            fileURL: SampleTesting.sampleTestingURL(name: "ball"),
+            maxSize: CGSize(width: width / 2, height: height / 2)
+        )
+        XCTAssertEqual(decoder.renderScale, 0.5, accuracy: 0.0001)
+        XCTAssertEqual(decoder.renderWidth, width / 2)
+        XCTAssertEqual(decoder.renderHeight, height / 2)
+
+        let renderer = try APNGImageRenderer(decoder: decoder)
+        let frame0 = try renderer.output!.get()
+        XCTAssertEqual(frame0.width, width / 2)
+        XCTAssertEqual(frame0.height, height / 2)
+
+        // The scaled size must hold across the compositing pipeline for subsequent frames, not just the first.
+        let frame1 = try renderer.renderNextAndGetResult()
+        XCTAssertEqual(frame1.width, width / 2)
+        XCTAssertEqual(frame1.height, height / 2)
+        let frame2 = try renderer.renderNextAndGetResult()
+        XCTAssertEqual(frame2.width, width / 2)
+        XCTAssertEqual(frame2.height, height / 2)
+    }
+
+    func testMaxSizeLargerThanNativeDoesNotUpscale() throws {
+        // `maxSize` is an upper bound only: an image already smaller than it is left at native size.
+        let decoder = try APNGDecoder(
+            fileURL: SampleTesting.sampleTestingURL(name: "ball"),
+            maxSize: CGSize(width: 10_000, height: 10_000)
+        )
+        XCTAssertEqual(decoder.renderScale, 1.0)
+        let renderer = try APNGImageRenderer(decoder: decoder)
+        let frame0 = try renderer.output!.get()
+        XCTAssertEqual(frame0.width, decoder.imageHeader.width)
+        XCTAssertEqual(frame0.height, decoder.imageHeader.height)
+    }
 }
 
 extension APNGImageRenderer {
